@@ -1,0 +1,6 @@
+Immersive tech port
+wires not zap when not grounded
+add heat exchanger
+add cool doors and gates
+
+Alternating Flux (AF)? for long range high voltage(power) energy transmission

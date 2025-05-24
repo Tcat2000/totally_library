@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "totally_immersive:block/multiblock/chemical_bath_split",
+      "uvlock": true
+    },
+    "facing=south": {
+      "model": "totally_immersive:block/multiblock/chemical_bath_split",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=west": {
+      "model": "totally_immersive:block/multiblock/chemical_bath_split",
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=east": {
+      "model": "totally_immersive:block/multiblock/chemical_bath_split",
+      "y": 90,
+      "uvlock": true
+    }
+  }
+}

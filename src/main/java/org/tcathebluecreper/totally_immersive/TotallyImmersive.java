@@ -2,6 +2,7 @@ package org.tcathebluecreper.totally_immersive;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -10,9 +11,13 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -28,6 +33,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
+import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBathRenderer;
+import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
+
+import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(TotallyImmersive.MODID)
@@ -84,6 +93,8 @@ public class TotallyImmersive {
         TIContent.TIItems.ITEMS.register(modEventBus);
         TIContent.TIBET.BETs.register(modEventBus);
         TIContent.TIMultiblocks.init();
+        TIContent.TIRecipes.RECIPE_TYPES.register(modEventBus);
+        TIContent.TIRecipes.RECIPE_SERIALIZERS.register(modEventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -119,6 +130,26 @@ public class TotallyImmersive {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+    }
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientProxy {
+        @SubscribeEvent
+        public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
+            ChemicalBathRenderer.craneTop = new TIDynamicModel(ChemicalBathRenderer.craneTopId);
+            ChemicalBathRenderer.craneMiddle = new TIDynamicModel(ChemicalBathRenderer.craneMiddleId);
+            ChemicalBathRenderer.craneBottom = new TIDynamicModel(ChemicalBathRenderer.craneBottomId);
+        }
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            registerBERenderNoContext(event, TIContent.TIMultiblocks.CHEMICAL_BATH.masterBE().get(), ChemicalBathRenderer::new);
+        }
+        private static <T extends BlockEntity>
+        void registerBERenderNoContext(
+                EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render
+        )
+        {
+            event.registerBlockEntityRenderer(type, $ -> render.get());
         }
     }
 }

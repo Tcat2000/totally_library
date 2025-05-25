@@ -26,7 +26,8 @@ public class ChemicalBathLogic implements IClientTickableComponent<ChemicalBathS
 
     @Override
     public void tickServer(IMultiblockContext<ChemicalBathState> iMultiblockContext) {
-
+        ChemicalBathState state = iMultiblockContext.getState();
+        state.process.tick(iMultiblockContext.getLevel().getRawLevel(), state);
     }
 
     @Override
@@ -51,6 +52,9 @@ public class ChemicalBathLogic implements IClientTickableComponent<ChemicalBathS
         }
         if(cap == ForgeCapabilities.ENERGY) {
             if(position.side() == RelativeBlockFace.UP || position.side() == null && position.posInMultiblock().equals(new BlockPos(3,1,0))) return ctx.getState().power.cast(ctx);
+        }
+        if(cap == ForgeCapabilities.FLUID_HANDLER) {
+            if(position.posInMultiblock().equals(new BlockPos(1,0,1))) return ctx.getState().chemTank.cast(ctx);
         }
         return LazyOptional.empty();
     }

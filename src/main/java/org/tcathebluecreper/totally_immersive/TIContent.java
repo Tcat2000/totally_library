@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_immersive;
 
+import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
@@ -10,7 +11,11 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultibl
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -18,9 +23,9 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.DeferredRegister;
-import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBathLogic;
-import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBathMultiblock;
-import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBathState;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import org.tcathebluecreper.totally_immersive.Multiblock.*;
 import org.tcathebluecreper.totally_immersive.lib.ITMultiblockBlock;
 
 import java.util.ArrayList;
@@ -96,6 +101,23 @@ public class TIContent {
                 toRegister.add(r);
                 return r;
             }
+        }
+    }
+    public static class TIRecipes {
+        public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
+        public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, MODID);
+
+        public static final IERecipeTypes.TypeWithClass<ChemicalBathRecipe> CHEMICAL_BATH = register("chemical_bath", ChemicalBathRecipe.class);
+
+        static {
+            ChemicalBathRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("chemical_bath", ChemicalBathRecipeSerializer::new);
+        }
+
+        public static <T extends Recipe<?>> IERecipeTypes.TypeWithClass<T> register(String name, Class<T> clazz){
+            return new IERecipeTypes.TypeWithClass<>(register(name), clazz);
+        }
+        public static <T extends Recipe<?>> RegistryObject<RecipeType<T>> register(String name) {
+            return RECIPE_TYPES.register(name, ()-> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(MODID,name)));
         }
     }
 }

@@ -24,7 +24,7 @@ public class ChemicalBathState implements IMultiblockState {
     StoredCapability<ArrayFluidHandler> chemTank;
     StoredCapability<IEnergyStorage> power;
 
-    int processingTime = 0;
+    ChemicalBathProcess process;
 
     public ChemicalBathState(IInitialMultiblockContext<ChemicalBathState> capabilitySource) {
         inventory = new ItemStackHandler(2);
@@ -33,8 +33,10 @@ public class ChemicalBathState implements IMultiblockState {
 
         input = new StoredCapability<>(new RangedWrapper(inventory, 0, 1));
         output = new StoredCapability<>(new RangedWrapper(inventory, 1, 2));
-        chemTank = new StoredCapability<>(ArrayFluidHandler.drainOnly(tank, () -> {}));
+        chemTank = new StoredCapability<>(new ArrayFluidHandler(tank, true, true, () -> {}));
         power = new StoredCapability<>(new WrappingEnergyStorage(energy, true, false));
+
+        process = new ChemicalBathProcess();
     }
 
     @Override
@@ -42,7 +44,7 @@ public class ChemicalBathState implements IMultiblockState {
         compoundTag.put("inventory", inventory.serializeNBT());
         compoundTag.put("tank", tank.writeToNBT(new CompoundTag()));
         compoundTag.put("energy", energy.serializeNBT());
-        compoundTag.putInt("progress", processingTime);
+        compoundTag.put("process", process.serializeNBT());
     }
 
     @Override
@@ -50,6 +52,7 @@ public class ChemicalBathState implements IMultiblockState {
         inventory.deserializeNBT(compoundTag.getCompound("inventory"));
         tank.readFromNBT(compoundTag.getCompound("tank"));
         energy.deserializeNBT(compoundTag.get("energy"));
-        processingTime = compoundTag.getInt("progress");
+        process = new ChemicalBathProcess(compoundTag.getCompound("process"));
     }
 }
+///data modify block -23 -60 -7 tank set value {"id":"minecraft:water","amount":4000}

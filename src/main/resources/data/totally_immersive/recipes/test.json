@@ -1,0 +1,18 @@
+{
+    "type": "totally_immersive:chemical_bath",
+    "itemInput": {
+        "item": "minecraft:coal",
+        "amount": 1
+    },
+    "fluidInput": {
+        "fluid": "minecraft:water",
+        "amount": 1
+    },
+    "output": {
+        "item": "minecraft:diamond",
+        "amount": 2
+    },
+    "energyCost": 1000,
+    "fluidCost": 1000,
+    "fluidRequirement": 2000
+}

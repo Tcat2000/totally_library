@@ -7,7 +7,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 
 public class ChemicalBathProcess {
-    public final int PROCESS_TIME = 120;
+    public final int PROCESS_TIME = 140;
     public final int RESET_TIME = 20;
     public int progress = 0;
     public int resetCooldown = 0;

@@ -15,6 +15,6 @@ public class ChemicalBathMultiblock extends IETemplateMultiblock {
 
     @Override
     public float getManualScale() {
-        return 5;
+        return 12;
     }
 }

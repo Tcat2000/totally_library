@@ -49,18 +49,31 @@ public class ChemicalBathRenderer implements BlockEntityRenderer<MultiblockBlock
 
 
         if(progress == -1) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(state.process.resetCooldown - pPartialTick, state.process.RESET_TIME)), 0, 0);
-        else matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(progress + pPartialTick, state.process.PROCESS_TIME)), 0, 0);
+        else if(progress >= 20 && progress <= 120) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(progress - 20 + pPartialTick, state.process.PROCESS_TIME - 40)), 0, 0);
+        else if(progress > 120) matrixStack.translate(3, 0, 0);
         renderPart(craneTop, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
 
         float lowerDist = 0;
-        if(progress >= 25 && progress <= 95) {
-            if(progress <= 40) {
-                lowerDist = -AnimationUtils.lerp(0,0.8f, AnimationUtils.amount(progress - 25 + pPartialTick, 16));
+        {
+            if(progress >= 40 && progress <= 55) {
+                lowerDist = -AnimationUtils.lerp(0,0.8f, AnimationUtils.amount(progress - 40 + pPartialTick, 16));
             }
-            else if(progress >= 80) {
+            else if(progress >= 80 && progress <= 95) {
                 lowerDist = -AnimationUtils.lerp(0,0.8f, 1 - AnimationUtils.amount(progress - 80 + pPartialTick, 16));
             }
-            else lowerDist = -0.8f;
+            else if(progress >= 55 && progress <= 80) lowerDist = -0.8f;
+            else if(progress >= 0) {
+                lowerDist = 0;
+            }
+//            else if(progress == -1) lowerDist = 0;
+            if(progress >= 120) {
+                if(progress <= 130) lowerDist = -AnimationUtils.lerp(0, 0.5f, AnimationUtils.amount(progress - 120, 10));
+                else lowerDist = -AnimationUtils.lerp(0, 0.5f, 1 - AnimationUtils.amount(progress - 130, 10));
+            }
+            if(progress <= 20 && progress >= 0) {
+                if(progress <= 10) lowerDist = -AnimationUtils.lerp(0, 0.5f, AnimationUtils.amount(progress, 10));
+                else lowerDist = -AnimationUtils.lerp(0, 0.5f, 1 - AnimationUtils.amount(progress - 10, 10));
+            }
         }
         matrixStack.translate(0, lowerDist, 0);
         renderPart(craneBottom, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
@@ -68,7 +81,7 @@ public class ChemicalBathRenderer implements BlockEntityRenderer<MultiblockBlock
         matrixStack.pushPose();
         matrixStack.scale(0.5f, 0.5f ,0.5f);
         matrixStack.translate(0,1.5,0);
-        if(state.process.progress > 0) itemRenderer.renderStatic(state.processSlot.getValue().getStackInSlot(0), ItemDisplayContext.FIXED, getLightLevel(te.getLevel(), te.getBlockPos()), OverlayTexture.NO_OVERLAY, matrixStack, pBuffer, te.getLevel(), 1);
+        if(progress >= 10 && progress <= 130) itemRenderer.renderStatic(state.processSlot.getValue().getStackInSlot(0), ItemDisplayContext.FIXED, getLightLevel(te.getLevel(), te.getBlockPos()), OverlayTexture.NO_OVERLAY, matrixStack, pBuffer, te.getLevel(), 1);
         matrixStack.popPose();
 
 

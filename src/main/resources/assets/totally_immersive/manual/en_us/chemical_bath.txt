@@ -1,1 +1,4 @@
+Chemical Bath
+Bathing in Chemicals
+<&chemical_bath>
 Hi, this is a test

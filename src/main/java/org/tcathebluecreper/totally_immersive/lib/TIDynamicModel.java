@@ -40,9 +40,6 @@ public class TIDynamicModel
     public BakedModel get()
     {
         final BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
-        System.out.println(name);
-        System.out.println(blockRenderer.getBlockModelShaper().getModelManager().getModel(name));
-        System.out.println(blockRenderer.getBlockModelShaper().getModelManager().getModel(ResourceLocation.fromNamespaceAndPath("ie","test")));
         return blockRenderer.getBlockModelShaper().getModelManager().getModel(name);
     }
 

@@ -4,20 +4,26 @@ import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-import blusunrize.immersiveengineering.client.render.tile.CrusherRenderer;
-import blusunrize.immersiveengineering.client.render.tile.DynamicModel;
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
+import org.tcathebluecreper.totally_immersive.lib.AnimationUtils;
 import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
 
 import java.util.EnumMap;
@@ -25,29 +31,60 @@ import java.util.List;
 import java.util.Map;
 
 public class ChemicalBathRenderer implements BlockEntityRenderer<MultiblockBlockEntityMaster<ChemicalBathState>> {
-    public static final String craneTopId = "chemical_bath_top";
+    public static final String craneTopId = "chemical_bath/top";
     public static TIDynamicModel craneTop;
-    public static final String craneMiddleId = "chemical_bath_middle";
+    public static final String craneMiddleId = "chemical_bath/middle";
     public static TIDynamicModel craneMiddle;
-    public static final String craneBottomId = "chemical_bath_bottom";
+    public static final String craneBottomId = "chemical_bath/bottom";
     public static TIDynamicModel craneBottom;
+
+    ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
     @Override
     public void render(MultiblockBlockEntityMaster<ChemicalBathState> te, float pPartialTick, PoseStack matrixStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-//        System.out.println(te);
-//        Direction d=te.getHelper().getContext().getLevel().getOrientation().front().getOpposite();
-//        BlockPos lightPos=te.getBlockPos().above(2);
-//        matrixStack.pushPose();
-//        List<BakedQuad> quads = craneTop.getNullQuads();
-//        int calculatedLight = LevelRenderer.getLightColor(te.getLevel(), lightPos);
-//        matrixStack.translate(3,2,1);
-//        RenderUtils.renderModelTESRFast(quads, pBuffer.getBuffer(RenderType.solid()), matrixStack, calculatedLight, pPackedOverlay);
-//        matrixStack.popPose();
-        System.out.println(craneTop);
+        ChemicalBathState state = te.getHelper().getContext().getState();
+        int progress = state.process.progress;
         matrixStack.pushPose();
         rotateForFacing(matrixStack, te.getBlockState().getValue(IEProperties.FACING_HORIZONTAL));
-        matrixStack.translate(0,2,0);
+        matrixStack.translate(0.5,0.5,0.5);
+
+
+        if(progress == -1) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(state.process.resetCooldown - pPartialTick, state.process.RESET_TIME)), 0, 0);
+        else matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(progress + pPartialTick, state.process.PROCESS_TIME)), 0, 0);
         renderPart(craneTop, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
+
+        float lowerDist = 0;
+        if(progress >= 25 && progress <= 95) {
+            if(progress <= 40) {
+                lowerDist = -AnimationUtils.lerp(0,0.8f, AnimationUtils.amount(progress - 25 + pPartialTick, 16));
+            }
+            else if(progress >= 80) {
+                lowerDist = -AnimationUtils.lerp(0,0.8f, 1 - AnimationUtils.amount(progress - 80 + pPartialTick, 16));
+            }
+            else lowerDist = -0.8f;
+        }
+        matrixStack.translate(0, lowerDist, 0);
+        renderPart(craneBottom, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
+
+        matrixStack.pushPose();
+        matrixStack.scale(0.5f, 0.5f ,0.5f);
+        matrixStack.translate(0,1.5,0);
+        if(state.process.progress > 0) itemRenderer.renderStatic(state.processSlot.getValue().getStackInSlot(0), ItemDisplayContext.FIXED, getLightLevel(te.getLevel(), te.getBlockPos()), OverlayTexture.NO_OVERLAY, matrixStack, pBuffer, te.getLevel(), 1);
         matrixStack.popPose();
+
+
+        renderPart(craneMiddle, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
+        while(lowerDist <= 1/16f) {
+            renderPart(craneMiddle, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
+            matrixStack.translate(0, 1/16f,0);
+            lowerDist += 1/16f;
+        }
+
+        matrixStack.popPose();
+    }
+    private int getLightLevel(Level level, BlockPos pos) {
+        int bLight = level.getBrightness(LightLayer.BLOCK, pos);
+        int sLight = level.getBrightness(LightLayer.SKY, pos);
+        return LightTexture.pack(bLight, sLight);
     }
     private void renderPart(TIDynamicModel barrel, PoseStack matrix, MultiBufferSource buffer, Direction facing, int light, int overlay) {
         matrix.pushPose();

@@ -21,13 +21,15 @@ import java.util.function.Function;
 public class ChemicalBathLogic implements IClientTickableComponent<ChemicalBathState>, IMultiblockLogic<ChemicalBathState>, IServerTickableComponent<ChemicalBathState> {
     @Override
     public void tickClient(IMultiblockContext<ChemicalBathState> iMultiblockContext) {
-
+        ChemicalBathState state = iMultiblockContext.getState();
+        state.process.tickClient();
     }
 
     @Override
     public void tickServer(IMultiblockContext<ChemicalBathState> iMultiblockContext) {
         ChemicalBathState state = iMultiblockContext.getState();
         state.process.tick(iMultiblockContext.getLevel().getRawLevel(), state);
+        iMultiblockContext.requestMasterBESync();
     }
 
     @Override

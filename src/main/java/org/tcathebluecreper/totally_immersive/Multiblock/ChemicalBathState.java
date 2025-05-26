@@ -8,7 +8,6 @@ import blusunrize.immersiveengineering.common.fluids.ArrayFluidHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -20,6 +19,7 @@ public class ChemicalBathState implements IMultiblockState {
     EnergyStorage energy;
 
     StoredCapability<IItemHandler> input;
+    StoredCapability<IItemHandler> processSlot;
     StoredCapability<IItemHandler> output;
     StoredCapability<ArrayFluidHandler> chemTank;
     StoredCapability<IEnergyStorage> power;
@@ -27,12 +27,13 @@ public class ChemicalBathState implements IMultiblockState {
     ChemicalBathProcess process;
 
     public ChemicalBathState(IInitialMultiblockContext<ChemicalBathState> capabilitySource) {
-        inventory = new ItemStackHandler(2);
+        inventory = new ItemStackHandler(3);
         tank = new FluidTank(4000);
         energy = new EnergyStorage(8000);
 
         input = new StoredCapability<>(new RangedWrapper(inventory, 0, 1));
-        output = new StoredCapability<>(new RangedWrapper(inventory, 1, 2));
+        processSlot = new StoredCapability<>(new RangedWrapper(inventory, 1, 2));
+        output = new StoredCapability<>(new RangedWrapper(inventory, 2, 3));
         chemTank = new StoredCapability<>(new ArrayFluidHandler(tank, true, true, () -> {}));
         power = new StoredCapability<>(new WrappingEnergyStorage(energy, true, false));
 
@@ -54,5 +55,17 @@ public class ChemicalBathState implements IMultiblockState {
         energy.deserializeNBT(compoundTag.get("energy"));
         process = new ChemicalBathProcess(compoundTag.getCompound("process"));
     }
+    @Override
+    public void writeSyncNBT(CompoundTag nbt) {
+        nbt.putInt("progress", this.process.progress);
+        nbt.putInt("cooldown", this.process.resetCooldown);
+        nbt.put("inventory", inventory.serializeNBT());
+    }
+    @Override
+    public void readSyncNBT(CompoundTag nbt) {
+        System.out.println(nbt);
+        this.process.progress = nbt.getInt("progress");
+        this.process.resetCooldown = nbt.getInt("cooldown");
+        this.inventory.deserializeNBT(nbt.getCompound("inventory"));
+    }
 }
-///data modify block -23 -60 -7 tank set value {"id":"minecraft:water","amount":4000}

@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_immersive;
 
+import blusunrize.immersiveengineering.client.render.tile.DynamicModel;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -130,6 +131,7 @@ public class TotallyImmersive {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            ManualEntries.AddManualEntries();
         }
     }
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -146,9 +148,7 @@ public class TotallyImmersive {
         }
         private static <T extends BlockEntity>
         void registerBERenderNoContext(
-                EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render
-        )
-        {
+                EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render) {
             event.registerBlockEntityRenderer(type, $ -> render.get());
         }
     }

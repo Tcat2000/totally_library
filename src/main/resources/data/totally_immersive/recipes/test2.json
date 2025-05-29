@@ -12,7 +12,7 @@
         "item": "minecraft:white_concrete",
         "amount": 2
     },
-    "energyCost": 1000,
+    "energyCost": 128,
     "fluidCost": 1000,
     "fluidRequirement": 2000
 }

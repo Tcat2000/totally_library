@@ -7,11 +7,13 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistra
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -30,6 +32,7 @@ import org.tcathebluecreper.totally_immersive.lib.ITMultiblockBlock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
@@ -37,6 +40,22 @@ import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 public class TIContent {
     public static class TIBlocks {
         public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MODID);
+        public static final RegistryObject<Block> REFINED_CONCRETE = register("refined_concrete", () -> new Block(BlockBehaviour.Properties.of()));
+
+        protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {
+            RegistryObject<T> blk = BLOCKS.register(name, block);
+            TIItems.ITEMS.register(itemName, () -> item.apply(blk.get()));
+            return blk;
+        }
+
+        protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block) {
+            return register(name, block, name, (b) -> new BlockItem(b, new Item.Properties()));
+        }
+
+
+        protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, Function<T, Item> item) {
+            return register(name, block, name, item);
+        }
     }
     public static class TIItems {
         public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, MODID);
@@ -76,7 +95,6 @@ public class TIContent {
         private static <S extends IMultiblockState> IEMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
             return new IEMultiblockBuilder<>(logic, name)
                     .defaultBEs(TIBET.BETs)
-                    .notMirrored()
                     .customBlock(
                             TIBlocks.BLOCKS, TIItems.ITEMS,
                             r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),

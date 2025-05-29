@@ -6,6 +6,7 @@ import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.event.ModelEvent;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
@@ -19,5 +20,8 @@ public class ManualEntries {
         builder.addSpecialElement(new ManualEntry.SpecialElementData("chemical_bath", 0, () -> new ManualElementMultiblock(manual, TIContent.TIMultiblocks.Multiblock.CHEMICAL_BATH.get())));
         builder.readFromFile(ResourceLocation.fromNamespaceAndPath(MODID, "chemical_bath"));
         manual.addEntry(CATEGORY, builder.create(), 0);
+    }
+    public static void RegisterModels(ModelEvent.RegisterAdditional ev) {
+        ev.register(ResourceLocation.fromNamespaceAndPath(MODID, "multiblocks/chemical_bath"));
     }
 }

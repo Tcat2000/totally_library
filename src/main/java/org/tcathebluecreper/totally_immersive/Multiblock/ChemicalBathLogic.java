@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlock
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.ArrayVoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -39,11 +40,36 @@ public class ChemicalBathLogic implements IClientTickableComponent<ChemicalBathS
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) {
-        return Util.memoize(ChemicalBathLogic::getShape);
+        return ChemicalBathLogic::getShape;
+        //return Util.memoize(ChemicalBathLogic::getShape);
     }
 
     static VoxelShape getShape(BlockPos pos) {
-        return Shapes.block();
+        if(pos.equals(new BlockPos(0,0,0)) || pos.equals(new BlockPos(0,0,1)) ||pos.equals(new BlockPos(3,0,0)) ||pos.equals(new BlockPos(3,0,1))) {
+            return Shapes.block();
+        }
+        else if(pos.equals(new BlockPos(1,1,1)) || pos.equals(new BlockPos(2,1,1))) {
+            return Shapes.box(0,11/16f,6/16f,16/16f,15/16f,10/16f);
+        }
+        else if(pos.equals(new BlockPos(1,1,0)) || pos.equals(new BlockPos(2,1,0))) {
+            return Shapes.box(0,0,0,16/16f,4/16f,9/16f);
+        }
+        else if(pos.equals(new BlockPos(1,0,0)) || pos.equals(new BlockPos(2,0,0))) {
+            return Shapes.or(Shapes.box(0,0,0,16/16f,16/16f,9/16f), Shapes.box(0,0,0,16/16f,6/16f,16/16f));
+        }
+        else if(pos.equals(new BlockPos(0,1,1))) {
+            return Shapes.box(3/16f,11/16f,0,16/16f,15/16f,10/16f);
+        }
+        else if(pos.equals(new BlockPos(3,1,1))) {
+            return Shapes.box(0,11/16f,0,13/16f,15/16f,10/16f);
+        }
+        else if(pos.equals(new BlockPos(2,0,1))) {
+            return Shapes.or(Shapes.box(0,0,0,16/16f,4/16f,16/16f), Shapes.box(0,0,0,16/16f,6/16f,11/16f), Shapes.box(0,6/16f,11/16f,16/16f,8/16f,12/16f), Shapes.box(0,8/16f,12/16f,16/16f,10/16f,13/16f), Shapes.box(0,10/16f,13/16f,16/16f,12/16f,14/16f), Shapes.box(0,12/16f,14/16f,16/16f,14/16f,15/16f), Shapes.box(0,14/16f,15/16f,16/16f,16/16f,16/16f));
+        }
+        else if(pos.equals(new BlockPos(1,0,1))) {
+            return Shapes.or(Shapes.box(0,0,0,16/16f,4/16f,16/16f), Shapes.box(0,0,0,16/16f,6/16f,11/16f), Shapes.box(0,6/16f,11/16f,16/16f,8/16f,12/16f), Shapes.box(0,8/16f,12/16f,16/16f,10/16f,13/16f), Shapes.box(0,10/16f,13/16f,16/16f,12/16f,14/16f), Shapes.box(0,12/16f,14/16f,16/16f,14/16f,15/16f), Shapes.box(0,14/16f,15/16f,16/16f,16/16f,16/16f), Shapes.box(2/16f,2/16f,14/16f,14/16f,14/16f,16/16f), Shapes.box(2/16f,2/16f,12/16f,14/16f,10/16f,14/16f), Shapes.box(2/16f,2/16f,10/16f,14/16f,6/16f,12/16f));
+        }
+        else return Shapes.block();
     }
 
     @Override

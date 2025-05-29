@@ -1,4 +1,6 @@
 Chemical Bath
 Bathing in Chemicals
 <&chemical_bath>
-Hi, this is a test
+The Chemical Bath is one of the simpler machines the engineer will find useful; it automates simple tasks, such as making Treated Wood.
+To form the structure, rightclick the Redstone Engineering block at the front of the machine.
+The fluid is inserted into the port on the front of the machine, while the item input is on the side with the Redstone Engineering block, and the output opposite.

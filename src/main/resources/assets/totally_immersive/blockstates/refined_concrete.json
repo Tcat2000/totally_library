@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "totally_immersive:block/refined_concrete"
+    }
+  }
+}

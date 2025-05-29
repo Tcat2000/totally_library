@@ -172,6 +172,10 @@ dependencies {
     implementation fg.deobf("curse.maven:the-one-probe-245211:4629624")
 
     compileOnly(fg.deobf("curse.maven:mct-immersive-technology-359407:5108047"))
+
+    runtimeOnly(fg.deobf("curse.maven:continuity-531351:5981334"))
+    runtimeOnly(fg.deobf("curse.maven:sinytra-connector-890127:5605667"))
+    runtimeOnly(fg.deobf("curse.maven:forgified-fabric-api-889079:6289136"))
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

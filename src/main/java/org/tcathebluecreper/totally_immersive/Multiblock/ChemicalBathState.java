@@ -35,7 +35,7 @@ public class ChemicalBathState implements IMultiblockState {
         processSlot = new StoredCapability<>(new RangedWrapper(inventory, 1, 2));
         output = new StoredCapability<>(new RangedWrapper(inventory, 2, 3));
         chemTank = new StoredCapability<>(new ArrayFluidHandler(tank, true, true, () -> {}));
-        power = new StoredCapability<>(new WrappingEnergyStorage(energy, true, false));
+        power = new StoredCapability<>(new WrappingEnergyStorage(energy, true, true));
 
         process = new ChemicalBathProcess();
     }

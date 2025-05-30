@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.Multiblock;
+package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
@@ -27,14 +27,14 @@ public class ChemicalBathRecipe extends IESerializableRecipe {
     public final int energyCost;
     public final int fluidAmount;
     public final int fluidMinAmount;
-    protected <T extends Recipe<?>> ChemicalBathRecipe(ItemStack outputDummy, ResourceLocation id, Ingredient input, Fluid fluidInput, ItemStack output, int energyCost, int fluidAmount, int fluidMinAmount) {
+    protected <T extends Recipe<?>> ChemicalBathRecipe(ItemStack outputDummy, ResourceLocation id, Ingredient input, FluidStack fluidInput, ItemStack output, int energyCost, int fluidAmount, int fluidMinAmount) {
         super(() -> outputDummy, TIContent.TIRecipes.CHEMICAL_BATH, id);
         this.dummy = outputDummy;
         this.input = input;
-        this.fluidInput = fluidInput;
+        this.fluidInput = fluidInput.getFluid();
         this.output = output;
         this.energyCost = energyCost;
-        this.fluidAmount = fluidAmount;
+        this.fluidAmount = fluidInput.getAmount();
         this.fluidMinAmount = fluidMinAmount;
     }
 

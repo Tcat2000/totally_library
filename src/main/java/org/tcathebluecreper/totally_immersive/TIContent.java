@@ -7,10 +7,10 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistra
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
+import com.google.common.collect.Comparators;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -26,8 +26,14 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.RegistryObject;
-import org.tcathebluecreper.totally_immersive.Multiblock.*;
+import org.apache.logging.log4j.util.PropertySource;
+import org.jetbrains.annotations.NotNull;
+import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.*;
+import org.tcathebluecreper.totally_immersive.Multiblock.grinder.*;
+import org.tcathebluecreper.totally_immersive.block.markings.Marking;
+import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
 import org.tcathebluecreper.totally_immersive.lib.ITMultiblockBlock;
 
 import java.util.ArrayList;
@@ -40,6 +46,19 @@ import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 public class TIContent {
     public static class TIBlocks {
         public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MODID);
+        public static final Marking STRIPES_YELLOW = new Marking() {
+            @Override
+            public String name() {
+                return "stripes_yellow";
+            }
+        };
+        public static final Marking DOUBLE_LINE_YELLOW = new Marking() {
+            @Override
+            public String name() {
+                return "double_line_yellow";
+            }
+        };
+        public static final RegistryObject<Block> MARKINGS_BLOCK = register("markings", () -> new MarkingBlock(BlockBehaviour.Properties.of()));
         public static final RegistryObject<Block> REFINED_CONCRETE = register("refined_concrete", () -> new Block(BlockBehaviour.Properties.of()));
 
         protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {
@@ -47,12 +66,9 @@ public class TIContent {
             TIItems.ITEMS.register(itemName, () -> item.apply(blk.get()));
             return blk;
         }
-
         protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block) {
             return register(name, block, name, (b) -> new BlockItem(b, new Item.Properties()));
         }
-
-
         protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, Function<T, Item> item) {
             return register(name, block, name, item);
         }
@@ -70,6 +86,9 @@ public class TIContent {
                 .structure(Multiblock.CHEMICAL_BATH)
                 .build());
 
+        public static final MultiblockRegistration<GrinderState> GRINDER = add(metal(new GrinderLogic(),"grinder")
+                .structure(Multiblock.GRINDER)
+                .build());
 
 
         public static <T extends IMultiblockState> MultiblockRegistration<T> add(MultiblockRegistration<T> res) {
@@ -109,6 +128,7 @@ public class TIContent {
 
 
             public static final Lazy<TemplateMultiblock> CHEMICAL_BATH = registerLazily(ChemicalBathMultiblock::new);
+            public static final Lazy<TemplateMultiblock> GRINDER = registerLazily(GrinderMultiblock::new);
 
 
             public static void init() {
@@ -126,9 +146,10 @@ public class TIContent {
         public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, MODID);
 
         public static final IERecipeTypes.TypeWithClass<ChemicalBathRecipe> CHEMICAL_BATH = register("chemical_bath", ChemicalBathRecipe.class);
+        public static final IERecipeTypes.TypeWithClass<GrinderRecipe> GRINDER = register("grinder", GrinderRecipe.class);
 
         static {
-            ChemicalBathRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("chemical_bath", ChemicalBathRecipeSerializer::new);
+            GrinderRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("grinder", GrinderRecipeSerializer::new);
         }
 
         public static <T extends Recipe<?>> IERecipeTypes.TypeWithClass<T> register(String name, Class<T> clazz){
@@ -136,6 +157,11 @@ public class TIContent {
         }
         public static <T extends Recipe<?>> RegistryObject<RecipeType<T>> register(String name) {
             return RECIPE_TYPES.register(name, ()-> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(MODID,name)));
+        }
+    }
+    public static class TIRegistries {
+        static {
+            RegistryManager.ACTIVE.
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.Multiblock;
+package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
 
 import blusunrize.immersiveengineering.api.energy.WrappingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;

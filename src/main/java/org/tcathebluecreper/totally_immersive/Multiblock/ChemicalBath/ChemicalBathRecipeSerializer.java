@@ -1,18 +1,14 @@
-package org.tcathebluecreper.totally_immersive.Multiblock;
+package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonObject;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.ClipContext;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import org.tcathebluecreper.totally_immersive.TIContent;
@@ -25,14 +21,7 @@ public class ChemicalBathRecipeSerializer extends IERecipeSerializer<ChemicalBat
 
     @Override
     public ChemicalBathRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
-        System.out.println(recipeId);
-        System.out.println(Ingredient.fromJson(json.get("itemInput")));
-        System.out.println(ApiUtils.jsonDeserializeFluidStack(json.get("fluidInput").getAsJsonObject()).getFluid());
-        System.out.println(readOutput(json.get("output")).get());
-        System.out.println(json.get("energyCost").getAsInt());
-        System.out.println(json.get("fluidCost").getAsInt());
-        System.out.println(json.get("fluidRequirement").getAsInt());
-        return new ChemicalBathRecipe(new ItemStack(Items.AIR), recipeId, Ingredient.fromJson(json.get("itemInput")), ApiUtils.jsonDeserializeFluidStack(json.get("fluidInput").getAsJsonObject()).getFluid(), readOutput(json.get("output")).get(), json.get("energyCost").getAsInt(), json.get("fluidCost").getAsInt(), json.get("fluidRequirement").getAsInt());
+        return new ChemicalBathRecipe(new ItemStack(Items.AIR), recipeId, Ingredient.fromJson(json.get("itemInput")), ApiUtils.jsonDeserializeFluidStack(json.get("fluidInput").getAsJsonObject()), readOutput(json.get("output")).get(), json.get("energyCost").getAsInt(), json.get("fluidCost").getAsInt(), json.get("fluidRequirement").getAsInt());
     }
 
     @Override

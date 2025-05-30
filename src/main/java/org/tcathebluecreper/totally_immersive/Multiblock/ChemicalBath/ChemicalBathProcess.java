@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.Multiblock;
+package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;

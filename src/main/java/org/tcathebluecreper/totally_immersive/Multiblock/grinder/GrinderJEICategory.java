@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.Multiblock;
+package org.tcathebluecreper.totally_immersive.Multiblock.grinder;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -16,19 +16,19 @@ import org.tcathebluecreper.totally_immersive.TIContent;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
-public class ChemicalBathJEICategory implements IRecipeCategory<ChemicalBathRecipe> {
-    public static RecipeType<ChemicalBathRecipe> UID = new RecipeType<>(ResourceLocation.fromNamespaceAndPath(MODID, "chemical_bath"),ChemicalBathRecipe.class);
+public class GrinderJEICategory implements IRecipeCategory<GrinderRecipe> {
+    public static RecipeType<GrinderRecipe> UID = new RecipeType<>(ResourceLocation.fromNamespaceAndPath(MODID, "chemical_bath"), GrinderRecipe.class);
     private IDrawable BACKGROUND;
     private IDrawable ICON;
     private IDrawable TANK;
     private IDrawableAnimated ARROW;
-    public ChemicalBathJEICategory(IGuiHelper guiHelper) {
+    public GrinderJEICategory(IGuiHelper guiHelper) {
         this.ICON = guiHelper.createDrawableItemStack(new ItemStack(TIContent.TIMultiblocks.CHEMICAL_BATH.blockItem().get()));
         this.BACKGROUND = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/chemical_bath.png"), 9, 22, 143, 59);
         this.TANK = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/chemical_bath.png"), 197, 1, 18, 48);
     }
     @Override
-    public RecipeType<ChemicalBathRecipe> getRecipeType() {
+    public RecipeType<GrinderRecipe> getRecipeType() {
         return UID;
     }
 
@@ -48,12 +48,12 @@ public class ChemicalBathJEICategory implements IRecipeCategory<ChemicalBathReci
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder iRecipeLayoutBuilder, ChemicalBathRecipe chemicalBathRecipe, IFocusGroup iFocusGroup) {
+    public void setRecipe(IRecipeLayoutBuilder iRecipeLayoutBuilder, GrinderRecipe grinderRecipe, IFocusGroup iFocusGroup) {
 
     }
 
     @Override
-    public void draw(ChemicalBathRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(GrinderRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         TANK.draw(guiGraphics, 20, 10);
     }
 }

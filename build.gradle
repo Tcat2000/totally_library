@@ -163,19 +163,20 @@ dependencies {
     implementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${ie_version}")
     implementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${ie_version}:datagen")
 
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.2.0.23")
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.2.0.23")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${jei_version}")
     // at runtime, use the full JEI jar
     implementation(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
 
-    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.2.0.23")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:${jei_version}")
     implementation fg.deobf("curse.maven:the-one-probe-245211:4629624")
 
     compileOnly(fg.deobf("curse.maven:mct-immersive-technology-359407:5108047"))
 
-//    runtimeOnly(fg.deobf("curse.maven:continuity-531351:5981334"))
-//    runtimeOnly(fg.deobf("curse.maven:sinytra-connector-890127:5605667"))
-//    runtimeOnly(fg.deobf("curse.maven:forgified-fabric-api-889079:6289136"))
+    runtimeOnly(fg.deobf("curse.maven:continuity-531351:5981334"))
+    runtimeOnly(fg.deobf("curse.maven:sinytra-connector-890127:5605667"))
+    runtimeOnly(fg.deobf("curse.maven:forgified-fabric-api-889079:6289136"))
+    implementation(fg.deobf("curse.maven:ldlib-626676:6497696"))
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

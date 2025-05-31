@@ -9,7 +9,7 @@ import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
 public class GrinderMultiblock extends IETemplateMultiblock {
     public GrinderMultiblock() {
-        super(ResourceLocation.fromNamespaceAndPath(MODID, "multiblocks/grinder/grinder"), new BlockPos(1,0,0), new BlockPos(1,0,3), new BlockPos(3,5,4), TIContent.TIMultiblocks.GRINDER);
+        super(ResourceLocation.fromNamespaceAndPath(MODID, "multiblocks/grinder/grinder"), new BlockPos(1,0,0), new BlockPos(1,0,3), new BlockPos(3,5,4), TIContent.TIMultiblocks.CHEMICAL_BATH/*TIContent.TIMultiblocks.GRINDER*/);
     }
 
     @Override

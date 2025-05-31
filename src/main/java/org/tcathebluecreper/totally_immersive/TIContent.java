@@ -10,7 +10,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
-import com.google.common.collect.Comparators;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -23,17 +22,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.RegistryObject;
-import org.apache.logging.log4j.util.PropertySource;
-import org.jetbrains.annotations.NotNull;
 import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.*;
 import org.tcathebluecreper.totally_immersive.Multiblock.grinder.*;
 import org.tcathebluecreper.totally_immersive.block.markings.Marking;
 import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
+import org.tcathebluecreper.totally_immersive.item.SprayCan;
 import org.tcathebluecreper.totally_immersive.lib.ITMultiblockBlock;
 
 import java.util.ArrayList;
@@ -46,6 +45,17 @@ import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 public class TIContent {
     public static class TIBlocks {
         public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MODID);
+        public static final Marking NONE = new Marking() {
+            @Override
+            public String name() {
+                return "none";
+            }
+
+            @Override
+            public VoxelShape getShape() {
+                return Shapes.empty();
+            }
+        };
         public static final Marking STRIPES_YELLOW = new Marking() {
             @Override
             public String name() {
@@ -58,7 +68,7 @@ public class TIContent {
                 return "double_line_yellow";
             }
         };
-        public static final RegistryObject<Block> MARKINGS_BLOCK = register("markings", () -> new MarkingBlock(BlockBehaviour.Properties.of()));
+        public static final RegistryObject<Block> MARKINGS_BLOCK = register("markings", () -> new MarkingBlock(BlockBehaviour.Properties.of().noCollission().instabreak().replaceable()));
         public static final RegistryObject<Block> REFINED_CONCRETE = register("refined_concrete", () -> new Block(BlockBehaviour.Properties.of()));
 
         protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {
@@ -75,6 +85,8 @@ public class TIContent {
     }
     public static class TIItems {
         public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, MODID);
+
+        public static final RegistryObject<SprayCan> SPRAY_CAN = ITEMS.register("spray_can", () -> new SprayCan(new Item.Properties()));
     }
     public static class TIBET {
         public static final DeferredRegister<BlockEntityType<?>> BETs = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
@@ -86,9 +98,9 @@ public class TIContent {
                 .structure(Multiblock.CHEMICAL_BATH)
                 .build());
 
-        public static final MultiblockRegistration<GrinderState> GRINDER = add(metal(new GrinderLogic(),"grinder")
-                .structure(Multiblock.GRINDER)
-                .build());
+//        public static final MultiblockRegistration<GrinderState> GRINDER = add(metal(new GrinderLogic(),"grinder")
+//                .structure(Multiblock.GRINDER)
+//                .build());
 
 
         public static <T extends IMultiblockState> MultiblockRegistration<T> add(MultiblockRegistration<T> res) {
@@ -128,7 +140,7 @@ public class TIContent {
 
 
             public static final Lazy<TemplateMultiblock> CHEMICAL_BATH = registerLazily(ChemicalBathMultiblock::new);
-            public static final Lazy<TemplateMultiblock> GRINDER = registerLazily(GrinderMultiblock::new);
+//            public static final Lazy<TemplateMultiblock> GRINDER = registerLazily(GrinderMultiblock::new);
 
 
             public static void init() {
@@ -161,7 +173,6 @@ public class TIContent {
     }
     public static class TIRegistries {
         static {
-            RegistryManager.ACTIVE.
         }
     }
 }

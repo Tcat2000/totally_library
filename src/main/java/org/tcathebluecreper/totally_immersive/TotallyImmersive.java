@@ -3,7 +3,11 @@ package org.tcathebluecreper.totally_immersive;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -18,7 +22,10 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -34,8 +41,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.ChemicalBathRenderer;
+import org.tcathebluecreper.totally_immersive.block.markings.Marking;
+import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
 import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/mods.toml file

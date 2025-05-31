@@ -10,7 +10,7 @@ import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
 public class ChemicalBathMultiblock extends IETemplateMultiblock {
     public ChemicalBathMultiblock() {
-        super(ResourceLocation.fromNamespaceAndPath(MODID, "multiblocks/chemical_bath/chemical_bath"), new BlockPos(0,0,1), new BlockPos(0,0,1), new BlockPos(4,2,2), TIContent.TIMultiblocks.CHEMICAL_BATH);
+        super(ResourceLocation.fromNamespaceAndPath(MODID, "multiblocks/chemical_bath"), new BlockPos(0,0,1), new BlockPos(0,0,1), new BlockPos(4,2,2), TIContent.TIMultiblocks.CHEMICAL_BATH);
     }
 
     @Override

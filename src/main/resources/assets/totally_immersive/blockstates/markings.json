@@ -1,0 +1,61 @@
+{
+    "multipart": [
+        {
+            "when": {
+                "marking_down": "stripes_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/yellow"
+            }
+        },
+        {
+            "when": {
+                "marking_up": "stripes_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/yellow",
+                "x": 180
+            }
+        },
+        {
+            "when": {
+                "marking_north": "stripes_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/yellow",
+                "x": 90,
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "marking_east": "stripes_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/yellow",
+                "x": 90,
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "marking_south": "stripes_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/yellow",
+                "x": 90,
+                "y": 0
+            }
+        },
+        {
+            "when": {
+                "marking_west": "stripes_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/yellow",
+                "x": 90,
+                "y": 90
+            }
+        }
+    ]
+}

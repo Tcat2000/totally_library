@@ -2,14 +2,23 @@ package org.tcathebluecreper.totally_immersive.block.markings;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SupportType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.*;
 import org.jetbrains.annotations.NotNull;
+import org.tcathebluecreper.totally_immersive.TIContent;
 
 import java.util.*;
 
@@ -85,14 +94,6 @@ public class MarkingBlock extends Block {
         return Shapes.box(0,0,0,0,0,0);
     }
 
-//    public static VoxelShape rotateShape(int x, int y, VoxelShape shape) {
-//        VoxelShape newShape = new ArrayVoxelShape();
-//        shape.forAllBoxes((xa, xb, ya, yb, za, zb) -> {
-//            shape.
-//        });
-//        return shape;
-//    }
-
     public static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {
         VoxelShape[] buffer = new VoxelShape[]{shape, Shapes.box(0,0,0,0,0,0)};
 
@@ -119,5 +120,19 @@ public class MarkingBlock extends Block {
         }
 
         return buffer[0];
+    }
+
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+        final BlockState[] block = {state};
+        Direction.stream().forEach(dir -> {
+            Property<Marking> prop = MARKING_DIRECTIONS.get(dir);
+            Marking marking = state.getValue(prop);
+            if(marking != TIContent.TIBlocks.NONE) return;
+            BlockState connectedBlock = level.getBlockState(pos.relative(dir));
+            if(!marking.canBeSupported((Level) level, connectedBlock, pos.relative(dir), dir)) {
+                block[0] = block[0].setValue(prop, TIContent.TIBlocks.NONE);
+            }
+        });
+        return InteractionResult.PASS;
     }
 }

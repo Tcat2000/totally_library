@@ -2,6 +2,9 @@ package org.tcathebluecreper.totally_immersive.block.markings;
 
 import net.minecraft.core.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SupportType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -38,5 +41,8 @@ public abstract class Marking implements Comparable<Marking> {
     }
     public ResourceLocation texture() {
         return null;
+    }
+    public boolean canBeSupported(Level level, BlockState state, BlockPos pos, Direction direction) {
+        return state.isFaceSturdy(level, pos, direction, SupportType.FULL);
     }
 }

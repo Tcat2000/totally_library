@@ -30,6 +30,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.*;
 import org.tcathebluecreper.totally_immersive.Multiblock.grinder.*;
+import org.tcathebluecreper.totally_immersive.block.markings.ColoredMarking;
 import org.tcathebluecreper.totally_immersive.block.markings.Marking;
 import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
 import org.tcathebluecreper.totally_immersive.item.SprayCan;
@@ -56,18 +57,22 @@ public class TIContent {
                 return Shapes.empty();
             }
         };
-        public static final Marking STRIPES_YELLOW = new Marking() {
-            @Override
-            public String name() {
-                return "stripes_yellow";
-            }
-        };
+//        public static final Marking STRIPES_YELLOW = new Marking() {
+//            @Override
+//            public String name() {
+//                return "stripes_yellow";
+//            }
+//        };
         public static final Marking DOUBLE_LINE_YELLOW = new Marking() {
             @Override
             public String name() {
                 return "double_line_yellow";
             }
         };
+
+        public static final ColoredMarking STRIPES = new ColoredMarking("stripes_[color]", ResourceLocation.fromNamespaceAndPath("totally_immersive", "block/marking/stripes_[color]"));
+
+
         public static final RegistryObject<Block> MARKINGS_BLOCK = register("markings", () -> new MarkingBlock(BlockBehaviour.Properties.of().noCollission().instabreak().replaceable()));
         public static final RegistryObject<Block> REFINED_CONCRETE = register("refined_concrete", () -> new Block(BlockBehaviour.Properties.of()));
 

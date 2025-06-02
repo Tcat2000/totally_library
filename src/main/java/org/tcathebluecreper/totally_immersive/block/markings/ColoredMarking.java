@@ -7,11 +7,9 @@ import java.util.*;
 public class ColoredMarking {
     public static final List<String> MC_COLORS = List.of("red","green","blue","yellow", "orange", "lime", "light_blue", "black", "white", "gray", "light_gray", "pink", "purple", "magenta", "cyan"); // what's the 16th?
     public final String name;
-    public final ResourceLocation texture;
     public final Map markings;
-    public ColoredMarking(String name, ResourceLocation texture) {
+    public ColoredMarking(String name, String textureNamespace, String texturePath) {
         this.name = name;
-        this.texture = texture;
 
         HashMap<String, Marking> map = new HashMap<>();
         MC_COLORS.forEach(color -> {
@@ -24,7 +22,7 @@ public class ColoredMarking {
 
                 @Override
                 public ResourceLocation texture() {
-                    return texture.withPath(texture.getPath().replace("[color]", color));
+                    return ResourceLocation.fromNamespaceAndPath(textureNamespace, texturePath.replace("[color]", color));
                 }
             });
         });

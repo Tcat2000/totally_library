@@ -7,10 +7,12 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistra
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
+import blusunrize.immersiveengineering.common.blocks.generic.ConnectorBlock;
 import blusunrize.immersiveengineering.common.blocks.metal.BasicConnectorBlock;
 import blusunrize.immersiveengineering.common.blocks.metal.EnergyConnectorBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
+import blusunrize.immersiveengineering.common.register.IEBlockEntities;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.model.Material;
@@ -75,7 +77,7 @@ public class TIContent {
             }
         };
 
-        public static final ColoredMarking STRIPES = new ColoredMarking("stripes_[color]", ResourceLocation.fromNamespaceAndPath("totally_immersive", "block/marking/stripes_[color]"));
+        public static final ColoredMarking STRIPES = new ColoredMarking("stripes_[color]", "totally_immersive", "block/marking/stripes_color]");
 
 
         public static final RegistryObject<Block> MARKINGS_BLOCK = register("markings", () -> new MarkingBlock(BlockBehaviour.Properties.of().noCollission().instabreak().replaceable()));
@@ -83,11 +85,8 @@ public class TIContent {
 
         public static final RegistryObject<Block> INDUSTRIAL_ENGINEERING = register("industrial_engineering", () -> new Block(BlockBehaviour.Properties.of()));
 
-        public static final RegistryObject<Block> UHV_CONNECTOR = register("uhv_connector", () -> return new IEBlocks.BlockEntry<>(
-                "connector_"+voltage.toLowerCase(Locale.US)+(relay?"_relay": ""), PROPERTIES,
-        p -> new BasicConnectorBlock<>(p, EnergyConnectorBlockEntity.SPEC_TO_TYPE.get(Pair.of(voltage, relay)))
-                ));
-        public static final RegistryObject<Block> UHV_CONNECTOR = register("uhv_connector", () -> BasicConnectorBlock.forPower("UHV", false));
+        public static final RegistryObject<Block> UHV_CONNECTOR = register("uhv_connector", () -> new BasicConnectorBlock<>(ConnectorBlock.PROPERTIES.get(), EnergyConnectorBlockEntity.SPEC_TO_TYPE.get(Pair.of("UHV", false))));
+        public static final RegistryObject<Block> UHV_RELAY = register("uhv_relay", () -> new BasicConnectorBlock<>(ConnectorBlock.PROPERTIES.get(), EnergyConnectorBlockEntity.SPEC_TO_TYPE.get(Pair.of("UHV", true))));
 
 
         protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {

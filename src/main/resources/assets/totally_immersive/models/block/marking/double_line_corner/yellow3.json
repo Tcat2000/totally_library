@@ -1,0 +1,6 @@
+{
+    "parent": "totally_immersive:block/marking/template",
+    "textures": {
+        "texture": "totally_immersive:block/marking/double_line_corner/yellow3"
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "parent": "totally_immersive:block/marking/template_wall",
+    "textures": {
+        "texture": "totally_immersive:block/marking/stripes/orange_wall"
+    }
+}

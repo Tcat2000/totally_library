@@ -46,39 +46,39 @@ public class SprayCan extends Item implements IUIHolder.ItemUI {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
-            HeldItemUIFactory.INSTANCE.openUI(serverPlayer, context.getHand());
-        }
-        return InteractionResult.SUCCESS;
+//        if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
+//            HeldItemUIFactory.INSTANCE.openUI(serverPlayer, context.getHand());
+//        }
+//        return InteractionResult.SUCCESS;
 
 //        if(context.getPlayer() instanceof ServerPlayer serverPlayer) {
 //            HeldItemUIFactory.INSTANCE.openUI(serverPlayer, context.getHand());
 //            return InteractionResult.PASS;
 //        }
-//
-//        Direction side = context.getClickedFace().getOpposite();
-//        BlockPos pos = context.getClickedPos();
-//        BlockState state = context.getLevel().getBlockState(pos);
-//        if(state.getBlock() != TIContent.TIBlocks.MARKINGS_BLOCK.get()) {
-//            pos = pos.relative(side.getOpposite());
-//            state = context.getLevel().getBlockState(pos);
-//        }
-//
-//        CompoundTag nbt = context.getItemInHand().getTag();
-//        String marking = nbt.getString("marking");
-//
-//        if(state.getBlock() == Blocks.AIR) {
-//            context.getLevel().setBlock(pos, TIContent.TIBlocks.MARKINGS_BLOCK.get().defaultBlockState(), 3);
-//            state = context.getLevel().getBlockState(pos);
-//        }
-//
-//        if(state.getBlock() == TIContent.TIBlocks.MARKINGS_BLOCK.get()) {
-//            state = state.setValue(MarkingBlock.MARKING_DIRECTIONS.get(side), MarkingBlock.MARKING_DIRECTIONS.get(side).getValue(marking).orElse(TIContent.TIBlocks.NONE));
-//            context.getLevel().setBlock(pos, state, 1);
-//            return InteractionResult.PASS;
-//        }
-//        context.getPlayer().playSound(SoundEvents.SAND_BREAK, 1, 1.5f);
-//        return InteractionResult.FAIL;
+
+        Direction side = context.getClickedFace().getOpposite();
+        BlockPos pos = context.getClickedPos();
+        BlockState state = context.getLevel().getBlockState(pos);
+        if(state.getBlock() != TIContent.TIBlocks.MARKINGS_BLOCK.get()) {
+            pos = pos.relative(side.getOpposite());
+            state = context.getLevel().getBlockState(pos);
+        }
+
+        CompoundTag nbt = context.getItemInHand().getTag();
+        String marking = nbt.getString("marking");
+
+        if(state.getBlock() == Blocks.AIR) {
+            context.getLevel().setBlock(pos, TIContent.TIBlocks.MARKINGS_BLOCK.get().defaultBlockState(), 3);
+            state = context.getLevel().getBlockState(pos);
+        }
+
+        if(state.getBlock() == TIContent.TIBlocks.MARKINGS_BLOCK.get()) {
+            state = state.setValue(MarkingBlock.MARKING_DIRECTIONS.get(side), MarkingBlock.MARKING_DIRECTIONS.get(side).getValue(marking).orElse(TIContent.TIBlocks.NONE));
+            context.getLevel().setBlock(pos, state, 1);
+            return InteractionResult.PASS;
+        }
+        context.getPlayer().playSound(SoundEvents.SAND_BREAK, 1, 1.5f);
+        return InteractionResult.FAIL;
     }
 
 //    @Override

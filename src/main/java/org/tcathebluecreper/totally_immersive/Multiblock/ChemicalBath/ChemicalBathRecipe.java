@@ -3,6 +3,7 @@ package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.tcathebluecreper.totally_immersive.TIContent;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ChemicalBathRecipe extends IESerializableRecipe {
@@ -41,6 +43,11 @@ public class ChemicalBathRecipe extends IESerializableRecipe {
     @Override
     protected IERecipeSerializer<?> getIESerializer() {
         return SERIALIZER.get();
+    }
+
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return NonNullList.of(input);
     }
 
     @Override

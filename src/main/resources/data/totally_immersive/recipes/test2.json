@@ -6,7 +6,7 @@
     },
     "fluidInput": {
         "fluid": "minecraft:water",
-        "amount": 1
+        "amount": 1000
     },
     "output": {
         "item": "minecraft:white_concrete",

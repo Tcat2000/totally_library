@@ -7,11 +7,14 @@ import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.runtime.IIngredientManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.ChemicalBathJEICategory;
+import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.ChemicalBathJEIScreen;
 import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.ChemicalBathRecipe;
 
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 public class TIJei implements IModPlugin {
 
     @Override
-    public ResourceLocation getPluginUid() {
+    public @NotNull ResourceLocation getPluginUid() {
         return ResourceLocation.fromNamespaceAndPath(MODID, "jei_plugin");
     }
 
@@ -48,6 +51,7 @@ public class TIJei implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        IModPlugin.super.registerGuiHandlers(registration);
+        IIngredientManager manager = registration.getJeiHelpers().getIngredientManager();
+        registration.addGenericGuiContainerHandler(ChemicalBathJEIScreen.class, new JEIGuiContainerHandler<>(manager, 76, 35, 21, 25, ChemicalBathJEICategory.UID));
     }
 }

@@ -17,12 +17,14 @@
                 "x": 180
             }
         },
+
+
         {
             "when": {
                 "marking_north": "stripes_yellow"
             },
             "apply": {
-                "model": "totally_immersive:block/marking/stripes/yellow",
+                "model": "totally_immersive:block/marking/stripes/yellow_wall",
                 "x": 90,
                 "y": 180
             }
@@ -32,7 +34,7 @@
                 "marking_east": "stripes_yellow"
             },
             "apply": {
-                "model": "totally_immersive:block/marking/stripes/yellow",
+                "model": "totally_immersive:block/marking/stripes/yellow_wall",
                 "x": 90,
                 "y": 270
             }
@@ -42,7 +44,7 @@
                 "marking_south": "stripes_yellow"
             },
             "apply": {
-                "model": "totally_immersive:block/marking/stripes/yellow",
+                "model": "totally_immersive:block/marking/stripes/yellow_wall",
                 "x": 90,
                 "y": 0
             }
@@ -52,7 +54,451 @@
                 "marking_west": "stripes_yellow"
             },
             "apply": {
-                "model": "totally_immersive:block/marking/stripes/yellow",
+                "model": "totally_immersive:block/marking/stripes/yellow_wall",
+                "x": 90,
+                "y": 90
+            }
+        },
+
+
+
+
+        {
+            "when": {
+                "marking_down": "stripes_orange"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/orange"
+            }
+        },
+        {
+            "when": {
+                "marking_up": "stripes_orange"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/orange",
+                "x": 180
+            }
+        },
+
+
+        {
+            "when": {
+                "marking_north": "stripes_orange"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/orange_wall",
+                "x": 90,
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "marking_east": "stripes_orange"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/orange_wall",
+                "x": 90,
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "marking_south": "stripes_orange"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/orange_wall",
+                "x": 90,
+                "y": 0
+            }
+        },
+        {
+            "when": {
+                "marking_west": "stripes_orange"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/stripes/orange_wall",
+                "x": 90,
+                "y": 90
+            }
+        },
+
+
+
+
+        {
+            "when": {
+                "marking_down": "double_line_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow"
+            }
+        },
+        {
+            "when": {
+                "marking_up": "double_line_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow",
+                "x": 180
+            }
+        },
+        {
+            "when": {
+                "marking_north": "double_line_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow",
+                "x": 90,
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "marking_east": "double_line_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow",
+                "x": 90,
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "marking_south": "double_line_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow",
+                "x": 90,
+                "y": 0
+            }
+        },
+        {
+            "when": {
+                "marking_west": "double_line_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow",
+                "x": 90,
+                "y": 90
+            }
+        },
+
+
+
+
+
+
+
+        {
+            "when": {
+                "marking_down": "double_line_rotated_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow_rotated"
+            }
+        },
+        {
+            "when": {
+                "marking_up": "double_line_rotated_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow_rotated",
+                "x": 180
+            }
+        },
+        {
+            "when": {
+                "marking_north": "double_line_rotated_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow_rotated",
+                "x": 90,
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "marking_east": "double_line_rotated_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow_rotated",
+                "x": 90,
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "marking_south": "double_line_rotated_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow_rotated",
+                "x": 90,
+                "y": 0
+            }
+        },
+        {
+            "when": {
+                "marking_west": "double_line_rotated_yellow"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line/yellow_rotated",
+                "x": 90,
+                "y": 90
+            }
+        },
+
+
+
+
+
+
+
+        {
+            "when": {
+                "marking_down": "double_line_corner_yellow3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow3"
+            }
+        },
+        {
+            "when": {
+                "marking_up": "double_line_corner_yellow3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow3",
+                "x": 180
+            }
+        },
+        {
+            "when": {
+                "marking_north": "double_line_corner_yellow3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow3",
+                "x": 90,
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "marking_east": "double_line_corner_yellow3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow3",
+                "x": 90,
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "marking_south": "double_line_corner_yellow3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow3",
+                "x": 90,
+                "y": 0
+            }
+        },
+        {
+            "when": {
+                "marking_west": "double_line_corner_yellow3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow3",
+                "x": 90,
+                "y": 90
+            }
+        },
+
+
+
+
+
+
+
+        {
+            "when": {
+                "marking_down": "double_line_corner_yellow1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow1"
+            }
+        },
+        {
+            "when": {
+                "marking_up": "double_line_corner_yellow1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow1",
+                "x": 180
+            }
+        },
+        {
+            "when": {
+                "marking_north": "double_line_corner_yellow1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow1",
+                "x": 90,
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "marking_east": "double_line_corner_yellow1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow1",
+                "x": 90,
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "marking_south": "double_line_corner_yellow1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow1",
+                "x": 90,
+                "y": 0
+            }
+        },
+        {
+            "when": {
+                "marking_west": "double_line_corner_yellow1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow1",
+                "x": 90,
+                "y": 90
+            }
+        },
+
+
+
+
+
+
+
+        {
+            "when": {
+                "marking_down": "double_line_corner_yellow2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow2"
+            }
+        },
+        {
+            "when": {
+                "marking_up": "double_line_corner_yellow2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow2",
+                "x": 180
+            }
+        },
+        {
+            "when": {
+                "marking_north": "double_line_corner_yellow2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow2",
+                "x": 90,
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "marking_east": "double_line_corner_yellow2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow2",
+                "x": 90,
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "marking_south": "double_line_corner_yellow2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow2",
+                "x": 90,
+                "y": 0
+            }
+        },
+        {
+            "when": {
+                "marking_west": "double_line_corner_yellow2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow2",
+                "x": 90,
+                "y": 90
+            }
+        },
+
+
+
+
+
+
+
+        {
+            "when": {
+                "marking_down": "double_line_corner_yellow0"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow0"
+            }
+        },
+        {
+            "when": {
+                "marking_up": "double_line_corner_yellow0"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow0",
+                "x": 180
+            }
+        },
+        {
+            "when": {
+                "marking_north": "double_line_corner_yellow0"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow0",
+                "x": 90,
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "marking_east": "double_line_corner_yellow0"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow0",
+                "x": 90,
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "marking_south": "double_line_corner_yellow0"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow0",
+                "x": 90,
+                "y": 0
+            }
+        },
+        {
+            "when": {
+                "marking_west": "double_line_corner_yellow0"
+            },
+            "apply": {
+                "model": "totally_immersive:block/marking/double_line_corner/yellow0",
                 "x": 90,
                 "y": 90
             }

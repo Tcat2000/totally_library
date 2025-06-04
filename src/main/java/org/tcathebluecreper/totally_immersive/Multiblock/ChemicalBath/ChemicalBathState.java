@@ -60,11 +60,13 @@ public class ChemicalBathState implements IMultiblockState {
         nbt.putInt("progress", this.process.progress);
         nbt.putInt("cooldown", this.process.resetCooldown);
         nbt.put("inventory", inventory.serializeNBT());
+        nbt.put("tank", tank.writeToNBT(new CompoundTag()));
     }
     @Override
     public void readSyncNBT(CompoundTag nbt) {
         this.process.progress = nbt.getInt("progress");
         this.process.resetCooldown = nbt.getInt("cooldown");
         this.inventory.deserializeNBT(nbt.getCompound("inventory"));
+        this.tank.readFromNBT(nbt.getCompound("tank"));
     }
 }

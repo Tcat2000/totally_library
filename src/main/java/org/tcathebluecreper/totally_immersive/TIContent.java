@@ -64,20 +64,46 @@ public class TIContent {
                 return Shapes.empty();
             }
         };
-//        public static final Marking STRIPES_YELLOW = new Marking() {
+
+
+//        public static final Marking DOUBLE_LINE_YELLOW = new Marking() {
 //            @Override
 //            public String name() {
-//                return "stripes_yellow";
+//                return "double_line_yellow";
 //            }
 //        };
-        public static final Marking DOUBLE_LINE_YELLOW = new Marking() {
+//        public static final Marking DOUBLE_LINE_ROTATED_YELLOW = new Marking() {
+//            @Override
+//            public String name() {
+//                return "double_line_rotated_yellow";
+//            }
+//        };
+        public static final Marking DOUBLE_LINE_CORNER_YELLOW_0 = new Marking() {
             @Override
             public String name() {
-                return "double_line_yellow";
+                return "double_line_corner_yellow0";
             }
         };
-
-        public static final ColoredMarking STRIPES = new ColoredMarking("stripes_[color]", "totally_immersive", "block/marking/stripes_color]");
+//        public static final Marking DOUBLE_LINE_CORNER_YELLOW_1 = new Marking() {
+//            @Override
+//            public String name() {
+//                return "double_line_corner_yellow1";
+//            }
+//        };
+//        public static final Marking DOUBLE_LINE_CORNER_YELLOW_2 = new Marking() {
+//            @Override
+//            public String name() {
+//                return "double_line_corner_yellow2";
+//            }
+//        };
+//        public static final Marking DOUBLE_LINE_CORNER_YELLOW_3 = new Marking() {
+//            @Override
+//            public String name() {
+//                return "double_line_corner_yellow3";
+//            }
+//        };
+//
+//        public static final ColoredMarking STRIPES = new ColoredMarking("stripes_[color]", "totally_immersive", "block/marking/stripes_[color]");
 
 
         public static final RegistryObject<Block> MARKINGS_BLOCK = register("markings", () -> new MarkingBlock(BlockBehaviour.Properties.of().noCollission().instabreak().replaceable()));
@@ -114,11 +140,12 @@ public class TIContent {
         public static final List<MultiblockRegistration<?>> MULTIBLOCKS = new ArrayList<>();
         public static final MultiblockRegistration<ChemicalBathState> CHEMICAL_BATH = add(metal(new ChemicalBathLogic(),"chemical_bath")
                 .structure(Multiblock.CHEMICAL_BATH)
+                .redstone(t -> t)
                 .build());
 
-//        public static final MultiblockRegistration<GrinderState> GRINDER = add(metal(new GrinderLogic(),"grinder")
-//                .structure(Multiblock.GRINDER)
-//                .build());
+        public static final MultiblockRegistration<GrinderState> GRINDER = add(metal(new GrinderLogic(),"grinder")
+                .structure(Multiblock.GRINDER)
+                .build());
 
 
         public static <T extends IMultiblockState> MultiblockRegistration<T> add(MultiblockRegistration<T> res) {
@@ -153,12 +180,12 @@ public class TIContent {
         public static void init() {
             Multiblock.init();
         }
-        public static class Multiblock{
+        public static class Multiblock {
             private static final List<Lazy<? extends MultiblockHandler.IMultiblock>> toRegister = new ArrayList<>();
 
 
             public static final Lazy<TemplateMultiblock> CHEMICAL_BATH = registerLazily(ChemicalBathMultiblock::new);
-//            public static final Lazy<TemplateMultiblock> GRINDER = registerLazily(GrinderMultiblock::new);
+            public static final Lazy<TemplateMultiblock> GRINDER = registerLazily(GrinderMultiblock::new);
 
 
             public static void init() {
@@ -179,6 +206,7 @@ public class TIContent {
         public static final IERecipeTypes.TypeWithClass<GrinderRecipe> GRINDER = register("grinder", GrinderRecipe.class);
 
         static {
+            ChemicalBathRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("chemical_bath", ChemicalBathRecipeSerializer::new);
             GrinderRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("grinder", GrinderRecipeSerializer::new);
         }
 

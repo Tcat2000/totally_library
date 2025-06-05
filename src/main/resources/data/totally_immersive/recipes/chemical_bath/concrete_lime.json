@@ -1,18 +1,18 @@
 {
     "type": "totally_immersive:chemical_bath",
     "itemInput": {
-        "item": "minecraft:white_concrete_powder",
+        "item": "minecraft:lime_concrete_powder",
         "amount": 1
     },
     "fluidInput": {
         "fluid": "minecraft:water",
-        "amount": 1000
+        "amount": 100
     },
     "output": {
-        "item": "minecraft:white_concrete",
+        "item": "minecraft:lime_concrete",
         "amount": 2
     },
     "energyCost": 128,
-    "fluidCost": 1000,
+    "fluidCost": 100,
     "fluidRequirement": 2000
 }

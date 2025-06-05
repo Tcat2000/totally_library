@@ -99,10 +99,10 @@ public class TotallyImmersive {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
 
-        TIContent.TIBlocks.BLOCKS.register(modEventBus);
+        TIBlocks.BLOCKS.register(modEventBus);
         TIContent.TIItems.ITEMS.register(modEventBus);
         TIContent.TIBET.BETs.register(modEventBus);
-        TIContent.TIMultiblocks.init();
+        TIMultiblocks.init();
         TIContent.TIRecipes.RECIPE_TYPES.register(modEventBus);
         TIContent.TIRecipes.RECIPE_SERIALIZERS.register(modEventBus);
     }
@@ -159,7 +159,7 @@ public class TotallyImmersive {
         }
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            registerBERenderNoContext(event, TIContent.TIMultiblocks.CHEMICAL_BATH.masterBE().get(), ChemicalBathRenderer::new);
+            registerBERenderNoContext(event, TIMultiblocks.CHEMICAL_BATH.masterBE().get(), ChemicalBathRenderer::new);
         }
         private static <T extends BlockEntity>
         void registerBERenderNoContext(

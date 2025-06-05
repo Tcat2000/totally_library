@@ -31,7 +31,7 @@ public class TIJei implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(TIContent.TIMultiblocks.CHEMICAL_BATH.blockItem().get()), ChemicalBathJEICategory.UID);
+        registration.addRecipeCatalyst(new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get()), ChemicalBathJEICategory.UID);
     }
 
     @Override

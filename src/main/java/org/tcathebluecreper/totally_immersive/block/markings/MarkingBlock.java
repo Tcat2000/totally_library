@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.*;
 import org.jetbrains.annotations.NotNull;
+import org.tcathebluecreper.totally_immersive.TIBlocks;
 import org.tcathebluecreper.totally_immersive.TIContent;
 
 import java.util.*;
@@ -127,10 +128,10 @@ public class MarkingBlock extends Block {
         Direction.stream().forEach(dir -> {
             Property<Marking> prop = MARKING_DIRECTIONS.get(dir);
             Marking marking = state.getValue(prop);
-            if(marking != TIContent.TIBlocks.NONE) return;
+            if(marking != TIBlocks.NONE) return;
             BlockState connectedBlock = level.getBlockState(pos.relative(dir));
             if(!marking.canBeSupported((Level) level, connectedBlock, pos.relative(dir), dir)) {
-                block[0] = block[0].setValue(prop, TIContent.TIBlocks.NONE);
+                block[0] = block[0].setValue(prop, TIBlocks.NONE);
             }
         });
         return InteractionResult.PASS;

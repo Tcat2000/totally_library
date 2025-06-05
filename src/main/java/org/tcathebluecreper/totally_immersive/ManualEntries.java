@@ -17,7 +17,7 @@ public class ManualEntries {
         CATEGORY = manual.getRoot().getOrCreateSubnode(ResourceLocation.fromNamespaceAndPath(MODID, "main"), 100);
 
         ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(manual);
-        builder.addSpecialElement(new ManualEntry.SpecialElementData("chemical_bath", 0, () -> new ManualElementMultiblock(manual, TIContent.TIMultiblocks.Multiblock.CHEMICAL_BATH.get())));
+        builder.addSpecialElement(new ManualEntry.SpecialElementData("chemical_bath", 0, () -> new ManualElementMultiblock(manual, TIMultiblocks.Multiblock.CHEMICAL_BATH.get())));
         builder.readFromFile(ResourceLocation.fromNamespaceAndPath(MODID, "chemical_bath"));
         manual.addEntry(CATEGORY, builder.create(), 0);
     }

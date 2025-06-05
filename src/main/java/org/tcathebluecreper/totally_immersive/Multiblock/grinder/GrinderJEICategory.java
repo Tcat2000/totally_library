@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.tcathebluecreper.totally_immersive.TIContent;
+import org.tcathebluecreper.totally_immersive.TIMultiblocks;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
@@ -23,7 +24,7 @@ public class GrinderJEICategory implements IRecipeCategory<GrinderRecipe> {
     private IDrawable TANK;
     private IDrawableAnimated ARROW;
     public GrinderJEICategory(IGuiHelper guiHelper) {
-        this.ICON = guiHelper.createDrawableItemStack(new ItemStack(TIContent.TIMultiblocks.CHEMICAL_BATH.blockItem().get()));
+        this.ICON = guiHelper.createDrawableItemStack(new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get()));
         this.BACKGROUND = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/chemical_bath.png"), 9, 22, 143, 59);
         this.TANK = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/chemical_bath.png"), 197, 1, 18, 48);
     }

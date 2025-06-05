@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.common.data.SoundDefinition;
+import org.tcathebluecreper.totally_immersive.TIBlocks;
 import org.tcathebluecreper.totally_immersive.TIContent;
 import org.tcathebluecreper.totally_immersive.block.markings.Marking;
 import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
@@ -59,7 +60,7 @@ public class SprayCan extends Item implements IUIHolder.ItemUI {
         Direction side = context.getClickedFace().getOpposite();
         BlockPos pos = context.getClickedPos();
         BlockState state = context.getLevel().getBlockState(pos);
-        if(state.getBlock() != TIContent.TIBlocks.MARKINGS_BLOCK.get()) {
+        if(state.getBlock() != TIBlocks.MARKINGS_BLOCK.get()) {
             pos = pos.relative(side.getOpposite());
             state = context.getLevel().getBlockState(pos);
         }
@@ -68,12 +69,12 @@ public class SprayCan extends Item implements IUIHolder.ItemUI {
         String marking = nbt.getString("marking");
 
         if(state.getBlock() == Blocks.AIR) {
-            context.getLevel().setBlock(pos, TIContent.TIBlocks.MARKINGS_BLOCK.get().defaultBlockState(), 3);
+            context.getLevel().setBlock(pos, TIBlocks.MARKINGS_BLOCK.get().defaultBlockState(), 3);
             state = context.getLevel().getBlockState(pos);
         }
 
-        if(state.getBlock() == TIContent.TIBlocks.MARKINGS_BLOCK.get()) {
-            state = state.setValue(MarkingBlock.MARKING_DIRECTIONS.get(side), MarkingBlock.MARKING_DIRECTIONS.get(side).getValue(marking).orElse(TIContent.TIBlocks.NONE));
+        if(state.getBlock() == TIBlocks.MARKINGS_BLOCK.get()) {
+            state = state.setValue(MarkingBlock.MARKING_DIRECTIONS.get(side), MarkingBlock.MARKING_DIRECTIONS.get(side).getValue(marking).orElse(TIBlocks.NONE));
             context.getLevel().setBlock(pos, state, 1);
             return InteractionResult.PASS;
         }

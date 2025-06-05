@@ -12,11 +12,12 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import org.tcathebluecreper.totally_immersive.TIContent;
+import org.tcathebluecreper.totally_immersive.TIMultiblocks;
 
 public class ChemicalBathRecipeSerializer extends IERecipeSerializer<ChemicalBathRecipe> {
     @Override
     public ItemStack getIcon() {
-        return new ItemStack(TIContent.TIMultiblocks.CHEMICAL_BATH.blockItem().get());
+        return new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get());
     }
 
     @Override

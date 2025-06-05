@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.tcathebluecreper.totally_immersive.TIContent;
+import org.tcathebluecreper.totally_immersive.TIMultiblocks;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
@@ -25,7 +26,7 @@ public class ChemicalBathJEICategory implements IRecipeCategory<ChemicalBathReci
     private final IDrawable ICON;
     private IDrawableAnimated ARROW;
     public ChemicalBathJEICategory(IGuiHelper guiHelper) {
-        this.ICON = guiHelper.createDrawableItemStack(new ItemStack(TIContent.TIMultiblocks.CHEMICAL_BATH.blockItem().get()));
+        this.ICON = guiHelper.createDrawableItemStack(new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get()));
         this.BACKGROUND = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/chemical_bath.png"), 0, 0, 144, 59);
 //        this.TANK = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/chemical_bath.png"), 197, 1, 18, 48);
 //        this.INPUT = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, Ingredient.of(Items.DIAMOND.asItem()));
@@ -54,7 +55,7 @@ public class ChemicalBathJEICategory implements IRecipeCategory<ChemicalBathReci
     public void setRecipe(IRecipeLayoutBuilder builder, ChemicalBathRecipe chemicalBathRecipe, IFocusGroup iFocusGroup) {
         builder.addInputSlot(10, 16).addIngredients(chemicalBathRecipe.input);
         builder.addOutputSlot(24+94, 16).addItemLike(chemicalBathRecipe.output.getItem());
-        builder.addInputSlot(24, 30).addFluidStack(chemicalBathRecipe.fluidInput).setFluidRenderer(1000, false, 96, 16);
+        builder.addInputSlot(27+16, 16).addFluidStack(chemicalBathRecipe.fluidInput).setFluidRenderer(1000, false, 90-32, 16);
     }
 
     @Override

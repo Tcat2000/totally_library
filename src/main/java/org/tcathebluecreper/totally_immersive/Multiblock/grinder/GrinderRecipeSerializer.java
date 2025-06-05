@@ -12,6 +12,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.jetbrains.annotations.Nullable;
 import org.tcathebluecreper.totally_immersive.TIContent;
+import org.tcathebluecreper.totally_immersive.TIMultiblocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 public class GrinderRecipeSerializer extends IERecipeSerializer<GrinderRecipe> {
     @Override
     public ItemStack getIcon() {
-        return new ItemStack(TIContent.TIMultiblocks.CHEMICAL_BATH.blockItem().get());
+        return new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get());
     }
 
     @Override

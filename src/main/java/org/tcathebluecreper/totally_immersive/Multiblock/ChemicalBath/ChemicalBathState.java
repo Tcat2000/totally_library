@@ -1,6 +1,7 @@
 package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
 
 import blusunrize.immersiveengineering.api.energy.WrappingEnergyStorage;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
@@ -25,6 +26,8 @@ public class ChemicalBathState implements IMultiblockState {
     StoredCapability<IEnergyStorage> power;
 
     ChemicalBathProcess process;
+
+    public RedstoneControl.RSState redstoneState = RedstoneControl.RSState.enabledByDefault();
 
     public ChemicalBathState(IInitialMultiblockContext<ChemicalBathState> capabilitySource) {
         inventory = new ItemStackHandler(3);
@@ -61,6 +64,7 @@ public class ChemicalBathState implements IMultiblockState {
         nbt.putInt("cooldown", this.process.resetCooldown);
         nbt.put("inventory", inventory.serializeNBT());
         nbt.put("tank", tank.writeToNBT(new CompoundTag()));
+        redstoneState.writeSyncNBT(nbt.getCompound("redstone_mode"));
     }
     @Override
     public void readSyncNBT(CompoundTag nbt) {
@@ -68,5 +72,6 @@ public class ChemicalBathState implements IMultiblockState {
         this.process.resetCooldown = nbt.getInt("cooldown");
         this.inventory.deserializeNBT(nbt.getCompound("inventory"));
         this.tank.readFromNBT(nbt.getCompound("tank"));
+        this.redstoneState.readSyncNBT(nbt.getCompound("redstone_mode"));
     }
 }

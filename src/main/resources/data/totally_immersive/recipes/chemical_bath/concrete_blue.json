@@ -1,18 +1,18 @@
 {
     "type": "totally_immersive:chemical_bath",
     "itemInput": {
-        "item": "minecraft:coal",
+        "item": "minecraft:blue_concrete_powder",
         "amount": 1
     },
     "fluidInput": {
         "fluid": "minecraft:water",
-        "amount": 1
+        "amount": 100
     },
     "output": {
-        "item": "minecraft:diamond",
+        "item": "minecraft:blue_concrete",
         "amount": 2
     },
-    "energyCost": 1000,
-    "fluidCost": 1000,
+    "energyCost": 128,
+    "fluidCost": 100,
     "fluidRequirement": 2000
 }

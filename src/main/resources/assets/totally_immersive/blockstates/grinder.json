@@ -1,0 +1,42 @@
+{
+  "variants": {
+    "facing=north,mirrored=false": {
+      "model": "totally_immersive:block/multiblock/grinder/grinder_split",
+      "uvlock": true
+    },
+    "facing=south,mirrored=false": {
+      "model": "totally_immersive:block/multiblock/grinder/grinder_split",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=west,mirrored=false": {
+      "model": "totally_immersive:block/multiblock/grinder/grinder_split",
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=east,mirrored=false": {
+      "model": "totally_immersive:block/multiblock/grinder/grinder_split",
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=north,mirrored=true": {
+      "model": "totally_immersive:block/multiblock/grinder/grinder_mirrored_split",
+      "uvlock": true
+    },
+    "facing=south,mirrored=true": {
+      "model": "totally_immersive:block/multiblock/grinder/grinder_mirrored_split",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=west,mirrored=true": {
+      "model": "totally_immersive:block/multiblock/grinder/grinder_mirrored_split",
+      "y": 270,
+      "uvlock": true
+    },
+    "facing=east,mirrored=true": {
+      "model": "totally_immersive:block/multiblock/grinder/grinder_mirrored_split",
+      "y": 90,
+      "uvlock": true
+    }
+  }
+}

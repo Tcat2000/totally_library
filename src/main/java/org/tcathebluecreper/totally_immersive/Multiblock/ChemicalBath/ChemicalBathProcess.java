@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,7 +20,8 @@ public class ChemicalBathProcess {
     }
     public ChemicalBathProcess() {}
 
-    public void tick(Level level, ChemicalBathState state) {
+    public void tick(Level level, ChemicalBathState state, IMultiblockContext<ChemicalBathState> context) {
+        if(!state.redstoneState.isEnabled(context)) return;
         if(progress != 0 && progress != -2 && recipe == null) {
             recipe = ChemicalBathRecipe.findRecipe(level, state.processSlot.getValue().getStackInSlot(0), state.chemTank.getValue().getFluidInTank(0));
             if(recipe == null) progress = -2;

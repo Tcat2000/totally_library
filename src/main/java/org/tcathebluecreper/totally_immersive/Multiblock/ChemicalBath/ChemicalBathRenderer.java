@@ -58,7 +58,10 @@ public class ChemicalBathRenderer implements BlockEntityRenderer<MultiblockBlock
 
 
         if(progress == -1) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(state.process.resetCooldown - pPartialTick, state.process.RESET_TIME)) * mirrored, 0, 0);
-        else if(progress >= 20 && progress <= 120) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(progress - 20 + pPartialTick, state.process.PROCESS_TIME - 40)) * mirrored, 0, 0);
+        else if(progress >= 20 && progress <= 120) {
+//            System.out.println((progress - 20 + (pPartialTick)) + ", " + AnimationUtils.lerp(0,3, AnimationUtils.amount(progress - 20 + (pPartialTick), state.process.PROCESS_TIME - 40)));
+            matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(progress - 20 + (pPartialTick), state.process.PROCESS_TIME - 40)) * mirrored, 0, 0);
+        }
         else if(progress > 120) matrixStack.translate(3 * mirrored, 0, 0);
         renderPart(craneTop, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
 
@@ -107,6 +110,7 @@ public class ChemicalBathRenderer implements BlockEntityRenderer<MultiblockBlock
         if(state.tank.getFluid().isEmpty()) return;
 
         matrixStack.pushPose();
+        rotateForFacing(matrixStack, te.getBlockState().getValue(IEProperties.FACING_HORIZONTAL));
 //        VertexConsumer consumer = pBuffer.getBuffer(RenderType.endPortal());
 //
 //        consumer.vertex(0, 5, 0);
@@ -132,6 +136,7 @@ public class ChemicalBathRenderer implements BlockEntityRenderer<MultiblockBlock
 
         int color = IClientFluidTypeExtensions.of(fluid).getTintColor(fluid.defaultFluidState(), te.getLevel(), te.getBlockPos());
 
+        if(mirrored == -1) matrixStack.translate(-3,0,0);
         renderQuad(matrixStack, color, texture, consumer, pPackedLight, 0, 1, 1, 0);
         renderQuad(matrixStack, color, texture, consumer, pPackedLight, 1, 1, 2, 0);
         matrixStack.translate(0,0,1);

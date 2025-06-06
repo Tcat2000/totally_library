@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
+package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +34,7 @@ public class ChemicalBathProcess {
             }
             progress = 1;
 
-            ((RangedWrapper)state.processSlot.getValue()).setStackInSlot(0, state.input.getValue().extractItem(0, recipe.input.getItems()[0].getCount(), false));
+            ((RangedWrapper)state.processSlot.getValue()).setStackInSlot(0, state.input.getValue().extractItem(0, recipe.input.getCount(), false));
         }
         else if(progress > 0) {
             if(progress == PROCESS_TIME / 2) {

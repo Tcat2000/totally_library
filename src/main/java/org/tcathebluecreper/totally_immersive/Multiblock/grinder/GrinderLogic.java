@@ -42,29 +42,63 @@ public class GrinderLogic implements IClientTickableComponent<GrinderState>, IMu
     }
 
     static VoxelShape getShape(BlockPos pos) {
-        if(pos.equals(new BlockPos(0,0,0)) || pos.equals(new BlockPos(0,0,1)) ||pos.equals(new BlockPos(3,0,0)) ||pos.equals(new BlockPos(3,0,1))) {
-            return Shapes.block();
+        if(
+                pos.equals(new BlockPos(0,0,0)) ||
+                pos.equals(new BlockPos(0,0,1)) ||
+                pos.equals(new BlockPos(0,0,2)) ||
+                pos.equals(new BlockPos(2,0,0)) ||
+                pos.equals(new BlockPos(2,0,1)) ||
+                pos.equals(new BlockPos(2,0,2))) {
+            return Shapes.box(0,0,0,1,0.5,1);
         }
-        else if(pos.equals(new BlockPos(1,1,1)) || pos.equals(new BlockPos(2,1,1))) {
-            return Shapes.box(0,11/16f,6/16f,16/16f,15/16f,10/16f);
+        if(
+                pos.equals(new BlockPos(2,1,1)) ||
+                pos.equals(new BlockPos(2,1,2))) {
+            return Shapes.box(0,0.5,0,0.5,1,1);
         }
-        else if(pos.equals(new BlockPos(1,1,0)) || pos.equals(new BlockPos(2,1,0))) {
-            return Shapes.box(0,0,0,16/16f,4/16f,9/16f);
+        if(
+                pos.equals(new BlockPos(0,1,1)) ||
+                pos.equals(new BlockPos(0,1,2))) {
+            return Shapes.box(0.5,0.5,0,1,1,1);
         }
-        else if(pos.equals(new BlockPos(1,0,0)) || pos.equals(new BlockPos(2,0,0))) {
-            return Shapes.or(Shapes.box(0,0,0,16/16f,16/16f,9/16f), Shapes.box(0,0,0,16/16f,6/16f,16/16f));
+        if(
+                pos.equals(new BlockPos(2,2,1)) ||
+                pos.equals(new BlockPos(2,2,2)) ||
+                pos.equals(new BlockPos(2,3,1)) ||
+                pos.equals(new BlockPos(2,3,2))) {
+            return Shapes.box(0,0,0,0.5,1,1);
         }
-        else if(pos.equals(new BlockPos(0,1,1))) {
-            return Shapes.box(3/16f,11/16f,0,16/16f,15/16f,10/16f);
+        if(
+                pos.equals(new BlockPos(0,2,1)) ||
+                pos.equals(new BlockPos(0,2,2)) ||
+                pos.equals(new BlockPos(0,3,1)) ||
+                pos.equals(new BlockPos(0,3,2))) {
+            return Shapes.box(0.5,0,0,1,1,1);
         }
-        else if(pos.equals(new BlockPos(3,1,1))) {
-            return Shapes.box(0,11/16f,0,13/16f,15/16f,10/16f);
+        if(
+                pos.equals(new BlockPos(0,1,3)) ||
+                pos.equals(new BlockPos(1,1,3)) ||
+                pos.equals(new BlockPos(0,2,3)) ||
+                pos.equals(new BlockPos(0,3,3)) ||
+                pos.equals(new BlockPos(2,2,3)) ||
+                pos.equals(new BlockPos(2,3,3))) {
+            return Shapes.box(0,0,0,1,1,0.5);
         }
-        else if(pos.equals(new BlockPos(2,0,1))) {
-            return Shapes.or(Shapes.box(0,0,0,16/16f,4/16f,16/16f), Shapes.box(0,0,0,16/16f,6/16f,11/16f), Shapes.box(0,6/16f,11/16f,16/16f,8/16f,12/16f), Shapes.box(0,8/16f,12/16f,16/16f,10/16f,13/16f), Shapes.box(0,10/16f,13/16f,16/16f,12/16f,14/16f), Shapes.box(0,12/16f,14/16f,16/16f,14/16f,15/16f), Shapes.box(0,14/16f,15/16f,16/16f,16/16f,16/16f));
+        if(
+                pos.equals(new BlockPos(1,3,3))) {
+            return Shapes.or(Shapes.box(0,0,0,1,1,0.5), Shapes.box(0,0,0,1,0.5,1));
         }
-        else if(pos.equals(new BlockPos(1,0,1))) {
-            return Shapes.or(Shapes.box(0,0,0,16/16f,4/16f,16/16f), Shapes.box(0,0,0,16/16f,6/16f,11/16f), Shapes.box(0,6/16f,11/16f,16/16f,8/16f,12/16f), Shapes.box(0,8/16f,12/16f,16/16f,10/16f,13/16f), Shapes.box(0,10/16f,13/16f,16/16f,12/16f,14/16f), Shapes.box(0,12/16f,14/16f,16/16f,14/16f,15/16f), Shapes.box(0,14/16f,15/16f,16/16f,16/16f,16/16f), Shapes.box(2/16f,2/16f,14/16f,14/16f,14/16f,16/16f), Shapes.box(2/16f,2/16f,12/16f,14/16f,10/16f,14/16f), Shapes.box(2/16f,2/16f,10/16f,14/16f,6/16f,12/16f));
+        if(
+                pos.equals(new BlockPos(1,2,3))) {
+            return Shapes.or(Shapes.box(0,0,0,1,1,0.5), Shapes.box(0,0.5,0,1,1,1));
+        }
+        if(
+                pos.equals(new BlockPos(2,1,3))) {
+            return Shapes.or(Shapes.box(0,0,0,1,1,0.5), Shapes.box(0,0,0.5,1,1,1));
+        }
+        if(
+                pos.equals(new BlockPos(1,1,0))) {
+            return Shapes.box(0,0,0.5,1,0.5,1);
         }
         else return Shapes.block();
     }

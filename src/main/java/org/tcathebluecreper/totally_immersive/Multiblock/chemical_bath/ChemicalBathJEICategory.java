@@ -1,6 +1,5 @@
-package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
+package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -13,10 +12,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import org.tcathebluecreper.totally_immersive.TIContent;
 import org.tcathebluecreper.totally_immersive.TIMultiblocks;
+
+import java.util.List;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
@@ -53,9 +51,9 @@ public class ChemicalBathJEICategory implements IRecipeCategory<ChemicalBathReci
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ChemicalBathRecipe chemicalBathRecipe, IFocusGroup iFocusGroup) {
-        builder.addInputSlot(10, 16).addIngredients(chemicalBathRecipe.input);
-        builder.addOutputSlot(24+94, 16).addItemLike(chemicalBathRecipe.output.getItem());
-        builder.addInputSlot(27+16, 16).addFluidStack(chemicalBathRecipe.fluidInput).setFluidRenderer(1000, false, 90-32, 16);
+        builder.addInputSlot(10, 16).addItemStacks(List.of(chemicalBathRecipe.input.value.getItems()));
+        builder.addOutputSlot(24+94, 16).addItemStack(chemicalBathRecipe.output.value);
+        builder.addInputSlot(27+16, 16).addFluidStack(chemicalBathRecipe.fluidInput.value.getFluid()).setFluidRenderer(1000, false, 90-32, 16);
     }
 
     @Override

@@ -1,52 +1,19 @@
 package org.tcathebluecreper.totally_immersive;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
-import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
-import blusunrize.immersiveengineering.common.blocks.generic.ConnectorBlock;
-import blusunrize.immersiveengineering.common.blocks.metal.BasicConnectorBlock;
-import blusunrize.immersiveengineering.common.blocks.metal.EnergyConnectorBlockEntity;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
-import blusunrize.immersiveengineering.common.register.IEBlockEntities;
-import blusunrize.immersiveengineering.common.register.IEBlocks;
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.*;
+import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.*;
 import org.tcathebluecreper.totally_immersive.Multiblock.grinder.*;
-import org.tcathebluecreper.totally_immersive.block.markings.ColoredMarking;
-import org.tcathebluecreper.totally_immersive.block.markings.Marking;
-import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
 import org.tcathebluecreper.totally_immersive.item.SprayCan;
-import org.tcathebluecreper.totally_immersive.lib.ITMultiblockBlock;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
@@ -69,7 +36,7 @@ public class TIContent {
         public static final IERecipeTypes.TypeWithClass<GrinderRecipe> GRINDER = register("grinder", GrinderRecipe.class);
 
         static {
-            ChemicalBathRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("chemical_bath", ChemicalBathRecipeSerializer::new);
+            ChemicalBathRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("chemical_bath", () -> new ChemicalBathRecipeSerializer(ChemicalBathRecipe::new));
             GrinderRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("grinder", GrinderRecipeSerializer::new);
         }
 

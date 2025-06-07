@@ -1,0 +1,18 @@
+{
+    "type": "totally_immersive:chemical_bath",
+    "inputItem": {
+        "tag": "minecraft:planks",
+        "count": 4
+    },
+    "fluidInput": {
+        "fluid": "immersiveengineering:creosote",
+        "amount": 500
+    },
+    "outputItem": {
+        "item": "immersiveengineering:treated_wood_horizontal",
+        "count": 4
+    },
+    "energyCost": 128,
+    "fluidRequirement": 2000,
+    "priority": 4
+}

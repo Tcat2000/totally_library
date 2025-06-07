@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
+package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
 import blusunrize.immersiveengineering.api.energy.WrappingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -11,6 +11,7 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 
@@ -19,9 +20,9 @@ public class ChemicalBathState implements IMultiblockState {
     FluidTank tank;
     EnergyStorage energy;
 
-    StoredCapability<IItemHandler> input;
-    StoredCapability<IItemHandler> processSlot;
-    StoredCapability<IItemHandler> output;
+    StoredCapability<IItemHandlerModifiable> input;
+    StoredCapability<IItemHandlerModifiable> processSlot;
+    StoredCapability<IItemHandlerModifiable> output;
     StoredCapability<ArrayFluidHandler> chemTank;
     StoredCapability<IEnergyStorage> power;
 

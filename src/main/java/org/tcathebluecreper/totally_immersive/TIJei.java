@@ -13,9 +13,9 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.ChemicalBathJEICategory;
-import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.ChemicalBathJEIScreen;
-import org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath.ChemicalBathRecipe;
+import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathJEICategory;
+import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathJEIScreen;
+import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathRecipe;
 
 import java.util.ArrayList;
 

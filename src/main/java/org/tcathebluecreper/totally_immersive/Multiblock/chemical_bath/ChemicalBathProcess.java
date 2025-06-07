@@ -1,10 +1,14 @@
 package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.common.fluids.ArrayFluidHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 
 public class ChemicalBathProcess {
@@ -21,32 +25,36 @@ public class ChemicalBathProcess {
     public ChemicalBathProcess() {}
 
     public void tick(Level level, ChemicalBathState state, IMultiblockContext<ChemicalBathState> context) {
+        IItemHandlerModifiable inputSlot = state.input.getValue();
+        IItemHandlerModifiable processSlot = state.processSlot.getValue();
+        IItemHandlerModifiable outputSlot = state.output.getValue();
+        ArrayFluidHandler tank = state.chemTank.getValue();
+
         if(!state.redstoneState.isEnabled(context)) return;
         if(progress != 0 && progress != -2 && recipe == null) {
-            recipe = ChemicalBathRecipe.findRecipe(level, state.processSlot.getValue().getStackInSlot(0), state.chemTank.getValue().getFluidInTank(0));
+            recipe = ChemicalBathRecipe.findRecipe(level, processSlot.getStackInSlot(0), outputSlot.getStackInSlot(0), tank.getFluidInTank(0));
             if(recipe == null) progress = -2;
         }
         if(progress == 0 || progress == -2) {
-            recipe = ChemicalBathRecipe.findRecipe(level, state.input.getValue().getStackInSlot(0), state.chemTank.getValue().getFluidInTank(0));
+            recipe = ChemicalBathRecipe.findRecipe(level, inputSlot.getStackInSlot(0), outputSlot.getStackInSlot(0), tank.getFluidInTank(0));
             if(recipe == null) {
                 progress = -2;
                 return;
             }
             progress = 1;
 
-            ((RangedWrapper)state.processSlot.getValue()).setStackInSlot(0, state.input.getValue().extractItem(0, recipe.input.getCount(), false));
+            processSlot.setStackInSlot(0, recipe.input.extractFrom(inputSlot.getStackInSlot(0)));
         }
         else if(progress > 0) {
             if(progress == PROCESS_TIME / 2) {
-                state.chemTank.getValue().drain(recipe.fluidAmount, IFluidHandler.FluidAction.EXECUTE);
-                ((RangedWrapper)state.processSlot.getValue()).setStackInSlot(0, recipe.output.copy());
+                recipe.fluidInput.extract(tank.getFluidInTank(0));
+                processSlot.setStackInSlot(0, recipe.output.value.copy());
                 if(drawPower(level, state)) progress++;
             }
             else if(progress >= PROCESS_TIME) {
-                ((RangedWrapper)state.processSlot.getValue()).setStackInSlot(0, ItemStack.EMPTY);
+                processSlot.setStackInSlot(0, ItemStack.EMPTY);
                 ItemStack stack = state.output.getValue().getStackInSlot(0);
-                if(stack.isEmpty()) state.output.getValue().insertItem(0, recipe.output.copy(), false);
-                else stack.grow(recipe.output.getCount());
+                recipe.output.insertTo(outputSlot, 0);
                 progress = -1;
                 resetCooldown = RESET_TIME;
             }
@@ -58,8 +66,8 @@ public class ChemicalBathProcess {
         }
     }
     public boolean drawPower(Level level, ChemicalBathState state) {
-        if(state.power.getValue().extractEnergy(recipe.energyCost, true) == recipe.energyCost) {
-            state.power.getValue().extractEnergy(recipe.energyCost, false);
+        if(state.power.getValue().extractEnergy(recipe.energyCost.value, true) == recipe.energyCost.value) {
+            state.power.getValue().extractEnergy(recipe.energyCost.value, false);
             return true;
         }
         return false;

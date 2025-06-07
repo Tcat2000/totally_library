@@ -1,12 +1,8 @@
-package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
+package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.tcathebluecreper.totally_immersive.AccessableFluidInfoArea;
 import org.tcathebluecreper.totally_immersive.IIContainerScreen;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;

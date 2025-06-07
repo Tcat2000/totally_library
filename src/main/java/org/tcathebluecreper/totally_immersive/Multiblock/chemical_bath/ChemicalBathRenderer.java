@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
+package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.IEProperties;

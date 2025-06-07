@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
+package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -6,15 +6,19 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultib
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MBInventoryUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ChemicalBathLogic implements IClientTickableComponent<ChemicalBathState>, IMultiblockLogic<ChemicalBathState>, IServerTickableComponent<ChemicalBathState> {
@@ -39,8 +43,8 @@ public class ChemicalBathLogic implements IClientTickableComponent<ChemicalBathS
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) {
-        return ChemicalBathLogic::getShape;
-        //return Util.memoize(ChemicalBathLogic::getShape);
+        //return ChemicalBathLogic::getShape;
+        return Util.memoize(ChemicalBathLogic::getShape);
     }
 
     static VoxelShape getShape(BlockPos pos) {
@@ -84,5 +88,10 @@ public class ChemicalBathLogic implements IClientTickableComponent<ChemicalBathS
             if(position.posInMultiblock().equals(new BlockPos(1,0,1))) return ctx.getState().chemTank.cast(ctx);
         }
         return LazyOptional.empty();
+    }
+
+    @Override
+    public void dropExtraItems(ChemicalBathState state, Consumer<ItemStack> drop) {
+        MBInventoryUtils.dropItems(state.inventory, drop);
     }
 }

@@ -1,10 +1,8 @@
-package org.tcathebluecreper.totally_immersive.Multiblock.ChemicalBath;
+package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import org.tcathebluecreper.totally_immersive.TIContent;
 import org.tcathebluecreper.totally_immersive.TIMultiblocks;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;

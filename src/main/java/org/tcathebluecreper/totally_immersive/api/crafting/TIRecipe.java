@@ -42,4 +42,6 @@ public abstract class TIRecipe implements Recipe<Container> {
     public final ResourceLocation getId() {
         return id;
     }
+
+    public abstract int length();
 }

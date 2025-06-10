@@ -28,6 +28,7 @@ public class ChemicalBathRecipe extends TIRecipe {
     public final TIRecipeSerializer.IntProvider energyCost;
     public final TIRecipeSerializer.IntProvider fluidRequirement;
     public final TIRecipeSerializer.IntProvider priority;
+    public final TIRecipeSerializer.BooleanProvider jeiHide;
     public <T extends Recipe<?>> ChemicalBathRecipe(ResourceLocation id, ProviderList<?> providers) {
         super(id, providers);
         this.input = (TIRecipeSerializer.IngredientProvider) providers.get("inputItem").get();
@@ -36,6 +37,7 @@ public class ChemicalBathRecipe extends TIRecipe {
         this.energyCost = (TIRecipeSerializer.IntProvider) providers.get("energyCost").get();
         this.fluidRequirement = (TIRecipeSerializer.IntProvider) providers.get("fluidRequirement").get();
         this.priority = (TIRecipeSerializer.IntProvider) providers.get("priority").get();
+        this.jeiHide = (TIRecipeSerializer.BooleanProvider) providers.get("jeiHide").get();
     }
 
     @Override

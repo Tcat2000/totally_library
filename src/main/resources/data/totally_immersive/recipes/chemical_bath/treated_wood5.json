@@ -14,5 +14,6 @@
     },
     "energyCost": 128,
     "fluidRequirement": 2000,
-    "priority": 5
+    "priority": 5,
+    "jeiHide": true
 }

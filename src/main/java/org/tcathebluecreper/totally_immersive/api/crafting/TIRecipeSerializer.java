@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_immersive.api.crafting;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.core.registries.Registries;
@@ -17,23 +18,25 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class TIRecipeSerializer<R extends TIRecipe> implements RecipeSerializer<R> {
+public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSerializer<R> {
+    protected static final Map<Class<? extends TIRecipe>, Function<IMultiblockState, ? extends TIRecipe>> SERIALIZERS = new HashMap<>();
     private final ProviderList<Provider<?>> providers = getProviders();
     private final BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor;
     public ProviderList<Provider<?>> getProviders() {
         return new ProviderList<>();
     }
 
-    public TIRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor) {
+    public TIRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor, Class<? extends TIRecipe> type) {
         this.constructor = constructor;
+        SERIALIZERS.put(type, this::findRecipe);
     }
+
     @Override
     public final @NotNull R fromJson(@NotNull ResourceLocation recipeID, @NotNull JsonObject jsonObject) {
         ProviderList<Provider<?>> list = new ProviderList<>();
@@ -58,6 +61,8 @@ public class TIRecipeSerializer<R extends TIRecipe> implements RecipeSerializer<
             provider.toNetwork(friendlyByteBuf);
         });
     }
+
+    public abstract R findRecipe(IMultiblockState state);
 
     public abstract static class Provider<T> {
         public final String field;
@@ -85,13 +90,9 @@ public class TIRecipeSerializer<R extends TIRecipe> implements RecipeSerializer<
             super(field, value);
             this.defaultValue = defaultValue;
         }
-        protected IntProvider(String field, Integer value) {
+        public IntProvider(String field, Integer value) {
             super(field, value);
             this.defaultValue = null;
-        }
-        public IntProvider(String field, int defaultValue) {
-            super(field, null);
-            this.defaultValue = defaultValue;
         }
         public IntProvider(String field) {
             super(field, null);
@@ -119,6 +120,36 @@ public class TIRecipeSerializer<R extends TIRecipe> implements RecipeSerializer<
         public boolean canExtract(ItemStack stack) {
             assert value != null;
             return stack.getCount() >= value;
+        }
+    }
+    public static class BooleanProvider extends Provider<Boolean> {
+        protected final Boolean defaultValue;
+        protected BooleanProvider(String field, Boolean value, Boolean defaultValue) {
+            super(field, value);
+            this.defaultValue = defaultValue;
+        }
+        public BooleanProvider(String field, Boolean value) {
+            super(field, value);
+            this.defaultValue = null;
+        }
+        public BooleanProvider(String field) {
+            super(field, null);
+            this.defaultValue = null;
+        }
+        @Override
+        public Provider<Boolean> fromJson(ResourceLocation recipeID, JsonObject json) {
+            if(defaultValue != null && !json.has(field)) return new BooleanProvider(field, defaultValue);
+            if(!json.has(field)) throw new RecipeSerializationException(recipeID, "Missing field '" + field + "'");
+            return new BooleanProvider(field, json.get(field).getAsBoolean(), null);
+        }
+        @Override
+        public void toNetwork(FriendlyByteBuf buf) {
+            assert value != null;
+            buf.writeBoolean(value);
+        }
+        @Override
+        public Provider<?> fromNetwork(ResourceLocation recipeID, FriendlyByteBuf buf) {
+            return new BooleanProvider(field, buf.readBoolean(), null);
         }
     }
     public static class FloatProvider extends Provider<Float> {

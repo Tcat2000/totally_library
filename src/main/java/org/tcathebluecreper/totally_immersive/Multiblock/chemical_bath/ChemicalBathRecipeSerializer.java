@@ -1,19 +1,26 @@
 package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import org.tcathebluecreper.totally_immersive.api.crafting.ProviderList;
+import org.tcathebluecreper.totally_immersive.api.crafting.TIRecipe;
 import org.tcathebluecreper.totally_immersive.api.crafting.TIRecipeSerializer;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
 public class ChemicalBathRecipeSerializer extends TIRecipeSerializer<ChemicalBathRecipe> {
-    public ChemicalBathRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, ChemicalBathRecipe> constructor) {
-        super(constructor);
+    public ChemicalBathRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, ChemicalBathRecipe> constructor, Class<? extends TIRecipe> type) {
+        super(constructor, type);
+    }
+
+    @Override
+    public ChemicalBathRecipe findRecipe(IMultiblockState state) {
+        return null;
     }
 
     @Override
@@ -25,6 +32,7 @@ public class ChemicalBathRecipeSerializer extends TIRecipeSerializer<ChemicalBat
         list.add(new IntProvider("energyCost"));
         list.add(new IntProvider("fluidRequirement"));
         list.add(new IntProvider("priority", 1));
+        list.add(new BooleanProvider("jeiHide", false));
         return list;
     }
 }

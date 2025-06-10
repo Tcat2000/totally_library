@@ -36,7 +36,7 @@ public class TIContent {
         public static final IERecipeTypes.TypeWithClass<GrinderRecipe> GRINDER = register("grinder", GrinderRecipe.class);
 
         static {
-            ChemicalBathRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("chemical_bath", () -> new ChemicalBathRecipeSerializer(ChemicalBathRecipe::new));
+            ChemicalBathRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("chemical_bath", () -> new ChemicalBathRecipeSerializer(ChemicalBathRecipe::new, ChemicalBathRecipe.class));
             GrinderRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("grinder", GrinderRecipeSerializer::new);
         }
 

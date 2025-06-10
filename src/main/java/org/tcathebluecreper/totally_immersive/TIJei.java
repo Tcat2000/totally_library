@@ -38,7 +38,7 @@ public class TIJei implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         ClientLevel world = Minecraft.getInstance().level;
         assert world != null;
-        registration.addRecipes(ChemicalBathJEICategory.UID, new ArrayList<>(ChemicalBathRecipe.recipes.getRecipes(world)));
+        registration.addRecipes(ChemicalBathJEICategory.UID, new ArrayList<>(ChemicalBathRecipe.recipes.getRecipes(world)).stream().filter((r) -> !r.jeiHide.get()).toList());
     }
 
     @Override

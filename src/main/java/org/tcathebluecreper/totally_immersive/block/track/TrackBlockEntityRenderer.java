@@ -27,8 +27,6 @@ public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEn
     public void render(@NotNull TrackBlockEntity be, float v, PoseStack stack, MultiBufferSource buf, int light, int lightOverlay) {
         if(be.target == null || be.targetVector == null || be.localVector == null) return;
         stack.pushPose();
-        Matrix4f matrix4f = stack.last().pose();
-        Matrix3f matrix3f = stack.last().normal();
         VertexConsumer consumer = buf.getBuffer(RenderType.lines());
 
 
@@ -40,28 +38,55 @@ public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEn
         stack.translate(0.5,0.5,0.5);
         if(!(vector0 == null || vector1 == null)) {
             Vec3 last = TIMath.curve(pos0, vector0, pos1, vector1, 0);
+            Vec3 lastTarget = TIMath.curve(pos0, vector0, pos1, vector1, 0);
             Vec3 first = last;
             Vec3 lastVec = be.localVector.normalize();
+            final Vec3 normal = new Vec3(0,0,1);
             float dist = 0;
-            float targetDist = 1;
-            for(int i = 0; i < 21; i++) {
-                Vec3 current = TIMath.curve(pos0, vector0, pos1, vector1, i / 20f);
-                Vec3 next = TIMath.curve(pos0, vector0, pos1, vector1, (i + 1) / 20f);
-                Vec3 vec = TIMath.subVec(last, current);
-                vec = TIMath.subVec(lastVec, vec);
-                stack.translate(current.x - last.x, current.y - last.y, current.z - last.z);
-                stack.pushPose();
-                stack.mulPose(new Quaternionf().rotateAxis((float) ((TIMath.calculateAngle(TIMath.subVec(first,last), TIMath.subVec(current,next))) * Mth.DEG_TO_RAD), new Vector3f(0,1,0)));
-//                stack.rotateAround(new Quaternionf(0, 1, 0, vec.y), 0, 0, 0);
-//                consumer.vertex(matrix4f, (float) last.x, (float) last.y, (float) last.z).color(1f, 1f, 1f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
-//                consumer.vertex(matrix4f, (float) next.x, (float) next.y, (float) next.z).color(1f, 1f, 1f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
-                renderPart(tie, stack, buf, 100, lightOverlay);
-                stack.scale(1,1,6);
-                stack.translate(1,3/16f,0);
-                renderPart(rail, stack, buf, 100, lightOverlay);;
-                stack.translate(-2,0,0);
-                renderPart(rail, stack, buf, 100, lightOverlay);
-                stack.popPose();
+            float targetDist = 0.75f;
+
+            Matrix4f matrix4f = stack.last().pose();
+            Matrix3f matrix3f = stack.last().normal();
+
+//            consumer.vertex(matrix4f, 0, 0, 0).color(1f, 0f, 0f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
+//            consumer.vertex(matrix4f, (float) normal.x, (float) normal.y, (float) normal.z).color(1f, 0f, 0f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
+
+            for(float i = 0; i < 1; i += 0.001f) {
+                Vec3 current = TIMath.curve(pos0, vector0, pos1, vector1, i);
+                dist += (float) TIMath.vectorDist(last, current);
+//                stack.translate(current.x - last.x, current.y - last.y, current.z - last.z);
+                if(dist >= targetDist) {
+                    dist -= targetDist;
+                    Vec3 vec = current.subtract(lastTarget).normalize().multiply(targetDist, targetDist, targetDist);
+
+                    stack.pushPose();
+                    matrix4f = stack.last().pose();
+                    matrix3f = stack.last().normal();
+                    stack.translate(lastTarget.x, lastTarget.y, lastTarget.z);
+
+//                    consumer.vertex(matrix4f, 0, 0, 0).color(0f, 1f, 0f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
+//                    consumer.vertex(matrix4f, (float) vec.x, (float) vec.y, (float) vec.z).color(0f, 1f, 0f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
+
+//                    stack.mulPose(TIMath.getRotationQuaternion(normal, vec));
+                    stack.mulPose(new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)));
+
+//                    consumer.vertex(matrix4f, 0, 0, 0).color(0f, 0f, 1f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
+//                    consumer.vertex(matrix4f, (float) 1, (float) 0, (float) 0).color(0f, 0f, 1f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
+
+
+                    stack.mulPose(new Quaternionf().rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)));
+//
+                    renderPart(tie, stack, buf, 100, lightOverlay);
+                    stack.scale(1, 1, 6);
+                    stack.translate(1, 3 / 16f, 0);
+                    renderPart(rail, stack, buf, 100, lightOverlay);
+
+                    stack.translate(-2, 0, 0);
+                    renderPart(rail, stack, buf, 100, lightOverlay);
+
+                    stack.popPose();
+                    lastTarget = current;
+                }
                 last = current;
             }
         }

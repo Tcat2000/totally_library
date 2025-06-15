@@ -1,6 +1,7 @@
 package org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath;
 
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.Util;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -46,6 +47,11 @@ public class ChemicalBathRecipe extends TIRecipe {
     }
 
     @Override
+    public int length() {
+        return 140;
+    }
+
+    @Override
     public RecipeSerializer<?> getSerializer() {
         return SERIALIZER.get();
     }
@@ -55,26 +61,10 @@ public class ChemicalBathRecipe extends TIRecipe {
         return TIContent.TIRecipes.CHEMICAL_BATH.get();
     }
 
-    public static ChemicalBathRecipe findRecipe(Level level, ItemStack input, ItemStack output, FluidStack fluid) {
-        for(ChemicalBathRecipe recipe : Util.memoize(
-                (lvl) -> {
-                    List<ChemicalBathRecipe> list =
-                            new ArrayList<>(
-                                    recipes.getRecipes((Level) lvl)
-                                            .stream()
-                                            .sorted(
-                                                    Comparator.comparingInt(a -> a.priority.get())
-                                            )
-                                            .toList());
-                    Collections.reverse(list);
-                    return list;
-                }).apply(level)) {
-            if(recipe.validate(input, output, fluid)) return recipe;
-        }
-        return null;
-    }
-    public boolean validate(ItemStack input, ItemStack output, FluidStack fluid) {
-        return this.input.canExtractFrom(input) && this.output.canInsertTo(output) && this.fluidInput.canExtract(fluid) && this.fluidRequirement.canExtract(fluid);
+    @Override
+    public boolean checkCanExecute(IMultiblockState IState) {
+        ChemicalBathState state = (ChemicalBathState) IState;
+        return this.input.canExtractFrom(state.input.getValue().getStackInSlot(0)) && this.output.canInsertTo(state.output.getValue().getStackInSlot(0)) && this.fluidInput.canExtract(state.tank.getFluid()) && this.fluidRequirement.canExtract(state.tank.getFluid());
     }
     public static ChemicalBathRecipe recipeById(Level level, ResourceLocation id) {
         Optional<ChemicalBathRecipe> rec = recipes.getRecipes(level).stream().filter(recipe -> recipe.getId().equals(id)).findFirst();

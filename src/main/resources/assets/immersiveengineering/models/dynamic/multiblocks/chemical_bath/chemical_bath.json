@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "totally_immersive:block/multiblock/chemical_bath"
+  },
+  "loader": "forge:obj",
+  "model": "totally_immersive:models/block/multiblock/chemical_bath.obj",
+  "automatic_culling": false,
+  "flip_v": true
+}

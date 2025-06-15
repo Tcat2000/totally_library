@@ -21,13 +21,13 @@ public class GrinderLogic implements IClientTickableComponent<GrinderState>, IMu
     @Override
     public void tickClient(IMultiblockContext<GrinderState> iMultiblockContext) {
         GrinderState state = iMultiblockContext.getState();
-        state.process.tickClient();
+        state.process.tick(iMultiblockContext.getLevel().getRawLevel());
     }
 
     @Override
     public void tickServer(IMultiblockContext<GrinderState> iMultiblockContext) {
         GrinderState state = iMultiblockContext.getState();
-        state.process.tick(iMultiblockContext.getLevel().getRawLevel(), state);
+        state.process.tick(iMultiblockContext.getLevel().getRawLevel());
         iMultiblockContext.requestMasterBESync();
     }
 
@@ -98,7 +98,29 @@ public class GrinderLogic implements IClientTickableComponent<GrinderState>, IMu
         }
         if(
                 pos.equals(new BlockPos(1,1,0))) {
-            return Shapes.box(0,0,0.5,1,0.5,1);
+            return Shapes.or(
+                Shapes.box(0,0,8/16f,1,1/16f,1),
+                Shapes.box(0,0,9/16f,1,2/16f,1),
+                Shapes.box(0,0,10/16f,1,3/16f,1),
+                Shapes.box(0,0,11/16f,1,4/16f,1),
+                Shapes.box(0,0,12/16f,1,5/16f,1),
+                Shapes.box(0,0,13/16f,1,6/16f,1),
+                Shapes.box(0,0,14/16f,1,7/16f,1),
+                Shapes.box(0,0,15/16f,1,8/16f,1),
+                Shapes.box(0,0,16/16f,1,8/16f,1)
+            );
+        }
+        if(
+            pos.equals(new BlockPos(1,4,3))) {
+            return Shapes.or(Shapes.box(2/16f,2/16f,0,14/16f,14/16f,1), Shapes.box(6/16f,0,0,10/16f,2/16f,8/16f));
+        }
+        if(
+            pos.equals(new BlockPos(1,4,2))) {
+            return Shapes.or(Shapes.box(2/16f,2/16f,0,14/16f,14/16f,1), Shapes.box(2/16f,0,0,14/16f,14/16f,6/16f));
+        }
+        if(
+            pos.equals(new BlockPos(1,4,1))) {
+            return Shapes.box(2/16f,0,10/16f,14/16f,14/16f,1);
         }
         else return Shapes.block();
     }
@@ -106,14 +128,12 @@ public class GrinderLogic implements IClientTickableComponent<GrinderState>, IMu
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<GrinderState> ctx, CapabilityPosition position, Capability<T> cap) {
         if(cap == ForgeCapabilities.ITEM_HANDLER) {
-            if(position.posInMultiblock().equals(new BlockPos(0,0,1))) return ctx.getState().input.cast(ctx);
-            if(position.posInMultiblock().equals(new BlockPos(3,0,1))) return ctx.getState().output.cast(ctx);
+            if(position.posInMultiblock().equals(new BlockPos(1,4,3))) return ctx.getState().input.cast(ctx);
+            if(position.posInMultiblock().equals(new BlockPos(1,1,3))) return ctx.getState().processSlot.cast(ctx);
+            if(position.posInMultiblock().equals(new BlockPos(1,0,0))) return ctx.getState().output.cast(ctx);
         }
         if(cap == ForgeCapabilities.ENERGY) {
-            if(position.side() == RelativeBlockFace.UP || position.side() == null && position.posInMultiblock().equals(new BlockPos(3,1,0))) return ctx.getState().power.cast(ctx);
-        }
-        if(cap == ForgeCapabilities.FLUID_HANDLER) {
-            if(position.posInMultiblock().equals(new BlockPos(1,0,1))) return ctx.getState().chemTank.cast(ctx);
+            if(position.side() == RelativeBlockFace.BACK || position.side() == null && position.posInMultiblock().equals(new BlockPos(1,0,3))) return ctx.getState().power.cast(ctx);
         }
         return LazyOptional.empty();
     }

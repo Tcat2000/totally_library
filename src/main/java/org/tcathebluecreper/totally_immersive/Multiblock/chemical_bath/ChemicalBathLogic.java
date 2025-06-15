@@ -25,15 +25,13 @@ public class ChemicalBathLogic implements IClientTickableComponent<ChemicalBathS
     @Override
     public void tickClient(IMultiblockContext<ChemicalBathState> iMultiblockContext) {
         ChemicalBathState state = iMultiblockContext.getState();
-//        state.process.tickClient();
-        state.process.tick(iMultiblockContext.getLevel().getRawLevel(), state, iMultiblockContext);
+        state.TIProcess.tick(iMultiblockContext.getLevel().getRawLevel());
     }
 
     @Override
     public void tickServer(IMultiblockContext<ChemicalBathState> iMultiblockContext) {
         ChemicalBathState state = iMultiblockContext.getState();
-//        state.process.tick(iMultiblockContext.getLevel().getRawLevel(), state, iMultiblockContext);
-        state.TIProcess.tick();
+        state.TIProcess.tick(iMultiblockContext.getLevel().getRawLevel());
         iMultiblockContext.requestMasterBESync();
     }
 

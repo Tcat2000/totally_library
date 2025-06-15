@@ -8,6 +8,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -15,7 +16,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import org.tcathebluecreper.totally_immersive.block.markings.Marking;
 import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
+import org.tcathebluecreper.totally_immersive.block.track.TrackBlock;
+import org.tcathebluecreper.totally_immersive.block.track.TrackBlockEntity;
 
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -23,6 +27,9 @@ import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
 public class TIBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BETs = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
+
+
     public static final Marking NONE = new Marking() {
         @Override
         public String name() {
@@ -83,6 +90,10 @@ public class TIBlocks {
 
     public static final RegistryObject<Block> UHV_CONNECTOR = register("uhv_connector", () -> new BasicConnectorBlock<>(ConnectorBlock.PROPERTIES.get(), EnergyConnectorBlockEntity.SPEC_TO_TYPE.get(Pair.of("UHV", false))));
     public static final RegistryObject<Block> UHV_RELAY = register("uhv_relay", () -> new BasicConnectorBlock<>(ConnectorBlock.PROPERTIES.get(), EnergyConnectorBlockEntity.SPEC_TO_TYPE.get(Pair.of("UHV", true))));
+
+    public static final RegistryObject<TrackBlock> TRACK_BLOCK = register("track", TrackBlock::new);
+    public static final RegistryObject<BlockEntityType<TrackBlockEntity>> TRACK_BLOCK_ENTITY = BETs.register("track", () -> new BlockEntityType<>(TrackBlockEntity::new, Set.of(TRACK_BLOCK.get()), null));
+
 
 
     protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {

@@ -55,12 +55,12 @@ public class TIMultiblocks {
                         TIBlocks.BLOCKS, TIContent.TIItems.ITEMS,
                         r -> new NonMirrorableWithActiveBlock<>(properties, r),
                         MultiblockItem::new)
-                .defaultBEs(TIContent.TIBET.BETs);
+                .defaultBEs(TIBlocks.BETs);
     }
 
     private static <S extends IMultiblockState> IEMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
         return new IEMultiblockBuilder<>(logic, name)
-                .defaultBEs(TIContent.TIBET.BETs)
+                .defaultBEs(TIBlocks.BETs)
                 .customBlock(
                         TIBlocks.BLOCKS, TIContent.TIItems.ITEMS,
                         r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),
@@ -86,5 +86,6 @@ public class TIMultiblocks {
             toRegister.add(r);
             return r;
         }
+
     }
 }

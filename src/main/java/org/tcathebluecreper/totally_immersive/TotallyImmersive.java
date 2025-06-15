@@ -34,6 +34,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathRenderer;
+import org.tcathebluecreper.totally_immersive.block.track.TrackBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
 
 import java.util.function.Supplier;
@@ -91,7 +92,7 @@ public class TotallyImmersive {
 
         TIBlocks.BLOCKS.register(modEventBus);
         TIContent.TIItems.ITEMS.register(modEventBus);
-        TIContent.TIBET.BETs.register(modEventBus);
+        TIBlocks.BETs.register(modEventBus);
         TIMultiblocks.init();
         TIContent.TIRecipes.RECIPE_TYPES.register(modEventBus);
         TIContent.TIRecipes.RECIPE_SERIALIZERS.register(modEventBus);
@@ -146,10 +147,14 @@ public class TotallyImmersive {
             ChemicalBathRenderer.craneTop = new TIDynamicModel(ChemicalBathRenderer.craneTopId);
             ChemicalBathRenderer.craneMiddle = new TIDynamicModel(ChemicalBathRenderer.craneMiddleId);
             ChemicalBathRenderer.craneBottom = new TIDynamicModel(ChemicalBathRenderer.craneBottomId);
+
+            TrackBlockEntityRenderer.tie = new TIDynamicModel(TrackBlockEntityRenderer.tieLocation);
+            TrackBlockEntityRenderer.rail = new TIDynamicModel(TrackBlockEntityRenderer.railLocation);
         }
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             registerBERenderNoContext(event, TIMultiblocks.CHEMICAL_BATH.masterBE().get(), ChemicalBathRenderer::new);
+            registerBERenderNoContext(event, TIBlocks.TRACK_BLOCK_ENTITY.get(), TrackBlockEntityRenderer::new);
         }
         private static <T extends BlockEntity>
         void registerBERenderNoContext(

@@ -12,22 +12,24 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathRecipe;
 import org.tcathebluecreper.totally_immersive.TIContent;
 import org.tcathebluecreper.totally_immersive.TIMultiblocks;
+
+import java.util.List;
 
 import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
 
 public class GrinderJEICategory implements IRecipeCategory<GrinderRecipe> {
-    public static RecipeType<GrinderRecipe> UID = new RecipeType<>(ResourceLocation.fromNamespaceAndPath(MODID, "chemical_bath"), GrinderRecipe.class);
+    public static RecipeType<GrinderRecipe> UID = new RecipeType<>(ResourceLocation.fromNamespaceAndPath(MODID, "grinder"), GrinderRecipe.class);
     private IDrawable BACKGROUND;
     private IDrawable ICON;
-    private IDrawable TANK;
     private IDrawableAnimated ARROW;
+
     public GrinderJEICategory(IGuiHelper guiHelper) {
-        this.ICON = guiHelper.createDrawableItemStack(new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get()));
-        this.BACKGROUND = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/chemical_bath.png"), 9, 22, 143, 59);
-        this.TANK = guiHelper.createDrawable(ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/chemical_bath.png"), 197, 1, 18, 48);
+        this.ICON = guiHelper.createDrawableItemStack(new ItemStack(TIMultiblocks.GRINDER.blockItem().get()));
     }
+
     @Override
     public RecipeType<GrinderRecipe> getRecipeType() {
         return UID;
@@ -35,12 +37,17 @@ public class GrinderJEICategory implements IRecipeCategory<GrinderRecipe> {
 
     @Override
     public Component getTitle() {
-        return Component.translatable("totally_immersive.jei.chemical_bath.tittle");
+        return Component.translatable("jei.totally_immersive.grinder.tittle");
     }
 
     @Override
-    public IDrawable getBackground() {
-        return BACKGROUND;
+    public int getWidth() {
+        return 144;
+    }
+
+    @Override
+    public int getHeight() {
+        return 59;
     }
 
     @Override
@@ -48,13 +55,10 @@ public class GrinderJEICategory implements IRecipeCategory<GrinderRecipe> {
         return ICON;
     }
 
-    @Override
-    public void setRecipe(IRecipeLayoutBuilder iRecipeLayoutBuilder, GrinderRecipe grinderRecipe, IFocusGroup iFocusGroup) {
-
-    }
 
     @Override
-    public void draw(GrinderRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        TANK.draw(guiGraphics, 20, 10);
+    public void setRecipe(IRecipeLayoutBuilder builder, GrinderRecipe recipe, IFocusGroup iFocusGroup) {
+        builder.addInputSlot(10, 16).addItemStacks(List.of(recipe.input.value.getItems()));
+        builder.addOutputSlot(24 + 94, 16).addItemStack(recipe.output.value);
     }
 }

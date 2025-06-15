@@ -1,80 +1,53 @@
 package org.tcathebluecreper.totally_immersive.Multiblock.grinder;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.StackWithChance;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.jetbrains.annotations.Nullable;
-import org.tcathebluecreper.totally_immersive.TIContent;
-import org.tcathebluecreper.totally_immersive.TIMultiblocks;
+import net.minecraft.world.level.Level;
+import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathRecipe;
+import org.tcathebluecreper.totally_immersive.api.crafting.ProviderList;
+import org.tcathebluecreper.totally_immersive.api.crafting.TIRecipe;
+import org.tcathebluecreper.totally_immersive.api.crafting.TIRecipeSerializer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
 
-public class GrinderRecipeSerializer extends IERecipeSerializer<GrinderRecipe> {
-    @Override
-    public ItemStack getIcon() {
-        return new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get());
+public class GrinderRecipeSerializer extends TIRecipeSerializer<GrinderRecipe> {
+    public GrinderRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, GrinderRecipe> constructor, Class<? extends TIRecipe> type) {
+        super(constructor, type);
     }
 
     @Override
-    public GrinderRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
-        System.out.println(recipeId);
-        System.out.println(Ingredient.fromJson(json.get("itemInput")));
-        System.out.println(readOutput(json.get("outputs")).get());
-        return new GrinderRecipe(new ItemStack(Items.AIR), recipeId, Ingredient.fromJson(json.get("itemInput")), readOutputs(json.get("output").getAsJsonArray()), json.get("energyCost").getAsInt());
-    }
-
-    @Override
-    public @Nullable GrinderRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
-        return new GrinderRecipe(buffer.readItem(), id, Ingredient.fromNetwork(buffer), readOutputs(buffer), buffer.readInt());
-    }
-
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer, GrinderRecipe recipe) {
-        buffer.writeItemStack(recipe.dummy, true);
-        recipe.input.toNetwork(buffer);
-        writeOutputs(buffer, recipe.outputs);
-        buffer.writeInt(recipe.energyCost);
-    }
-
-    public List<StackWithChance> readOutputs(JsonArray json) {
-        List<StackWithChance> list = new ArrayList<>();
-        for(int i = 0; i < json.size(); i++) {
-            list.add(readStackWithChance(json.get(i).getAsJsonObject()));
+    public GrinderRecipe findRecipe(IMultiblockState state, Level level) {
+        for(GrinderRecipe recipe : Util.memoize(
+            (lvl) -> {
+                List<GrinderRecipe> list =
+                    new ArrayList<>(
+                        GrinderRecipe.recipes.getRecipes((Level) lvl)
+                            .stream()
+                            .sorted(
+                                Comparator.comparingInt(a -> a.priority.get())
+                            )
+                            .toList());
+                Collections.reverse(list);
+                return list;
+            }).apply(level)) {
+            if(recipe.checkCanExecute(state)) return recipe;
         }
+        return null;
+    }
+
+    @Override
+    public ProviderList<TIRecipeSerializer.Provider<?>> getProviders() {
+        ProviderList<TIRecipeSerializer.Provider<?>> list = super.getProviders();
+        list.add(new TIRecipeSerializer.IngredientProvider("inputItem"));
+        list.add(new TIRecipeSerializer.ItemStackProvider("outputItem"));
+        list.add(new TIRecipeSerializer.IntProvider("energyCost"));
+        list.add(new TIRecipeSerializer.IntProvider("priority", 1));
+        list.add(new TIRecipeSerializer.BooleanProvider("jeiHide", false));
         return list;
-    }
-
-
-    public StackWithChance readStackWithChance(JsonObject json) {
-        return new StackWithChance(readOutput(json), json.get("chance").getAsFloat());
-    }
-    public List<StackWithChance> readOutputs(FriendlyByteBuf buf) {
-        List<StackWithChance> list = new ArrayList<>();
-        int len = buf.readInt();
-        for(int i = 0; i < len; i++) {
-            list.add(readStackWithChance(buf));
-        }
-        return list;
-    }
-    public StackWithChance readStackWithChance(FriendlyByteBuf buf) {
-        return new StackWithChance(buf.readItem(), buf.readInt());
-    }
-    public void writeOutputs(FriendlyByteBuf buf, List<StackWithChance> outputs) {
-        buf.writeInt(outputs.size());
-        for(int i = 0; i < outputs.size(); i++) {
-            writeStackWithChance(buf, outputs.get(i));
-        }
-    }
-    public void writeStackWithChance(FriendlyByteBuf buf, StackWithChance stack) {
-        buf.writeItemStack(stack.stack().get(), true);
-        buf.writeFloat(stack.chance());
     }
 }

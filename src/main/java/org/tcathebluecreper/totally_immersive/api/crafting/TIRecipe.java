@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_immersive.api.crafting;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -44,4 +45,5 @@ public abstract class TIRecipe implements Recipe<Container> {
     }
 
     public abstract int length();
+    public abstract boolean checkCanExecute(IMultiblockState state);
 }

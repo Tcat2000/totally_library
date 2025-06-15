@@ -1,0 +1,13 @@
+{
+    "type": "totally_immersive:grinder",
+    "inputItem": {
+        "item": "minecraft:cobblestone",
+        "count": 1
+    },
+    "outputItem": {
+        "item": "minecraft:gravel",
+        "count": 1
+    },
+    "energyCost": 128,
+    "priority": 1
+}

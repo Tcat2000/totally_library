@@ -41,60 +41,60 @@ public class GrinderRenderer implements BlockEntityRenderer<MultiblockBlockEntit
     ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
     @Override
     public void render(MultiblockBlockEntityMaster<GrinderState> te, float pPartialTick, PoseStack matrixStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-        GrinderState state = te.getHelper().getContext().getState();
-        int mirrored = te.getBlockState().getValue(IEProperties.MIRRORED) ? -1 : 1;
-        int progress = state.process.progress;
-        matrixStack.pushPose();
-        rotateForFacing(matrixStack, te.getBlockState().getValue(IEProperties.FACING_HORIZONTAL));
-        matrixStack.translate(0.5,0.5,0.5);
-
-
-        if(progress == -1) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(state.process.resetCooldown - pPartialTick, state.process.RESET_TIME)) * mirrored, 0, 0);
-        else if(progress >= 20 && progress <= 120) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(progress - 20 + pPartialTick, state.process.PROCESS_TIME - 40)) * mirrored, 0, 0);
-        else if(progress > 120) matrixStack.translate(3 * mirrored, 0, 0);
-        renderPart(craneTop, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
-
-        float lowerDist = 0;
-        {
-            if(progress >= 40 && progress <= 55) {
-                lowerDist = -AnimationUtils.lerp(0,0.8f, AnimationUtils.amount(progress - 40 + pPartialTick, 16));
-            }
-            else if(progress >= 80 && progress <= 95) {
-                lowerDist = -AnimationUtils.lerp(0,0.8f, 1 - AnimationUtils.amount(progress - 80 + pPartialTick, 16));
-            }
-            else if(progress >= 55 && progress <= 80) lowerDist = -0.8f;
-            else if(progress >= 0) {
-                lowerDist = 0;
-            }
-//            else if(progress == -1) lowerDist = 0;
-            if(progress >= 120) {
-                if(progress <= 130) lowerDist = -AnimationUtils.lerp(0, 0.5f, AnimationUtils.amount(progress - 120, 10));
-                else lowerDist = -AnimationUtils.lerp(0, 0.5f, 1 - AnimationUtils.amount(progress - 130, 10));
-            }
-            if(progress <= 20 && progress >= 0) {
-                if(progress <= 10) lowerDist = -AnimationUtils.lerp(0, 0.5f, AnimationUtils.amount(progress, 10));
-                else lowerDist = -AnimationUtils.lerp(0, 0.5f, 1 - AnimationUtils.amount(progress - 10, 10));
-            }
-            if(progress == -2) lowerDist = 0;
-        }
-        matrixStack.translate(0, lowerDist, 0);
-        renderPart(craneBottom, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
-
-        matrixStack.pushPose();
-        matrixStack.scale(0.5f, 0.5f ,0.5f);
-        matrixStack.translate(0,1.5,0);
-        if(progress >= 10 && progress <= 130) itemRenderer.renderStatic(state.processSlot.getValue().getStackInSlot(0), ItemDisplayContext.FIXED, getLightLevel(te.getLevel(), te.getBlockPos()), OverlayTexture.NO_OVERLAY, matrixStack, pBuffer, te.getLevel(), 1);
-        matrixStack.popPose();
-
-
-        renderPart(craneMiddle, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
-        while(lowerDist <= 1/16f) {
-            renderPart(craneMiddle, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
-            matrixStack.translate(0, 1/16f,0);
-            lowerDist += 1/16f;
-        }
-
-        matrixStack.popPose();
+//        GrinderState state = te.getHelper().getContext().getState();
+//        int mirrored = te.getBlockState().getValue(IEProperties.MIRRORED) ? -1 : 1;
+//        int progress = state.process.progress;
+//        matrixStack.pushPose();
+//        rotateForFacing(matrixStack, te.getBlockState().getValue(IEProperties.FACING_HORIZONTAL));
+//        matrixStack.translate(0.5,0.5,0.5);
+//
+//
+//        if(progress == -1) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(state.process.resetCooldown - pPartialTick, state.process.RESET_TIME)) * mirrored, 0, 0);
+//        else if(progress >= 20 && progress <= 120) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(progress - 20 + pPartialTick, state.process.PROCESS_TIME - 40)) * mirrored, 0, 0);
+//        else if(progress > 120) matrixStack.translate(3 * mirrored, 0, 0);
+//        renderPart(craneTop, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
+//
+//        float lowerDist = 0;
+//        {
+//            if(progress >= 40 && progress <= 55) {
+//                lowerDist = -AnimationUtils.lerp(0,0.8f, AnimationUtils.amount(progress - 40 + pPartialTick, 16));
+//            }
+//            else if(progress >= 80 && progress <= 95) {
+//                lowerDist = -AnimationUtils.lerp(0,0.8f, 1 - AnimationUtils.amount(progress - 80 + pPartialTick, 16));
+//            }
+//            else if(progress >= 55 && progress <= 80) lowerDist = -0.8f;
+//            else if(progress >= 0) {
+//                lowerDist = 0;
+//            }
+////            else if(progress == -1) lowerDist = 0;
+//            if(progress >= 120) {
+//                if(progress <= 130) lowerDist = -AnimationUtils.lerp(0, 0.5f, AnimationUtils.amount(progress - 120, 10));
+//                else lowerDist = -AnimationUtils.lerp(0, 0.5f, 1 - AnimationUtils.amount(progress - 130, 10));
+//            }
+//            if(progress <= 20 && progress >= 0) {
+//                if(progress <= 10) lowerDist = -AnimationUtils.lerp(0, 0.5f, AnimationUtils.amount(progress, 10));
+//                else lowerDist = -AnimationUtils.lerp(0, 0.5f, 1 - AnimationUtils.amount(progress - 10, 10));
+//            }
+//            if(progress == -2) lowerDist = 0;
+//        }
+//        matrixStack.translate(0, lowerDist, 0);
+//        renderPart(craneBottom, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
+//
+//        matrixStack.pushPose();
+//        matrixStack.scale(0.5f, 0.5f ,0.5f);
+//        matrixStack.translate(0,1.5,0);
+//        if(progress >= 10 && progress <= 130) itemRenderer.renderStatic(state.processSlot.getValue().getStackInSlot(0), ItemDisplayContext.FIXED, getLightLevel(te.getLevel(), te.getBlockPos()), OverlayTexture.NO_OVERLAY, matrixStack, pBuffer, te.getLevel(), 1);
+//        matrixStack.popPose();
+//
+//
+//        renderPart(craneMiddle, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
+//        while(lowerDist <= 1/16f) {
+//            renderPart(craneMiddle, matrixStack, pBuffer, Direction.NORTH, pPackedLight, pPackedOverlay);
+//            matrixStack.translate(0, 1/16f,0);
+//            lowerDist += 1/16f;
+//        }
+//
+//        matrixStack.popPose();
     }
     private int getLightLevel(Level level, BlockPos pos) {
         int bLight = level.getBrightness(LightLayer.BLOCK, pos);

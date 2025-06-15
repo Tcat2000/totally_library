@@ -11,8 +11,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSerializer<R> {
-    protected static final Map<Class<? extends TIRecipe>, Function<IMultiblockState, ? extends TIRecipe>> SERIALIZERS = new HashMap<>();
+    protected static final Map<Class<? extends TIRecipe>, BiFunction<IMultiblockState, Level, ? extends TIRecipe>> SERIALIZERS = new HashMap<>();
     private final ProviderList<Provider<?>> providers = getProviders();
     private final BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor;
     public ProviderList<Provider<?>> getProviders() {
@@ -62,7 +64,7 @@ public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSe
         });
     }
 
-    public abstract R findRecipe(IMultiblockState state);
+    public abstract R findRecipe(IMultiblockState state, Level level);
 
     public abstract static class Provider<T> {
         public final String field;
@@ -130,7 +132,7 @@ public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSe
         }
         public BooleanProvider(String field, Boolean value) {
             super(field, value);
-            this.defaultValue = null;
+            this.defaultValue = value;
         }
         public BooleanProvider(String field) {
             super(field, null);
@@ -229,11 +231,11 @@ public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSe
             }
             return false;
         }
-        public boolean insertTo(IItemHandlerModifiable handeler, int slot) {
+        public boolean insertTo(IItemHandlerModifiable handler, int slot) {
             assert value != null;
-            if(!canInsertTo(handeler.getStackInSlot(slot))) return false;
-            if(handeler.getStackInSlot(slot).isEmpty()) handeler.setStackInSlot(slot, value);
-            else handeler.getStackInSlot(slot).setCount(handeler.getStackInSlot(slot).getCount() + value.getCount());
+            if(!canInsertTo(handler.getStackInSlot(slot))) return false;
+            if(handler.getStackInSlot(slot).isEmpty()) handler.setStackInSlot(slot, value.copy());
+            else handler.getStackInSlot(slot).setCount(handler.getStackInSlot(slot).getCount() + value.getCount());
             return true;
         }
     }
@@ -250,9 +252,8 @@ public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSe
             if(data == null) throw new RecipeSerializationException(recipeID, "Missing '" + field + "'");
             int count = data.has("count") ? data.get("count").getAsInt() : 1;
             if(data.has("item")) {
-                JsonObject itemObj = data.getAsJsonObject("item");
-                Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(itemObj.get("item").getAsString()));
-                if(item == null) throw new RecipeSerializationException(recipeID, "Cannot find item '" + ResourceLocation.parse(itemObj.get("item").getAsString()) + "'");
+                Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(data.get("item").getAsString()));
+                if(item == null) throw new RecipeSerializationException(recipeID, "Cannot find item '" + ResourceLocation.parse(data.get("item").getAsString()) + "'");
                 return new IngredientProvider(field, Ingredient.of(new ItemStack(item, count)));
             }
             if(data.has("items")) {
@@ -293,6 +294,9 @@ public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSe
             return new IngredientProvider(field, Ingredient.fromNetwork(buf));
         }
 
+        public boolean canExtractFrom(IItemHandler handler, int slot) {
+            return canExtractFrom(handler.getStackInSlot(slot));
+        }
         public boolean canExtractFrom(ItemStack stack) {
             assert value != null;
             for(ItemStack itemstack : value.getItems()) {
@@ -302,13 +306,35 @@ public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSe
             }
             return false;
         }
+        public boolean canExtractFromAny(IItemHandler handler) {
+            return canExtractFromAny(handler, 0, handler.getSlots());
+        }
+        public boolean canExtractFromAny(IItemHandler handler, int min, int max) {
+            for(int i = min; i < max; i++) {
+                if(canExtractFrom(handler, i)) return true;
+            }
+            return false;
+        }
+        public ItemStack extractFrom(IItemHandler handler, int slot) {
+            return extractFrom(handler.getStackInSlot(slot));
+        }
         public ItemStack extractFrom(ItemStack stack) {
             assert value != null;
             for(ItemStack itemstack : value.getItems()) {
                 if (itemstack.is(stack.getItem()) && itemstack.getCount() <= stack.getCount()) {
                     stack.setCount(stack.getCount() - itemstack.getCount());
-                    return itemstack;
+                    return itemstack.copy();
                 }
+            }
+            return ItemStack.EMPTY;
+        }
+        public ItemStack extractFromAny(IItemHandler handler) {
+            return extractFromAny(handler, 0, handler.getSlots());
+        }
+        public ItemStack extractFromAny(IItemHandler handler, int min, int max) {
+            assert value != null;
+            for(int i = min; i < max; i++) {
+                if(canExtractFrom(handler, i)) return extractFrom(handler, i);
             }
             return ItemStack.EMPTY;
         }

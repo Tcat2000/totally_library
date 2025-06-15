@@ -24,9 +24,6 @@ public class TIContent {
 
         public static final RegistryObject<SprayCan> SPRAY_CAN = ITEMS.register("spray_can", () -> new SprayCan(new Item.Properties()));
     }
-    public static class TIBET {
-        public static final DeferredRegister<BlockEntityType<?>> BETs = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
-    }
 
     public static class TIRecipes {
         public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
@@ -37,7 +34,7 @@ public class TIContent {
 
         static {
             ChemicalBathRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("chemical_bath", () -> new ChemicalBathRecipeSerializer(ChemicalBathRecipe::new, ChemicalBathRecipe.class));
-            GrinderRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("grinder", GrinderRecipeSerializer::new);
+            GrinderRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("grinder", () -> new GrinderRecipeSerializer(GrinderRecipe::new, GrinderRecipe.class));
         }
 
         public static <T extends Recipe<?>> IERecipeTypes.TypeWithClass<T> register(String name, Class<T> clazz){

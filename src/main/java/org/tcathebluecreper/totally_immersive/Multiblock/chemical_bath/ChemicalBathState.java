@@ -11,10 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.RangedWrapper;
 import org.tcathebluecreper.totally_immersive.api.crafting.RangedDetectorWrapper;
 import org.tcathebluecreper.totally_immersive.api.crafting.TIRecipeProcess;
 
@@ -31,8 +29,7 @@ public class ChemicalBathState implements IMultiblockState {
     StoredCapability<ArrayFluidHandler> chemTank;
     StoredCapability<IEnergyStorage> power;
 
-    ChemicalBathProcess process;
-    TIRecipeProcess<ChemicalBathRecipe> TIProcess;
+    TIRecipeProcess<ChemicalBathRecipe, ChemicalBathState> TIProcess;
 
     public RedstoneControl.RSState redstoneState = RedstoneControl.RSState.enabledByDefault();
 
@@ -48,8 +45,6 @@ public class ChemicalBathState implements IMultiblockState {
         output = new StoredCapability<>(new RangedDetectorWrapper(inventory, 2, 3, (mode, stack) -> TIProcess.triggerUpdate()));
         chemTank = new StoredCapability<>(new ArrayFluidHandler(tank, true, true, TIProcess::triggerUpdate));
         power = new StoredCapability<>(new WrappingEnergyStorage(energy, true, true));
-
-        process = new ChemicalBathProcess();
     }
 
     @Override
@@ -57,7 +52,6 @@ public class ChemicalBathState implements IMultiblockState {
         compoundTag.put("inventory", inventory.serializeNBT());
         compoundTag.put("tank", tank.writeToNBT(new CompoundTag()));
         compoundTag.put("energy", energy.serializeNBT());
-        compoundTag.put("process", process.serializeNBT());
     }
 
     @Override
@@ -65,13 +59,10 @@ public class ChemicalBathState implements IMultiblockState {
         inventory.deserializeNBT(compoundTag.getCompound("inventory"));
         tank.readFromNBT(compoundTag.getCompound("tank"));
         energy.deserializeNBT(compoundTag.get("energy"));
-        process = new ChemicalBathProcess(compoundTag.getCompound("process"));
     }
 
     @Override
     public void writeSyncNBT(CompoundTag nbt) {
-        nbt.putInt("progress", this.process.progress);
-        nbt.putInt("cooldown", this.process.resetCooldown);
         nbt.put("inventory", inventory.serializeNBT());
         nbt.put("tank", tank.writeToNBT(new CompoundTag()));
         redstoneState.writeSyncNBT(nbt.getCompound("redstone_mode"));
@@ -79,35 +70,31 @@ public class ChemicalBathState implements IMultiblockState {
 
     @Override
     public void readSyncNBT(CompoundTag nbt) {
-        this.process.progress = nbt.getInt("progress");
-        this.process.resetCooldown = nbt.getInt("cooldown");
         this.inventory.deserializeNBT(nbt.getCompound("inventory"));
         this.tank.readFromNBT(nbt.getCompound("tank"));
         this.redstoneState.readSyncNBT(nbt.getCompound("redstone_mode"));
     }
 
-    protected TIRecipeProcess<ChemicalBathRecipe> createProcess(int tick) {
-        return new TIRecipeProcess<>(
+    protected TIRecipeProcess<ChemicalBathRecipe, ChemicalBathState> createProcess(int tick) {
+        return new TIRecipeProcess<ChemicalBathRecipe, ChemicalBathState>(
             ChemicalBathRecipe.class,
             List.of(
-                new TIRecipeProcess.TickAction<ChemicalBathRecipe>(0, ((process) -> {
-                    processSlot.getValue().setStackInSlot(0, process.recipe.input.extractFrom(input.getValue().getStackInSlot(0)));
+                new TIRecipeProcess.TickAction<ChemicalBathRecipe, ChemicalBathState>(0, ((process, parallel) -> {
+                    processSlot.getValue().setStackInSlot(0, process.recipe[0].input.extractFrom(input.getValue().getStackInSlot(0)));
+                    return true;
                 })),
-                new TIRecipeProcess.TickAction<ChemicalBathRecipe>(70, ((process) -> {
-                    assert process.recipe.output.value != null;
-                    process.recipe.fluidInput.extract(tank.getFluidInTank(0));
-                    processSlot.getValue().setStackInSlot(0, process.recipe.output.value.copy());
-                })),
-                new TIRecipeProcess.TickAction<ChemicalBathRecipe>(140, ((process) -> {
+                new TIRecipeProcess.TickAction<ChemicalBathRecipe, ChemicalBathState>(140, ((process, parallel) -> {
                     processSlot.getValue().setStackInSlot(0, ItemStack.EMPTY);
                     ItemStack stack = process.state.output.getValue().getStackInSlot(0);
-                    process.recipe.output.insertTo(output.getValue(), 0);
+                    process.recipe[0].output.insertTo(output.getValue(), 0);
+                    return true;
                 }))
             ),
             this,
-            (process) -> {
-                if(process.state.power.getValue().extractEnergy(process.recipe.energyCost.value, true) == process.recipe.energyCost.value) {
-                    process.state.power.getValue().extractEnergy(process.recipe.energyCost.value, false);
+            (process, parallel) -> {
+                if(process.recipe[0] == null) return false;
+                if(process.state.power.getValue().extractEnergy(process.recipe[0].energyCost.value, true) == process.recipe[0].energyCost.value) {
+                    process.state.power.getValue().extractEnergy(process.recipe[0].energyCost.value, false);
                     return true;
                 }
                 return false;

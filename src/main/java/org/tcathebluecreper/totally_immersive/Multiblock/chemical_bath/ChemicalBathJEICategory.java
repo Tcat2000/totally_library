@@ -40,8 +40,13 @@ public class ChemicalBathJEICategory implements IRecipeCategory<ChemicalBathReci
     }
 
     @Override
-    public IDrawable getBackground() {
-        return BACKGROUND;
+    public int getWidth() {
+        return 144;
+    }
+
+    @Override
+    public int getHeight() {
+        return 59;
     }
 
     @Override

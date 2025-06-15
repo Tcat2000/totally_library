@@ -1,0 +1,5 @@
+{
+    "flip_v":true,
+    "loader":"forge:obj",
+    "model":"totally_immersive:models/dynamic/track/rail.obj"
+}

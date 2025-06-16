@@ -34,6 +34,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathRenderer;
+import org.tcathebluecreper.totally_immersive.block.TIBlocks;
 import org.tcathebluecreper.totally_immersive.block.track.TrackBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
 

@@ -1,14 +1,22 @@
 package org.tcathebluecreper.totally_immersive.block.track;
 
+import com.lowdragmc.lowdraglib.client.renderer.impl.BlockStateRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Transformation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -16,7 +24,10 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.tcathebluecreper.totally_immersive.api.TIBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.api.TIMath;
+import org.tcathebluecreper.totally_immersive.lib.AnimationUtils;
 import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
+
+import static org.tcathebluecreper.totally_immersive.block.track.BallastBlock.NE_FILL;
 
 public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEntity> {
     public static final String tieLocation = "track/tie";
@@ -35,6 +46,18 @@ public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEn
         Vec3 vector0 = be.localVector;
         Vec3 vector1 = be.targetVector;
 
+        if(!be.constructed && be.renderBlocks != null) {
+            BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
+            be.renderBlocks.forEach((pos, state) -> {
+                if(state == null) return;
+                stack.pushPose();
+                BlockPos offset = pos.subtract(be.getBlockPos());
+                stack.translate(offset.getX(), offset.getY(), offset.getZ());
+                dispatcher.renderSingleBlock(state, stack, buf, 100, lightOverlay, ModelData.builder().with(new ModelProperty<>(), 2).build(), RenderType.solid());
+                stack.popPose();
+            });
+        }
+
         stack.translate(0.5,0.5,0.5);
         if(!(vector0 == null || vector1 == null)) {
             Vec3 last = TIMath.curve(pos0, vector0, pos1, vector1, 0);
@@ -43,56 +66,62 @@ public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEn
             Vec3 lastVec = be.localVector.normalize();
             final Vec3 normal = new Vec3(0,0,1);
             float dist = 0;
-            float targetDist = 0.75f;
+            float targetDist = 0.5f;
 
-            Matrix4f matrix4f = stack.last().pose();
-            Matrix3f matrix3f = stack.last().normal();
-
-//            consumer.vertex(matrix4f, 0, 0, 0).color(1f, 0f, 0f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
-//            consumer.vertex(matrix4f, (float) normal.x, (float) normal.y, (float) normal.z).color(1f, 0f, 0f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
-
-            for(float i = 0; i < 1; i += 0.001f) {
+            float inc = 0.001f;
+            for(float i = 0; i < 1; i += inc) {
                 Vec3 current = TIMath.curve(pos0, vector0, pos1, vector1, i);
-                dist += (float) TIMath.vectorDist(last, current);
-//                stack.translate(current.x - last.x, current.y - last.y, current.z - last.z);
+                float currentDist = (float) TIMath.vectorDist(last, current);
+
                 if(dist >= targetDist) {
+                    Vec3 next = TIMath.curve(pos0, vector0, pos1, vector1, i + inc);
+                    Vec3 real = TIMath.lerp3D(lastTarget, next, AnimationUtils.amount(dist - currentDist, (float) (TIMath.vectorDist(current, next) - currentDist)));//dist - currentDist | TIMath.vectorDist(current, next) - currentDist
+
                     dist -= targetDist;
-                    Vec3 vec = current.subtract(lastTarget).normalize().multiply(targetDist, targetDist, targetDist);
+                    Vec3 vec = real.subtract(lastTarget).normalize().multiply(targetDist, targetDist, targetDist);
 
                     stack.pushPose();
-                    matrix4f = stack.last().pose();
-                    matrix3f = stack.last().normal();
                     stack.translate(lastTarget.x, lastTarget.y, lastTarget.z);
+                    stack.mulPose(new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)).rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)));
 
-//                    consumer.vertex(matrix4f, 0, 0, 0).color(0f, 1f, 0f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
-//                    consumer.vertex(matrix4f, (float) vec.x, (float) vec.y, (float) vec.z).color(0f, 1f, 0f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
-
-//                    stack.mulPose(TIMath.getRotationQuaternion(normal, vec));
-                    stack.mulPose(new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)));
-
-//                    consumer.vertex(matrix4f, 0, 0, 0).color(0f, 0f, 1f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
-//                    consumer.vertex(matrix4f, (float) 1, (float) 0, (float) 0).color(0f, 0f, 1f, 1f).normal(matrix3f, 1.0F, 0.0F, 0.0F).endVertex();
-
-
-                    stack.mulPose(new Quaternionf().rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)));
-//
                     renderPart(tie, stack, buf, 100, lightOverlay);
-                    stack.scale(1, 1, 6);
+
+                    stack.pushPose();
+                    stack.scale(1, 1, 10 * targetDist);//(float) TIMath.vectorDist(lastTarget.add(lastTarget.z, 0, lastTarget.x), current.add(current.z, 0, current.x))
                     stack.translate(1, 3 / 16f, 0);
                     renderPart(rail, stack, buf, 100, lightOverlay);
+                    stack.popPose();
 
-                    stack.translate(-2, 0, 0);
+                    stack.scale(1, 1, 10 * targetDist);//(float) TIMath.vectorDist(lastTarget.add(-lastTarget.z, 0, -lastTarget.x), current.add(-current.z, 0, -current.x))
+                    stack.translate(-1, 3/16f, 0);
                     renderPart(rail, stack, buf, 100, lightOverlay);
 
                     stack.popPose();
                     lastTarget = current;
                 }
+                dist += currentDist;
                 last = current;
             }
         }
         stack.popPose();
     }
-    private static BlockPos invertBlockPos(BlockPos pos) {
+    public static BlockPos invertBlockPos(BlockPos pos) {
         return new BlockPos(-pos.getX(), -pos.getY(), -pos.getZ());
+    }
+
+    public static class RenderableTrackPart {
+        public final Vec3 pos;
+        public final Quaternionf rot;
+        public final Vec3 scale;
+
+        public RenderableTrackPart(Vec3 pos, Quaternionf rot, Vec3 scale) {
+            this.pos = pos;
+            this.rot = rot;
+            this.scale = scale;
+        }
+
+        public void render(TIDynamicModel part, PoseStack stack) {
+
+        }
     }
 }

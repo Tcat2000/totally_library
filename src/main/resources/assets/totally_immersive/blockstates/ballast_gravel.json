@@ -1,0 +1,308 @@
+{
+    "multipart": [
+        {
+            "when": {
+                "fill_ne": "1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_1"
+            }
+        },
+        {
+            "when": {
+                "fill_es": "1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_1",
+                "y": 90,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_sw": "1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_1",
+                "y": 180,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_wn": "1"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_1",
+                "y": 270,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_ne": "2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_2"
+            }
+        },
+        {
+            "when": {
+                "fill_es": "2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_2",
+                "y": 90,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_sw": "2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_2",
+                "y": 180,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_wn": "2"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_2",
+                "y": 270,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_ne": "3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_3"
+            }
+        },
+        {
+            "when": {
+                "fill_es": "3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_3",
+                "y": 90,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_sw": "3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_3",
+                "y": 180,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_wn": "3"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_3",
+                "y": 270,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_ne": "4"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_4"
+            }
+        },
+        {
+            "when": {
+                "fill_es": "4"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_4",
+                "y": 90,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_sw": "4"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_4",
+                "y": 180,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_wn": "4"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_4",
+                "y": 270,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_ne": "5"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_5"
+            }
+        },
+        {
+            "when": {
+                "fill_es": "5"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_5",
+                "y": 90,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_sw": "5"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_5",
+                "y": 180,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_wn": "5"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_5",
+                "y": 270,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_ne": "6"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_6"
+            }
+        },
+        {
+            "when": {
+                "fill_es": "6"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_6",
+                "y": 90,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_sw": "6"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_6",
+                "y": 180,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_wn": "6"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_6",
+                "y": 270,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_ne": "7"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_7"
+            }
+        },
+        {
+            "when": {
+                "fill_es": "7"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_7",
+                "y": 90,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_sw": "7"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_7",
+                "y": 180,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_wn": "7"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_7",
+                "y": 270,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_ne": "8"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_8"
+            }
+        },
+        {
+            "when": {
+                "fill_es": "8"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_8",
+                "y": 90,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_sw": "8"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_8",
+                "y": 180,
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "fill_wn": "8"
+            },
+            "apply": {
+                "model": "totally_immersive:block/ballast/gravel_8",
+                "y": 270,
+                "uvlock": true
+            }
+        }
+    ]
+}

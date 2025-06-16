@@ -20,6 +20,7 @@ import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalB
 import org.tcathebluecreper.totally_immersive.Multiblock.grinder.GrinderLogic;
 import org.tcathebluecreper.totally_immersive.Multiblock.grinder.GrinderMultiblock;
 import org.tcathebluecreper.totally_immersive.Multiblock.grinder.GrinderState;
+import org.tcathebluecreper.totally_immersive.block.TIBlocks;
 import org.tcathebluecreper.totally_immersive.lib.ITMultiblockBlock;
 
 import java.util.ArrayList;

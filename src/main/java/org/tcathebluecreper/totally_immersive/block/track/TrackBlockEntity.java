@@ -1,6 +1,6 @@
 package org.tcathebluecreper.totally_immersive.block.track;
 
-import net.minecraft.client.renderer.texture.Tickable;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
@@ -11,9 +11,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.tcathebluecreper.totally_immersive.TIBlocks;
+import org.joml.Quaternionf;
+import org.tcathebluecreper.totally_immersive.block.TIBlocks;
 import org.tcathebluecreper.totally_immersive.api.NBT.TINBTUtils;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class TrackBlockEntity extends BlockEntity {
@@ -25,11 +28,17 @@ public class TrackBlockEntity extends BlockEntity {
     public BlockPos target;
     public Vec3 targetVector;
 
+    public boolean constructed = false;
+    public Map<BlockPos, BlockState> renderBlocks;
+    public List<TrackBlockEntityRenderer.RenderableTrackPart> renderTies;
+    public List<TrackBlockEntityRenderer.RenderableTrackPart> renderRails;
+
     @Override
     public void saveAdditional(CompoundTag tag) {
         tag.put("LocalVector", TINBTUtils.vec3ToTag(Objects.requireNonNullElse(localVector, new Vec3(0,0,0))));
         tag.put("TargetVector", TINBTUtils.vec3ToTag(Objects.requireNonNullElse(targetVector, new Vec3(0,0,0))));
         tag.put("TargetPos", TINBTUtils.blockPosToTag(Objects.requireNonNullElse(target, getBlockPos())));
+        tag.putBoolean("Constructed", constructed);
     }
 
     @Override
@@ -37,6 +46,7 @@ public class TrackBlockEntity extends BlockEntity {
         localVector = TINBTUtils.tagToVec(nbt.getCompound("LocalVector"));
         target = TINBTUtils.tagToBlockPos((IntArrayTag) nbt.get("TargetPos"));
         targetVector = TINBTUtils.tagToVec(nbt.getCompound("TargetVector"));
+        constructed = nbt.getBoolean("Constructed");
         setChanged();
     }
 

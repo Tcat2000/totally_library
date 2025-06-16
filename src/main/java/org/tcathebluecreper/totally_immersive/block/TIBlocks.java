@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive;
+package org.tcathebluecreper.totally_immersive.block;
 
 import blusunrize.immersiveengineering.common.blocks.generic.ConnectorBlock;
 import blusunrize.immersiveengineering.common.blocks.metal.BasicConnectorBlock;
@@ -14,8 +14,10 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import org.tcathebluecreper.totally_immersive.TIContent;
 import org.tcathebluecreper.totally_immersive.block.markings.Marking;
 import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
+import org.tcathebluecreper.totally_immersive.block.track.BallastBlock;
 import org.tcathebluecreper.totally_immersive.block.track.TrackBlock;
 import org.tcathebluecreper.totally_immersive.block.track.TrackBlockEntity;
 
@@ -94,7 +96,7 @@ public class TIBlocks {
     public static final RegistryObject<TrackBlock> TRACK_BLOCK = register("track", TrackBlock::new);
     public static final RegistryObject<BlockEntityType<TrackBlockEntity>> TRACK_BLOCK_ENTITY = BETs.register("track", () -> new BlockEntityType<>(TrackBlockEntity::new, Set.of(TRACK_BLOCK.get()), null));
 
-
+    public static final RegistryObject<BallastBlock> GRAVEL_BALLAST = register("ballast_gravel", BallastBlock::new);
 
     protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {
         RegistryObject<T> blk = BLOCKS.register(name, block);

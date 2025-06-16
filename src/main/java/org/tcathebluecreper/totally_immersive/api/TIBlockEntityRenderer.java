@@ -36,7 +36,7 @@ public abstract class TIBlockEntityRenderer<S extends BlockEntity> implements Bl
         return LightTexture.pack(bLight, sLight);
     }
 
-    protected void renderPart(TIDynamicModel part, PoseStack matrix, MultiBufferSource buffer, int light, int overlay) {
+    public void renderPart(TIDynamicModel part, PoseStack matrix, MultiBufferSource buffer, int light, int overlay) {
         matrix.pushPose();
         matrix.translate(-.5, -.5, -.5);
         List<BakedQuad> quads = part.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);

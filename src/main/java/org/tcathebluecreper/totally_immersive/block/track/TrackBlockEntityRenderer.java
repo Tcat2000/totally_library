@@ -59,49 +59,14 @@ public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEn
         }
 
         stack.translate(0.5,0.5,0.5);
-        if(!(vector0 == null || vector1 == null)) {
-            Vec3 last = TIMath.curve(pos0, vector0, pos1, vector1, 0);
-            Vec3 lastTarget = TIMath.curve(pos0, vector0, pos1, vector1, 0);
-            Vec3 first = last;
-            Vec3 lastVec = be.localVector.normalize();
-            final Vec3 normal = new Vec3(0,0,1);
-            float dist = 0;
-            float targetDist = 0.5f;
 
-            float inc = 0.001f;
-            for(float i = 0; i < 1; i += inc) {
-                Vec3 current = TIMath.curve(pos0, vector0, pos1, vector1, i);
-                float currentDist = (float) TIMath.vectorDist(last, current);
-
-                if(dist >= targetDist) {
-                    Vec3 next = TIMath.curve(pos0, vector0, pos1, vector1, i + inc);
-                    Vec3 real = TIMath.lerp3D(lastTarget, next, AnimationUtils.amount(dist - currentDist, (float) (TIMath.vectorDist(current, next) - currentDist)));//dist - currentDist | TIMath.vectorDist(current, next) - currentDist
-
-                    dist -= targetDist;
-                    Vec3 vec = real.subtract(lastTarget).normalize().multiply(targetDist, targetDist, targetDist);
-
-                    stack.pushPose();
-                    stack.translate(lastTarget.x, lastTarget.y, lastTarget.z);
-                    stack.mulPose(new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)).rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)));
-
-                    renderPart(tie, stack, buf, 100, lightOverlay);
-
-                    stack.pushPose();
-                    stack.scale(1, 1, 10 * targetDist);//(float) TIMath.vectorDist(lastTarget.add(lastTarget.z, 0, lastTarget.x), current.add(current.z, 0, current.x))
-                    stack.translate(1, 3 / 16f, 0);
-                    renderPart(rail, stack, buf, 100, lightOverlay);
-                    stack.popPose();
-
-                    stack.scale(1, 1, 10 * targetDist);//(float) TIMath.vectorDist(lastTarget.add(-lastTarget.z, 0, -lastTarget.x), current.add(-current.z, 0, -current.x))
-                    stack.translate(-1, 3/16f, 0);
-                    renderPart(rail, stack, buf, 100, lightOverlay);
-
-                    stack.popPose();
-                    lastTarget = current;
-                }
-                dist += currentDist;
-                last = current;
-            }
+        if(!(be.renderRails == null || be.renderTies == null)) {
+            be.renderTies.forEach(data -> {
+                data.render(this, tie, stack, buf, light, lightOverlay);
+            });
+            be.renderRails.forEach(data -> {
+                data.render(this, rail, stack, buf, light, lightOverlay);
+            });
         }
         stack.popPose();
     }
@@ -111,17 +76,25 @@ public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEn
 
     public static class RenderableTrackPart {
         public final Vec3 pos;
+        public final Vec3 pos2;
         public final Quaternionf rot;
         public final Vec3 scale;
 
-        public RenderableTrackPart(Vec3 pos, Quaternionf rot, Vec3 scale) {
+        public RenderableTrackPart(Vec3 pos, Quaternionf rot, Vec3 pos2, Vec3 scale) {
             this.pos = pos;
             this.rot = rot;
+            this.pos2 = pos2;
             this.scale = scale;
         }
 
-        public void render(TIDynamicModel part, PoseStack stack) {
-
+        public void render(TIBlockEntityRenderer<?> context, TIDynamicModel part, PoseStack stack, MultiBufferSource buf, int light, int lightOverlay) {
+            stack.pushPose();
+            stack.translate(pos.x, pos.y, pos.z);
+            stack.mulPose(rot);
+            stack.translate(pos2.x, pos2.y, pos2.z);
+            stack.scale((float) scale.x, (float) scale.y, (float) scale.z);
+            context.renderPart(part, stack, buf, light, lightOverlay);
+            stack.popPose();
         }
     }
 }

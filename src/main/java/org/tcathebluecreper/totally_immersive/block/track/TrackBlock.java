@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -28,6 +29,7 @@ import org.tcathebluecreper.totally_immersive.api.TIMath;
 import org.tcathebluecreper.totally_immersive.block.TIBlocks;
 import org.tcathebluecreper.totally_immersive.lib.AnimationUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -95,6 +97,9 @@ public class TrackBlock extends Block implements EntityBlock {
             Vec3 vector0 = be.localVector;
             Vec3 vector1 = be.targetVector;
 
+            be.renderTies = new ArrayList<>();
+            be.renderRails = new ArrayList<>();
+
             if(!(vector0 == null || vector1 == null)) {
                 Vec3 last = TIMath.curve(pos0, vector0, pos1, vector1, 0);
                 Vec3 lastTarget = TIMath.curve(pos0, vector0, pos1, vector1, 0);
@@ -111,15 +116,15 @@ public class TrackBlock extends Block implements EntityBlock {
 
                     if(dist >= targetDist) {
                         Vec3 next = TIMath.curve(pos0, vector0, pos1, vector1, i + inc);
-                        Vec3 real = TIMath.lerp3D(lastTarget, next, AnimationUtils.amount(dist - currentDist, (float) (TIMath.vectorDist(current, next) - currentDist)));//dist - currentDist | TIMath.vectorDist(current, next) - currentDist
+                        Vec3 real = TIMath.lerp3D(lastTarget, next, AnimationUtils.amount(dist - currentDist, (float) (TIMath.vectorDist(current, next))));//dist - currentDist | TIMath.vectorDist(current, next) - currentDist
 
                         dist -= targetDist;
                         Vec3 vec = real.subtract(lastTarget).normalize().multiply(targetDist, targetDist, targetDist);
 
 
-                        be.renderTies.add(new TrackBlockEntityRenderer.RenderableTrackPart(new Vec3(0, 0, 0), new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)).rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)), new Vec3(1, 1, 1)));
-                        be.renderRails.add(new TrackBlockEntityRenderer.RenderableTrackPart(new Vec3(1, 3 / 16f, 0), new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)).rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)), new Vec3(1, 1, 10 * targetDist)));
-                        be.renderRails.add(new TrackBlockEntityRenderer.RenderableTrackPart(new Vec3(-1, 3 / 16f, 0), new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)).rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)), new Vec3(1, 1, 10 * targetDist)));
+                        be.renderTies.add(new TrackBlockEntityRenderer.RenderableTrackPart(lastTarget, new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)).rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)), new Vec3(0, 0, 0), new Vec3(1, 1, 1)));
+                        be.renderRails.add(new TrackBlockEntityRenderer.RenderableTrackPart(lastTarget, new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)).rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)), new Vec3(1, 3 / 16f, 0), new Vec3(1, 1, 10 * targetDist)));
+                        be.renderRails.add(new TrackBlockEntityRenderer.RenderableTrackPart(lastTarget, new Quaternionf().lookAlong(new Vector3f((float) vec.z, (float) vec.y, (float) vec.x), new Vector3f(0,1,0)).rotateAxis(90 * Mth.DEG_TO_RAD, new Vector3f(0,1,0)), new Vec3(-1, 3 / 16f, 0), new Vec3(1, 1, 10 * targetDist)));
 
                         lastTarget = current;
                     }
@@ -195,6 +200,7 @@ public class TrackBlock extends Block implements EntityBlock {
         Vec3 acc = new Vec3(0,0,0);
         Map<BlockPos, BlockState> map = new HashMap<>();
         for(int i = 0; i < 16*8; i++) {
+            if(!(level.getBlockState(pos).getBlock() instanceof AirBlock) && !(level.getBlockState(pos).getBlock() instanceof BallastBlock) && !(level.getBlockState(pos).getBlock() instanceof TrackBlock)) break;
             BallastBlock.addLayers(level, acc.add(pos.getCenter())).forEach((POS, STATE) -> {
                 if(map.containsKey(POS)) {
                     map.put(POS, BallastBlock.combine(STATE, map.get(POS)));

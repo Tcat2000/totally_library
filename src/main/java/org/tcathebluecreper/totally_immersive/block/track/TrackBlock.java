@@ -200,7 +200,10 @@ public class TrackBlock extends Block implements EntityBlock {
         Vec3 acc = new Vec3(0,0,0);
         Map<BlockPos, BlockState> map = new HashMap<>();
         for(int i = 0; i < 16*8; i++) {
-            if(!(level.getBlockState(pos).getBlock() instanceof AirBlock) && !(level.getBlockState(pos).getBlock() instanceof BallastBlock) && !(level.getBlockState(pos).getBlock() instanceof TrackBlock)) break;
+            System.out.println("state: " + (level.getBlockState(pos).getBlock()));
+            if(!(level.getBlockState(pos).getBlock() instanceof AirBlock) && !(level.getBlockState(pos).getBlock() instanceof BallastBlock) && !(level.getBlockState(pos).getBlock() instanceof TrackBlock)) {
+                break;
+            }
             BallastBlock.addLayers(level, acc.add(pos.getCenter())).forEach((POS, STATE) -> {
                 if(map.containsKey(POS)) {
                     map.put(POS, BallastBlock.combine(STATE, map.get(POS)));

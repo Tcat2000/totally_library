@@ -21,6 +21,7 @@ import org.tcathebluecreper.totally_immersive.Multiblock.grinder.GrinderLogic;
 import org.tcathebluecreper.totally_immersive.Multiblock.grinder.GrinderMultiblock;
 import org.tcathebluecreper.totally_immersive.Multiblock.grinder.GrinderState;
 import org.tcathebluecreper.totally_immersive.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.item.TIItems;
 import org.tcathebluecreper.totally_immersive.lib.ITMultiblockBlock;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class TIMultiblocks {
         return new IEMultiblockBuilder<>(logic, name)
                 .notMirrored()
                 .customBlock(
-                        TIBlocks.BLOCKS, TIContent.TIItems.ITEMS,
+                        TIBlocks.BLOCKS, TIItems.ITEMS,
                         r -> new NonMirrorableWithActiveBlock<>(properties, r),
                         MultiblockItem::new)
                 .defaultBEs(TIBlocks.BETs);
@@ -63,7 +64,7 @@ public class TIMultiblocks {
         return new IEMultiblockBuilder<>(logic, name)
                 .defaultBEs(TIBlocks.BETs)
                 .customBlock(
-                        TIBlocks.BLOCKS, TIContent.TIItems.ITEMS,
+                        TIBlocks.BLOCKS, TIItems.ITEMS,
                         r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),
                         MultiblockItem::new);
     }

@@ -44,6 +44,14 @@ public abstract class TIBlockEntityRenderer<S extends BlockEntity> implements Bl
         matrix.popPose();
     }
 
+    public void renderPart(TIDynamicModel part, PoseStack matrix, MultiBufferSource buffer, int light, int overlay, RenderType rt) {
+        matrix.pushPose();
+        matrix.translate(-.5, -.5, -.5);
+        List<BakedQuad> quads = part.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
+        RenderUtils.renderModelTESRFast(quads, buffer.getBuffer(rt), matrix, light, overlay);
+        matrix.popPose();
+    }
+
     private static final Map<Direction, Quaternionf> ROTATE_FOR_FACING = Util.make(
         new EnumMap<>(Direction.class), m -> {
             for(Direction facing : DirectionUtils.BY_HORIZONTAL_INDEX)

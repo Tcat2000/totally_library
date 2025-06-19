@@ -17,9 +17,8 @@ import net.minecraftforge.registries.RegistryObject;
 import org.tcathebluecreper.totally_immersive.TIContent;
 import org.tcathebluecreper.totally_immersive.block.markings.Marking;
 import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
-import org.tcathebluecreper.totally_immersive.block.track.BallastBlock;
-import org.tcathebluecreper.totally_immersive.block.track.TrackBlock;
-import org.tcathebluecreper.totally_immersive.block.track.TrackBlockEntity;
+import org.tcathebluecreper.totally_immersive.block.track.*;
+import org.tcathebluecreper.totally_immersive.item.TIItems;
 
 import java.util.Set;
 import java.util.function.Function;
@@ -98,9 +97,12 @@ public class TIBlocks {
 
     public static final RegistryObject<BallastBlock> GRAVEL_BALLAST = register("ballast_gravel", BallastBlock::new);
 
+    public static final RegistryObject<BridgeBlock> BRIDGE_BLOCK = register("bridge", BridgeBlock::new);
+    public static final RegistryObject<BlockEntityType<BridgeBlockEntity>> BRIDGE_BLOCK_ENTITY = BETs.register("bridge", () -> new BlockEntityType<>(BridgeBlockEntity::new, Set.of(BRIDGE_BLOCK.get()), null));
+
     protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {
         RegistryObject<T> blk = BLOCKS.register(name, block);
-        TIContent.TIItems.ITEMS.register(itemName, () -> item.apply(blk.get()));
+        TIItems.ITEMS.register(itemName, () -> item.apply(blk.get()));
         return blk;
     }
     protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block) {

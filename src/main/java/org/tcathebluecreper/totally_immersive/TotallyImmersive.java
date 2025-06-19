@@ -1,7 +1,11 @@
 package org.tcathebluecreper.totally_immersive;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
@@ -18,6 +22,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -35,7 +40,9 @@ import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathRenderer;
 import org.tcathebluecreper.totally_immersive.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.block.track.BridgeBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.block.track.TrackBlockEntityRenderer;
+import org.tcathebluecreper.totally_immersive.item.TIItems;
 import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
 
 import java.util.function.Supplier;
@@ -92,7 +99,7 @@ public class TotallyImmersive {
 
 
         TIBlocks.BLOCKS.register(modEventBus);
-        TIContent.TIItems.ITEMS.register(modEventBus);
+        TIItems.ITEMS.register(modEventBus);
         TIBlocks.BETs.register(modEventBus);
         TIMultiblocks.init();
         TIContent.TIRecipes.RECIPE_TYPES.register(modEventBus);
@@ -151,12 +158,16 @@ public class TotallyImmersive {
 
             TrackBlockEntityRenderer.tie = new TIDynamicModel(TrackBlockEntityRenderer.tieLocation);
             TrackBlockEntityRenderer.rail = new TIDynamicModel(TrackBlockEntityRenderer.railLocation);
+
+            BridgeBlockEntityRenderer.beam = new TIDynamicModel(BridgeBlockEntityRenderer.beamLocation);
         }
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             registerBERenderNoContext(event, TIMultiblocks.CHEMICAL_BATH.masterBE().get(), ChemicalBathRenderer::new);
             registerBERenderNoContext(event, TIBlocks.TRACK_BLOCK_ENTITY.get(), TrackBlockEntityRenderer::new);
+            registerBERenderNoContext(event, TIBlocks.BRIDGE_BLOCK_ENTITY.get(), BridgeBlockEntityRenderer::new);
         }
+
         private static <T extends BlockEntity>
         void registerBERenderNoContext(
                 EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render) {

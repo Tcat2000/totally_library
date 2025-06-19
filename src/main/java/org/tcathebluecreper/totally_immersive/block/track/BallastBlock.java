@@ -59,25 +59,26 @@ public class BallastBlock extends Block {
         return shape;
     }
 
-    public static Map<BlockPos, BlockState> addLayers(Level level, Vec3 pos) {
+    public static Map<BlockPos, BlockState> addLayers(Level level, Vec3 pos, Map<BlockPos, BlockState> map) {
         BlockPos blockPos = BlockPos.containing(pos);
-        BlockState state = level.getBlockState(blockPos);
+        BlockState state = map.getOrDefault(blockPos, Blocks.AIR.defaultBlockState());
         if(state.getBlock() instanceof AirBlock) {
 //            level.setBlock(blockPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState(), 3);
 //            state = level.getBlockState(blockPos);
             state = TIBlocks.GRAVEL_BALLAST.get().defaultBlockState();
+            map.put(blockPos, state);
         }
-        if(!(state.getBlock() instanceof BallastBlock)) return new HashMap<>();
+//        if(!(state.getBlock() instanceof BallastBlock)) return new HashMap<>();
         pos = pos.subtract(blockPos.getCenter());
         IntegerProperty prop = null;
-        if(pos.x > 0 && pos.z > 0) prop = NE_FILL;
-        else if(pos.x < 0 && pos.z > 0) prop = ES_FILL;
-        else if(pos.x > 0 && pos.z < 0) prop = WN_FILL;
+        if(pos.x >= 0 && pos.z >= 0) prop = NE_FILL;
+        else if(pos.x < 0 && pos.z >= 0) prop = ES_FILL;
+        else if(pos.x >= 0 && pos.z < 0) prop = WN_FILL;
         else if(pos.x < 0 && pos.z < 0) prop = SW_FILL;
-        if(prop == null) return new HashMap<>();
+        if(prop == null) return map;
 
         pos = pos.add(0.5,0.5,0.5);
-        BlockState above = level.getBlockState(blockPos.above());
+        BlockState above = map.getOrDefault(blockPos.above(), Blocks.AIR.defaultBlockState());
 
         if(above.getBlock() instanceof BallastBlock && above.getValue(NE_FILL) != 0) state = state.setValue(NE_FILL, 8);
         if(above.getBlock() instanceof BallastBlock && above.getValue(ES_FILL) != 0) state = state.setValue(ES_FILL, 8);
@@ -89,19 +90,8 @@ public class BallastBlock extends Block {
             return Map.of(blockPos, Blocks.GRAVEL.defaultBlockState());
         }
 
-        Map<BlockPos, BlockState> map = new HashMap<>();
-
-        if(state.getValue(NE_FILL) != 0 && state.getValue(ES_FILL) != 0 && state.getValue(SW_FILL) != 0 && state.getValue(WN_FILL) != 0) {
-            BlockPos dPos = blockPos.below();
-            while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
-//                level.setBlock(blockPos.below(), Blocks.GRAVEL.defaultBlockState(), Block.UPDATE_ALL);
-                map.put(blockPos.below(), Blocks.GRAVEL.defaultBlockState());
-                dPos = dPos.below();
-            }
-        }
-
         if(above.getBlock() instanceof BallastBlock && above.getValue(prop) != 0) state = state.setValue(prop, 8);
-        else if(pos.y > 14/16f) state.setValue(prop, 8);
+        else if(pos.y > 13/16f) state.setValue(prop, 8);
         else if(pos.y > 12/16f) state = state.setValue(prop, 7);
         else if(pos.y > 10/16f) state = state.setValue(prop, 6);
         else if(pos.y > 8/16f) state = state.setValue(prop, 5);
@@ -109,8 +99,46 @@ public class BallastBlock extends Block {
         else if(pos.y > 4/16f) state = state.setValue(prop, 3);
         else if(pos.y > 2/16f) state = state.setValue(prop, 2);
         else if(pos.y > 0/16f) state = state.setValue(prop, 1);
-        map.put(blockPos, state);
-//        level.setBlock(blockPos, state, Block.UPDATE_ALL);
+        map.put(blockPos, combine(state, map.get(blockPos)));
+
+        state = map.get(blockPos);
+        if(state.getValue(NE_FILL) != 0) {
+            BlockPos dPos = blockPos.below();
+            while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
+                BlockState oldState = map.getOrDefault(dPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState());
+                if(oldState == null) break;
+                map.put(blockPos.below(), oldState.setValue(NE_FILL, 8));
+                dPos = dPos.below();
+            }
+        }
+        if(state.getValue(ES_FILL) != 0) {
+            BlockPos dPos = blockPos.below();
+            while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
+                BlockState oldState = map.getOrDefault(dPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState());
+                if(oldState == null) break;
+                map.put(blockPos.below(), oldState.setValue(ES_FILL, 8));
+                dPos = dPos.below();
+            }
+        }
+        if(state.getValue(SW_FILL) != 0) {
+            BlockPos dPos = blockPos.below();
+            while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
+                BlockState oldState = map.getOrDefault(dPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState());
+                if(oldState == null) break;
+                map.put(blockPos.below(), oldState.setValue(SW_FILL, 8));
+                dPos = dPos.below();
+            }
+        }
+        if(state.getValue(WN_FILL) != 0) {
+            BlockPos dPos = blockPos.below();
+            while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
+                BlockState oldState = map.getOrDefault(dPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState());
+                if(oldState == null) break;
+                map.put(blockPos.below(), oldState.setValue(WN_FILL, 8));
+                dPos = dPos.below();
+            }
+        }
+
         return map;
     }
 }

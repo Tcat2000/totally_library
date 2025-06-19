@@ -10,7 +10,18 @@ public class TIMath {
         return curve(new Vec3(pos0.getX(), pos0.getY(), pos0.getZ()), pos0vector, new Vec3(pos1.getX(), pos1.getY(), pos1.getZ()), pos1vector, amount);
     }
     public static Vec3 curve(Vec3 pos0, Vec3 pos0vector, Vec3 pos1, Vec3 pos1vector, float amount) {
-        return lerp3D(lerp3D(pos0, pos0.add(pos0vector), amount), lerp3D(pos1.add(pos1vector), pos1, amount), amount);
+        Vec3 p0 = pos0;
+        Vec3 p1 = pos0.add(pos0vector);
+        Vec3 p2 = pos1.add(pos1vector);
+        Vec3 p3 = pos1;
+
+        Vec3 p4 = lerp3D(p0, p1, amount);
+        Vec3 p5 = lerp3D(p1, p2, amount);
+        Vec3 p6 = lerp3D(p2, p3, amount);
+
+        Vec3 p7 = lerp3D(p4, p5, amount);
+        Vec3 p8 = lerp3D(p5, p6, amount);
+        return lerp3D(p7, p8, amount);
     }
 
     public static Vec3 lerp3D(Vec3 pos0, Vec3 pos1, float value) {

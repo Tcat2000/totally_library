@@ -10,17 +10,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.tcathebluecreper.totally_immersive.api.NBT.TINBTUtils;
 import org.tcathebluecreper.totally_immersive.api.RenderablePart;
 import org.tcathebluecreper.totally_immersive.block.TIBlocks;
-import org.tcathebluecreper.totally_immersive.api.NBT.TINBTUtils;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class TrackBlockEntity extends BlockEntity {
-    public TrackBlockEntity(BlockPos pos, BlockState state) {
-        super(TIBlocks.TRACK_BLOCK_ENTITY.get(), pos, state);
+public class BridgeBlockEntity extends BlockEntity {
+    public BridgeBlockEntity(BlockPos pos, BlockState state) {
+        super(TIBlocks.BRIDGE_BLOCK_ENTITY.get(), pos, state);
     }
 
     public Vec3 localVector;
@@ -30,8 +30,7 @@ public class TrackBlockEntity extends BlockEntity {
     public boolean constructed = false;
     public boolean needUpdate = true;
     public Map<BlockPos, BlockState> renderBlocks;
-    public List<RenderablePart> renderTies;
-    public List<RenderablePart> renderRails;
+    public List<RenderablePart> renderBeams;
 
     @Override
     public void saveAdditional(CompoundTag tag) {
@@ -56,6 +55,7 @@ public class TrackBlockEntity extends BlockEntity {
         tag.put("LocalVector", TINBTUtils.vec3ToTag(Objects.requireNonNullElse(localVector, new Vec3(0,0,0))));
         tag.put("TargetVector", TINBTUtils.vec3ToTag(Objects.requireNonNullElse(targetVector, new Vec3(0,0,0))));
         tag.put("TargetPos", TINBTUtils.blockPosToTag(Objects.requireNonNullElse(targetPos, getBlockPos())));
+        tag.putBoolean("Constructed", constructed);
         return tag;
     }
 

@@ -19,7 +19,7 @@ import org.tcathebluecreper.totally_immersive.block.TIBlocks;
 
 import java.util.*;
 
-import static org.tcathebluecreper.totally_immersive.TIContent.TIItems.SPRAY_CAN;
+import static org.tcathebluecreper.totally_immersive.item.TIItems.SPRAY_CAN;
 
 public class MarkingBlock extends Block {
     public static Property<Marking> MARKING_TOP;

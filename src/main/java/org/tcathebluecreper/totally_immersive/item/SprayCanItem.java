@@ -27,8 +27,8 @@ import org.tcathebluecreper.totally_immersive.block.markings.MarkingBlock;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SprayCan extends Item implements IUIHolder.ItemUI {
-    public SprayCan(Properties p_41383_) {
+public class SprayCanItem extends Item implements IUIHolder.ItemUI {
+    public SprayCanItem(Properties p_41383_) {
         super(p_41383_);
     }
 

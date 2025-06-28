@@ -25,14 +25,14 @@ public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEn
         if(be.targetPos == null || be.targetVector == null || be.localVector == null) return;
         stack.pushPose();
 
-        if(!be.constructed && be.renderBlocks != null) {
+        if((!be.constructed || be.previewForceBallast) && be.renderBlocks != null) {
             BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
             be.renderBlocks.forEach((pos, state) -> {
                 if(state == null) return;
                 stack.pushPose();
                 BlockPos offset = pos.subtract(be.getBlockPos());
                 stack.translate(offset.getX(), offset.getY(), offset.getZ());
-                dispatcher.renderSingleBlock(state, stack, buf, 100, lightOverlay, ModelData.builder().with(new ModelProperty<>(), 2).build(), be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
+                dispatcher.renderSingleBlock(state, stack, buf, 100, 100, ModelData.builder().with(new ModelProperty<>(), 2).build(), be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
                 stack.popPose();
             });
         }
@@ -41,10 +41,10 @@ public class TrackBlockEntityRenderer extends TIBlockEntityRenderer<TrackBlockEn
 
         if(!(be.renderRails == null || be.renderTies == null)) {
             be.renderTies.forEach(data -> {
-                data.render(this, tie, stack, buf, light, lightOverlay, be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
+                data.render(this, tie, stack, buf, 100, 100, be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
             });
             be.renderRails.forEach(data -> {
-                data.render(this, rail, stack, buf, light, lightOverlay, be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
+                data.render(this, rail, stack, buf, 100, 100, be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
             });
         }
         stack.popPose();

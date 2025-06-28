@@ -29,6 +29,10 @@ public class TrackBlockEntity extends BlockEntity {
 
     public boolean constructed = false;
     public boolean needUpdate = true;
+
+    public boolean previewForceBallast = false;
+    public Float previewMinBallastHeight = null;
+
     public Map<BlockPos, BlockState> renderBlocks;
     public List<RenderablePart> renderTies;
     public List<RenderablePart> renderRails;
@@ -56,6 +60,7 @@ public class TrackBlockEntity extends BlockEntity {
         tag.put("LocalVector", TINBTUtils.vec3ToTag(Objects.requireNonNullElse(localVector, new Vec3(0,0,0))));
         tag.put("TargetVector", TINBTUtils.vec3ToTag(Objects.requireNonNullElse(targetVector, new Vec3(0,0,0))));
         tag.put("TargetPos", TINBTUtils.blockPosToTag(Objects.requireNonNullElse(targetPos, getBlockPos())));
+        tag.putBoolean("Constructed", constructed);
         return tag;
     }
 

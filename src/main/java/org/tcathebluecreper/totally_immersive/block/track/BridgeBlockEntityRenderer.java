@@ -18,6 +18,8 @@ import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
 public class BridgeBlockEntityRenderer extends TIBlockEntityRenderer<BridgeBlockEntity> {
     public static final String beamLocation = "bridge/wooden_beam";
     public static TIDynamicModel beam;
+    public static final String beamHorizontalLocation = "bridge/wooden_beam_horizontal";
+    public static TIDynamicModel beamHorizontal;
     @Override
     public void render(@NotNull BridgeBlockEntity be, float v, PoseStack stack, MultiBufferSource buf, int light, int lightOverlay) {
         if(be.targetPos == null || be.targetVector == null || be.localVector == null) return;
@@ -30,7 +32,7 @@ public class BridgeBlockEntityRenderer extends TIBlockEntityRenderer<BridgeBlock
                 stack.pushPose();
                 BlockPos offset = pos.subtract(be.getBlockPos());
                 stack.translate(offset.getX(), offset.getY(), offset.getZ());
-                dispatcher.renderSingleBlock(state, stack, buf, 100, lightOverlay, ModelData.builder().with(new ModelProperty<>(), 2).build(), TIRenderTypes.blueprint());
+                dispatcher.renderSingleBlock(state, stack, buf, 100, lightOverlay, ModelData.builder().with(new ModelProperty<>(), 2).build(), be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
                 stack.popPose();
             });
         }
@@ -39,7 +41,12 @@ public class BridgeBlockEntityRenderer extends TIBlockEntityRenderer<BridgeBlock
 
         if(!(be.renderBeams == null)) {
             be.renderBeams.forEach(data -> {
-                data.render(this, beam, stack, buf, light, lightOverlay, TIRenderTypes.blueprint());
+                data.render(this, beam, stack, buf, 100, 100, be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
+            });
+        }
+        if(!(be.renderBeamsHorizontal == null)) {
+            be.renderBeamsHorizontal.forEach(data -> {
+                data.render(this, beamHorizontal, stack, buf, 100, 100, be.constructed ? RenderType.solid() : TIRenderTypes.blueprint());
             });
         }
         stack.popPose();

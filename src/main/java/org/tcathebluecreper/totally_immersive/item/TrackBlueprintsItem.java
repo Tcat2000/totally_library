@@ -26,7 +26,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+import org.tcathebluecreper.totally_immersive.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.block.track.TrackBlock;
+import org.tcathebluecreper.totally_immersive.block.track.TrackBlockEntity;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +39,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class TrackBlueprintsItem extends Item implements HeldItemUIFactory.IHeldItemUIHolder {
-    public static Supplier<WidgetGroup> uiCache = UIProject.loadUIFromFile(ResourceLocation.fromNamespaceAndPath("ldlib", "track_config"));
+    public static TrackedDummyWorld world;
+    public static Supplier<WidgetGroup> uiCache;
     public TrackBlueprintsItem() {
         super(new Properties());
     }
@@ -49,9 +54,23 @@ public class TrackBlueprintsItem extends Item implements HeldItemUIFactory.IHeld
 
     @Override
     public ModularUI createUI(Player player, HeldItemUIFactory.HeldItemHolder heldItemHolder) {
-        WidgetGroup root = UIProject.loadUIFromFile(new ResourceLocation("ldlib:track_config")).get();
+        if(uiCache == null) uiCache = UIProject.loadUIFromFile(ResourceLocation.fromNamespaceAndPath("ldlib", "track_config"));
+        WidgetGroup root = uiCache.get();
         AtomicReference<CompoundTag> tag = new AtomicReference<>(heldItemHolder.held.getTag());
         if(tag.get() == null) tag.set(new CompoundTag());
+
+        // Overall Preview
+
+        SceneWidget preview = createTrackPreviewWidget(0,8, 8,184, 98);
+        root.addWidget(preview);
+        preview.setScalable(true);
+        preview.setDraggable(true);
+        preview.setIntractable(true);
+        preview.setRenderSelect(true);
+        preview.setRenderFacing(true);
+        preview.setOrthoRange(3);
+
+        setTrackPreviewSettingUseBallast(0, true);
 
         // Track Ballast
 
@@ -101,30 +120,11 @@ public class TrackBlueprintsItem extends Item implements HeldItemUIFactory.IHeld
             selectTrackGaugeMenu.setVisible(true);
         });
         WidgetGroup gaugeList = (WidgetGroup) root.getFirstWidgetById("gauge_list");
-        TrackedDummyWorld world = new TrackedDummyWorld();
-        SceneWidget wig = new SceneWidget(0,0,90,30, world);
-        wig.setRenderedCore(List.of(new BlockPos(0, 0, 0), new BlockPos(0, 1, 0)), new ISceneBlockRenderHook() {
-            @Override
-            public void apply(boolean isTESR, RenderType layer) {
-                RenderSystem.enableBlend();
-                RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-            }
-        });
-        wig.useOrtho(true);
-        wig.setOrthoRange(1);
-        wig.setScalable(false);
-        wig.setDraggable(false);
-        wig.setIntractable(false);
-        wig.setRenderSelect(false);
-        wig.setRenderFacing(false);
-        wig.setCameraYawAndPitch(89.999f,0);
-        world.setBlock(new BlockPos(0,0,0), Blocks.DIAMOND_BLOCK.defaultBlockState(), 3);
-        world.setBlock(new BlockPos(0,1,0), Blocks.CHEST.defaultBlockState(), 3);
-//        TrackBlockEntity track = (TrackBlockEntity) world.getBlockEntity(new BlockPos(0,0,0));
-//        track.targetPos = new BlockPos(10,0,0);
-        wig.setSize(90,30);
 
-        gaugeList.addWidget(new WidgetGroup(0, 0, 90, 30).addWidget(wig));
+
+        gaugeList.addWidget(new WidgetGroup(0, 0, 90, 30).addWidget(createTrackPreviewWidget(5,0,0,90,40)));
+        gaugeList.addWidget(new WidgetGroup(0, 0, 90, 30).addWidget(createTrackPreviewWidget(10,0,0,90,40)));
+        gaugeList.addWidget(new WidgetGroup(0, 0, 90, 30).addWidget(createTrackPreviewWidget(15,0,0,90,40)));
 
         // Tie Options
 
@@ -165,5 +165,45 @@ public class TrackBlueprintsItem extends Item implements HeldItemUIFactory.IHeld
             spacingInfoText.setContent(List.of(text));
         });
         return new ModularUI(root, heldItemHolder, player);
+    }
+
+    public SceneWidget createTrackPreviewWidget(int x, int posX, int posY, int sizeX, int sizeY) {
+        if(world == null) world = new TrackedDummyWorld();
+        SceneWidget wig = new SceneWidget(0,0,90,30, world);
+        wig.setRenderedCore(List.of(new BlockPos(x, 0, 10)), new ISceneBlockRenderHook() {
+            @Override
+            public void apply(boolean isTESR, RenderType layer) {
+                RenderSystem.enableBlend();
+                RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+            }
+        });
+        wig.useOrtho(true);
+        wig.setOrthoRange(1);
+        wig.setScalable(false);
+        wig.setDraggable(false);
+        wig.setIntractable(false);
+        wig.setRenderSelect(false);
+        wig.setRenderFacing(false);
+        wig.useCacheBuffer(false);
+        wig.setCenter(new Vector3f(0.5f,0,0.5f));
+        wig.setCameraYawAndPitch(89.999f,0);
+        world.setBlock(new BlockPos(x,0,10), TIBlocks.TRACK_BLOCK.get().defaultBlockState(), 3);
+        TrackBlockEntity track = (TrackBlockEntity) world.getBlockEntity(new BlockPos(x,0,10));
+        track.targetPos = new BlockPos(x,0,-10);
+        track.targetVector = new Vec3(0,0,0);
+        track.localVector = new Vec3(0,0,0);
+        track.previewMinBallastHeight = -2f;
+        track.constructed = true;
+        track.needUpdate = true;
+        ((TrackBlock)world.getBlockState(new BlockPos(x,0,10)).getBlock()).updateTrack(world, new BlockPos(x,0,10), world.getBlockState(new BlockPos(x,0,10)), null);
+        wig.setSize(sizeX,sizeY);
+        wig.setSelfPosition(posX,posY);
+        return wig;
+    }
+    public void setTrackPreviewSettingUseBallast(int x, boolean useBallast) {
+        TrackBlockEntity be = (TrackBlockEntity) world.getBlockEntity(new BlockPos(x,0,10));
+        be.previewForceBallast = useBallast;
+        be.needUpdate = true;
+        ((TrackBlock)world.getBlockState(new BlockPos(x,0,10)).getBlock()).updateTrack(world, new BlockPos(x,0,10), world.getBlockState(new BlockPos(x,0,10)), null);
     }
 }

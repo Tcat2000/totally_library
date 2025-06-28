@@ -92,10 +92,10 @@ public class TIBlocks {
     public static final RegistryObject<Block> UHV_CONNECTOR = register("uhv_connector", () -> new BasicConnectorBlock<>(ConnectorBlock.PROPERTIES.get(), EnergyConnectorBlockEntity.SPEC_TO_TYPE.get(Pair.of("UHV", false))));
     public static final RegistryObject<Block> UHV_RELAY = register("uhv_relay", () -> new BasicConnectorBlock<>(ConnectorBlock.PROPERTIES.get(), EnergyConnectorBlockEntity.SPEC_TO_TYPE.get(Pair.of("UHV", true))));
 
+    public static final RegistryObject<BallastBlock> GRAVEL_BALLAST = register("ballast_gravel", BallastBlock::new);
+
     public static final RegistryObject<TrackBlock> TRACK_BLOCK = register("track", TrackBlock::new);
     public static final RegistryObject<BlockEntityType<TrackBlockEntity>> TRACK_BLOCK_ENTITY = BETs.register("track", () -> new BlockEntityType<>(TrackBlockEntity::new, Set.of(TRACK_BLOCK.get()), null));
-
-    public static final RegistryObject<BallastBlock> GRAVEL_BALLAST = register("ballast_gravel", BallastBlock::new);
 
     public static final RegistryObject<BridgeBlock> BRIDGE_BLOCK = register("bridge", BridgeBlock::new);
     public static final RegistryObject<BlockEntityType<BridgeBlockEntity>> BRIDGE_BLOCK_ENTITY = BETs.register("bridge", () -> new BlockEntityType<>(BridgeBlockEntity::new, Set.of(BRIDGE_BLOCK.get()), null));

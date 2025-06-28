@@ -31,6 +31,7 @@ public class BridgeBlockEntity extends BlockEntity {
     public boolean needUpdate = true;
     public Map<BlockPos, BlockState> renderBlocks;
     public List<RenderablePart> renderBeams;
+    public List<RenderablePart> renderBeamsHorizontal;
 
     @Override
     public void saveAdditional(CompoundTag tag) {

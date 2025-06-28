@@ -11,5 +11,5 @@ public class TIItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, MODID);
 
     public static final RegistryObject<SprayCanItem> SPRAY_CAN = ITEMS.register("spray_can", () -> new SprayCanItem(new Item.Properties()));
-    public static final RegistryObject<TrackBlueprintsItem> TRACK_BLUEPRINTS = ITEMS.register("track_blueprints.json", TrackBlueprintsItem::new);
+    public static final RegistryObject<TrackBlueprintsItem> TRACK_BLUEPRINTS = ITEMS.register("track_blueprints", TrackBlueprintsItem::new);
 }

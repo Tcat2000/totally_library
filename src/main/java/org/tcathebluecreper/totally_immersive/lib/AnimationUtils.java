@@ -8,6 +8,7 @@ public class AnimationUtils {
         return min * (1 - amount) + max * amount;
     }
     public static float amount(float amount, float max) {
+        if(max == 0) return 0;
         return amount / max;
     }
 }

@@ -140,6 +140,7 @@ public class TotallyImmersive {
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             ManualEntries.AddManualEntries();
+            MinecraftForge.EVENT_BUS.register(new ClientRenderEvents());
         }
 
         @SubscribeEvent
@@ -160,6 +161,7 @@ public class TotallyImmersive {
             TrackBlockEntityRenderer.rail = new TIDynamicModel(TrackBlockEntityRenderer.railLocation);
 
             BridgeBlockEntityRenderer.beam = new TIDynamicModel(BridgeBlockEntityRenderer.beamLocation);
+            BridgeBlockEntityRenderer.beamHorizontal = new TIDynamicModel(BridgeBlockEntityRenderer.beamHorizontalLocation);
         }
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

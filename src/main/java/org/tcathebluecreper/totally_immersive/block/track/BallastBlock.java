@@ -107,6 +107,7 @@ public class BallastBlock extends Block {
             while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
                 BlockState oldState = map.getOrDefault(dPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState());
                 if(oldState == null) break;
+                if(oldState.getValue(NE_FILL) == 8 && oldState.getValue(ES_FILL) == 8 && oldState.getValue(SW_FILL) == 8 && oldState.getValue(WN_FILL) == 8) oldState = Blocks.GRAVEL.defaultBlockState();
                 map.put(blockPos.below(), oldState.setValue(NE_FILL, 8));
                 dPos = dPos.below();
             }
@@ -116,6 +117,7 @@ public class BallastBlock extends Block {
             while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
                 BlockState oldState = map.getOrDefault(dPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState());
                 if(oldState == null) break;
+                if(oldState.getValue(NE_FILL) == 8 && oldState.getValue(ES_FILL) == 8 && oldState.getValue(SW_FILL) == 8 && oldState.getValue(WN_FILL) == 8) oldState = Blocks.GRAVEL.defaultBlockState();
                 map.put(blockPos.below(), oldState.setValue(ES_FILL, 8));
                 dPos = dPos.below();
             }
@@ -125,6 +127,7 @@ public class BallastBlock extends Block {
             while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
                 BlockState oldState = map.getOrDefault(dPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState());
                 if(oldState == null) break;
+                if(oldState.getValue(NE_FILL) == 8 && oldState.getValue(ES_FILL) == 8 && oldState.getValue(SW_FILL) == 8 && oldState.getValue(WN_FILL) == 8) oldState = Blocks.GRAVEL.defaultBlockState();
                 map.put(blockPos.below(), oldState.setValue(SW_FILL, 8));
                 dPos = dPos.below();
             }
@@ -134,6 +137,7 @@ public class BallastBlock extends Block {
             while(level.getBlockState(dPos).getBlock() instanceof AirBlock && level.isInWorldBounds(dPos)) {
                 BlockState oldState = map.getOrDefault(dPos, TIBlocks.GRAVEL_BALLAST.get().defaultBlockState());
                 if(oldState == null) break;
+                if(oldState.getValue(NE_FILL) == 8 && oldState.getValue(ES_FILL) == 8 && oldState.getValue(SW_FILL) == 8 && oldState.getValue(WN_FILL) == 8) oldState = Blocks.GRAVEL.defaultBlockState();
                 map.put(blockPos.below(), oldState.setValue(WN_FILL, 8));
                 dPos = dPos.below();
             }

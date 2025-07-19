@@ -20,7 +20,7 @@ void main() {
     vec4 color = vertexColor;
     color.r /= 2;
     color.g /= 2;
-    color.b *= 2;
+    color.b = 1 - (1 - color.b) / 2;
     color.a /= 3;
     color = texture(Sampler0, texCoord0) * color * ColorModulator;
     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);

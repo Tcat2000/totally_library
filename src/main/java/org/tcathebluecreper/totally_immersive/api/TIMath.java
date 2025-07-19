@@ -1,9 +1,11 @@
 package org.tcathebluecreper.totally_immersive.api;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.tcathebluecreper.totally_immersive.lib.AnimationUtils;
+import org.tcathebluecreper.totally_immersive.api.lib.AnimationUtils;
 
 public class TIMath {
     public static Vec3 curve(BlockPos pos0, Vec3 pos0vector, BlockPos pos1, Vec3 pos1vector, float amount) {
@@ -126,5 +128,22 @@ public class TIMath {
             axis.y * sinHalfAngle,
             axis.z * sinHalfAngle
         ).normalize(); // Normalize final quaternion for safety, though it should be already
+    }
+
+    public static BlockPos invertBlockPos(BlockPos pos) {
+        return new BlockPos(-pos.getX(), -pos.getY(), -pos.getZ());
+    }
+    public static BlockPos rotateBlockPos(BlockPos pos, Direction from, Direction to) {
+        if(from == to) return pos;
+        if(from == to.getClockWise()) return new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
+        if(from == to.getCounterClockWise()) return new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
+        if(from == to.getOpposite()) return new BlockPos(-pos.getX(), pos.getY(), -pos.getZ());
+        return pos;
+    }
+    public static BlockPos invertBlockPosAxis(BlockPos pos, Direction.Axis axis) {
+        if(axis == Direction.Axis.X) return new BlockPos(-pos.getX(), pos.getY(), pos.getZ());
+        if(axis == Direction.Axis.Y) return new BlockPos(pos.getX(), -pos.getY(), pos.getZ());
+        if(axis == Direction.Axis.Z) return new BlockPos(pos.getX(), pos.getY(), -pos.getZ());
+        return pos;
     }
 }

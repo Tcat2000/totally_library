@@ -135,6 +135,20 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        url "https://maven.latvian.dev/releases"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
+
+    maven {
+        url 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
+        }
+    }
 }
 
 dependencies {
@@ -177,6 +191,11 @@ dependencies {
     runtimeOnly(fg.deobf("curse.maven:sinytra-connector-890127:5605667"))
     runtimeOnly(fg.deobf("curse.maven:forgified-fabric-api-889079:6289136"))
     implementation(fg.deobf("curse.maven:ldlib-626676:6671158"))
+
+    implementation fg.deobf("dev.latvian.mods:kubejs-forge:$kubejs_version")
+
+    implementation fg.deobf("dev.latvian.mods:rhino-forge:${rhino_version}")
+    implementation fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

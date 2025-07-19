@@ -18,7 +18,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
-import org.tcathebluecreper.totally_immersive.lib.TIDynamicModel;
+import org.tcathebluecreper.totally_immersive.api.lib.TIDynamicModel;
 
 import java.util.EnumMap;
 import java.util.List;

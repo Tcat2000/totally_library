@@ -1,23 +1,19 @@
 package org.tcathebluecreper.totally_immersive.api.crafting;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import io.netty.handler.codec.DecoderException;
+import mcjty.theoneprobe.api.IProbeInfo;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.function.TriFunction;
-import org.apache.logging.log4j.util.TriConsumer;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 
 public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
@@ -78,10 +74,18 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
     }
 
     public void tick(Level level) {
-        if(tick.length == 0 || recipe.length == 0 || stuck.length == 0 || stopped.length == 0) return;
-        for(int p = 0; p < recipe.length; p++) {
-            if(tick[p] == 0 && needsCheck || tick[p] != 0 && recipe[p] == null) {
-                recipe[p] = findRecipe(level);
+        if(tick.length == 0 || recipe.length != (allowDifferentRecipes ? maxParallel : 1) || stuck.length == 0 || stopped.length == 0) return;
+        if(allowDifferentRecipes) {
+            for(int p = 0; p < maxParallel; p++) {
+                if(tick[p] == 0 && needsCheck || tick[p] != 0 && recipe[p] == null) {
+                    recipe[p] = findRecipe(level);
+                }
+            }
+        }
+        else {
+            if(recipe[0] == null || needsCheck) {
+                if(checkAnyRunning()) resumeRecipe(level);
+                else recipe[0] = findRecipe(level);
             }
         }
 //        needsCheck = false;
@@ -105,6 +109,11 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
 
     public int getRecipeIndex(int parallel) {
         return allowDifferentRecipes ? parallel : 0;
+    }
+
+    public boolean checkAnyRunning() {
+        for(int i : tick) if(i != 0) return true;
+        return false;
     }
 
     public void setWorking(boolean working) {
@@ -241,9 +250,28 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
     }
     public R findRecipe(Level level) {
         try {
-            return (R) TIRecipeSerializer.SERIALIZERS.get(type).apply(state, level);
+            return (R) TIRecipeSerializer.RecipeFineders.get(type).apply(state, level);
         } catch(ClassCastException e) {
             throw new TIAPIException("A serializer for recipe " + type + " was initialized with an invalid type class, should the the same as the recipe it is for.");
         }
+    }
+    public R resumeRecipe(Level level) {
+        try {
+            return (R) TIRecipeSerializer.RecipeFineders.get(type).apply(state, level);
+        } catch(ClassCastException e) {
+            throw new TIAPIException("A serializer for recipe " + type + " was initialized with an invalid type class, should the the same as the recipe it is for.");
+        }
+    }
+
+    public IProbeInfo displayBars(IProbeInfo info, int maxTime, boolean hideEmptyBars, boolean displayMaxProcesses) {
+        int count = 0;
+        for(int i = 0; i < maxParallel; i++) {
+            if(tick[i] != 0 || !hideEmptyBars) {
+                info.progress(tick[i], maxTime);
+                count++;
+            }
+        }
+        if(displayMaxProcesses) info.text(Component.translatable("top.totally_immersive.process.max_processes").append(" " + count + "/" + maxParallel));
+        return info;
     }
 }

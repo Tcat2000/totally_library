@@ -1,5 +1,12 @@
 {
     "jei.totally_immersive.chemical_bath.tittle": "Chemical Bath",
     "block.totally_immersive.chemical_bath": "Chemical Bath",
-    "jei.totally_immersive.grinder.tittle": "Grinding"
+    "jei.totally_immersive.grinder.tittle": "Grinding",
+    "top.totally_immersive.chemical_bath.input_items": "Input Items",
+    "top.totally_immersive.chemical_bath.processing_items": "Working Items",
+    "top.totally_immersive.chemical_bath.output_items": "Output Items",
+    "top.totally_immersive.chemical_bath.local_items": "Local Items",
+    "top.totally_immersive.chemical_bath.local_fluids": "Local Fluids",
+    "top.totally_immersive.chemical_bath.local_energy": "Local Energy",
+    "top.totally_immersive.process.max_processes": "Working Processes:"
 }

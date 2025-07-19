@@ -17,17 +17,18 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSerializer<R> {
-    protected static final Map<Class<? extends TIRecipe>, BiFunction<IMultiblockState, Level, ? extends TIRecipe>> SERIALIZERS = new HashMap<>();
+    protected static final Map<Class<? extends TIRecipe>, BiFunction<IMultiblockState, Level, ? extends TIRecipe>> RecipeFineders = new HashMap<>();
+    protected static final Map<Class<? extends TIRecipe>, TriFunction<IMultiblockState, Level, Integer, ? extends TIRecipe>> RecipeResumers = new HashMap<>();
     private final ProviderList<Provider<?>> providers = getProviders();
     private final BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor;
     public ProviderList<Provider<?>> getProviders() {
@@ -36,7 +37,8 @@ public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSe
 
     public TIRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor, Class<? extends TIRecipe> type) {
         this.constructor = constructor;
-        SERIALIZERS.put(type, this::findRecipe);
+        RecipeFineders.put(type, this::findRecipe);
+        RecipeResumers.put(type, this::resumeRecipe);
     }
 
     @Override
@@ -65,6 +67,7 @@ public abstract class TIRecipeSerializer<R extends TIRecipe> implements RecipeSe
     }
 
     public abstract R findRecipe(IMultiblockState state, Level level);
+    public abstract R resumeRecipe(IMultiblockState state, Level level, Integer parallel);
 
     public abstract static class Provider<T> {
         public final String field;

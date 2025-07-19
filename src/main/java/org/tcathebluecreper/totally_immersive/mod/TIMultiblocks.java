@@ -1,0 +1,100 @@
+package org.tcathebluecreper.totally_immersive.mod;
+
+import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
+import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.NonMirrorableWithActiveBlock;
+import blusunrize.immersiveengineering.common.register.IEBlocks;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraftforge.common.util.Lazy;
+import org.tcathebluecreper.totally_immersive.api.multiblock.TOPNonMirrorableWithActiveBlock;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.chemical_bath.ChemicalBathLogic;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.chemical_bath.ChemicalBathMultiblock;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.chemical_bath.ChemicalBathState;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.grinder.GrinderLogic;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.grinder.GrinderMultiblock;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.grinder.GrinderState;
+import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.mod.item.TIItems;
+import org.tcathebluecreper.totally_immersive.api.lib.ITMultiblockBlock;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+public class TIMultiblocks {
+    public static final List<MultiblockRegistration<?>> MULTIBLOCKS = new ArrayList<>();
+    public static final MultiblockRegistration<ChemicalBathState> CHEMICAL_BATH = add(metal(new ChemicalBathLogic(),"chemical_bath")
+            .structure(Multiblock.CHEMICAL_BATH)
+            .redstone(t -> t.redstoneState, new BlockPos(0,1,0))
+            .build());
+
+    public static final MultiblockRegistration<GrinderState> GRINDER = add(metal(new GrinderLogic(),"grinder")
+            .structure(Multiblock.GRINDER)
+            .build());
+
+
+    public static <T extends IMultiblockState> MultiblockRegistration<T> add(MultiblockRegistration<T> res) {
+        MULTIBLOCKS.add(res);
+        return res;
+    }
+    private static <S extends IMultiblockState> IEMultiblockBuilder<S> stone(IMultiblockLogic<S> logic, String name, boolean solid) {
+        BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
+                .mapColor(MapColor.STONE)
+                .instrument(NoteBlockInstrument.BASEDRUM)
+                .strength(2, 20).forceSolidOn();
+        if (!solid)
+            properties.noOcclusion();
+        return new IEMultiblockBuilder<>(logic, name)
+                .notMirrored()
+                .customBlock(
+                        TIBlocks.BLOCKS, TIItems.ITEMS,
+                        r -> new TOPNonMirrorableWithActiveBlock<>(properties, r),
+                        MultiblockItem::new)
+                .defaultBEs(TIBlocks.BETs);
+    }
+
+    private static <S extends IMultiblockState> IEMultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
+        return new IEMultiblockBuilder<>(logic, name)
+                .defaultBEs(TIBlocks.BETs)
+                .customBlock(
+                        TIBlocks.BLOCKS, TIItems.ITEMS,
+                        r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),
+                        MultiblockItem::new);
+    }
+
+    public static void init() {
+        Multiblock.init();
+    }
+    public static class Multiblock {
+        private static final List<Lazy<? extends MultiblockHandler.IMultiblock>> toRegister = new ArrayList<>();
+
+
+        public static final Lazy<TemplateMultiblock> CHEMICAL_BATH = registerLazily(ChemicalBathMultiblock::new);
+        public static final Lazy<TemplateMultiblock> GRINDER = registerLazily(GrinderMultiblock::new);
+
+
+        public static void init() {
+            toRegister.forEach(r->MultiblockHandler.registerMultiblock(r.get()));
+        }
+        public static <T extends MultiblockHandler.IMultiblock> Lazy<T> registerLazily(Supplier<T> mb) {
+            Lazy<T> r = Lazy.of(mb);
+            toRegister.add(r);
+            return r;
+        }
+
+    }
+}

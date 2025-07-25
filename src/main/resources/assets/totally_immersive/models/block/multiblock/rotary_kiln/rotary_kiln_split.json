@@ -1,17 +1,17 @@
 {
 	"parent": "minecraft:block/block",
 	"textures": {
-		"particle": "totally_immersive:block/multiblock/grinder"
+		"particle": "totally_immersive:block/multiblock/rotary_kiln"
 	},
 	"loader": "immersiveengineering:basic_split",
 	"dynamic": false,
 	"inner_model": {
 		"parent": "minecraft:block/block",
 		"textures": {
-			"particle": "totally_immersive:block/multiblock/grinder"
+			"particle": "totally_immersive:block/multiblock/rotary_kiln"
 		},
 		"loader": "forge:obj",
-		"model": "totally_immersive:models/block/multiblock/grinder/grinder.obj",
+		"model": "totally_immersive:models/block/multiblock/rotary_kiln/rotary_kiln.obj",
 		"automatic_culling": false,
 		"flip_v": true
 	},

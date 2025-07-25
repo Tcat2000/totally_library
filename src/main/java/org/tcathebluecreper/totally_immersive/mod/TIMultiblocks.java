@@ -27,6 +27,9 @@ import org.tcathebluecreper.totally_immersive.mod.Multiblock.chemical_bath.Chemi
 import org.tcathebluecreper.totally_immersive.mod.Multiblock.grinder.GrinderLogic;
 import org.tcathebluecreper.totally_immersive.mod.Multiblock.grinder.GrinderMultiblock;
 import org.tcathebluecreper.totally_immersive.mod.Multiblock.grinder.GrinderState;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.rotay_kiln.RotaryKilnLogic;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.rotay_kiln.RotaryKilnMultiblock;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.rotay_kiln.RotaryKilnState;
 import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
 import org.tcathebluecreper.totally_immersive.mod.item.TIItems;
 import org.tcathebluecreper.totally_immersive.api.lib.ITMultiblockBlock;
@@ -45,6 +48,11 @@ public class TIMultiblocks {
     public static final MultiblockRegistration<GrinderState> GRINDER = add(metal(new GrinderLogic(),"grinder")
             .structure(Multiblock.GRINDER)
             .build());
+
+    public static final MultiblockRegistration<RotaryKilnState> ROTARY_KILN = add(metal(new RotaryKilnLogic(),"rotary_kiln")
+        .structure(Multiblock.GRINDER)
+        .build());
+
 
 
     public static <T extends IMultiblockState> MultiblockRegistration<T> add(MultiblockRegistration<T> res) {
@@ -85,6 +93,7 @@ public class TIMultiblocks {
 
         public static final Lazy<TemplateMultiblock> CHEMICAL_BATH = registerLazily(ChemicalBathMultiblock::new);
         public static final Lazy<TemplateMultiblock> GRINDER = registerLazily(GrinderMultiblock::new);
+        public static final Lazy<TemplateMultiblock> ROTARY_KILN = registerLazily(RotaryKilnMultiblock::new);
 
 
         public static void init() {

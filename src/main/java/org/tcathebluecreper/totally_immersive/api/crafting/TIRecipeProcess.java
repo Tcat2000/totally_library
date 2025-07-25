@@ -8,8 +8,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.function.TriFunction;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.rotay_kiln.RotaryKilnRecipe;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.rotay_kiln.RotaryKilnState;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
@@ -71,6 +74,9 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
         stuck = new boolean[maxParallel];
         stopped = new boolean[maxParallel];
         tick = new int[maxParallel];
+    }
+
+    public <E> TIRecipeProcess(Class<RotaryKilnRecipe> rotaryKilnRecipeClass, ArrayList<E> es, RotaryKilnState rotaryKilnState) {
     }
 
     public void tick(Level level) {

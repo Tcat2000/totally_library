@@ -75,8 +75,18 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
         stopped = new boolean[maxParallel];
         tick = new int[maxParallel];
     }
+    public TIRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TIRecipeProcess<R, S>, Integer, Boolean> tickLogic, int maxParallel, boolean allowDifferentRecipes) {
+        this.type = type;
+        this.actions = actions;
+        this.state = state;
+        this.tickLogic = tickLogic;
 
-    public <E> TIRecipeProcess(Class<RotaryKilnRecipe> rotaryKilnRecipeClass, ArrayList<E> es, RotaryKilnState rotaryKilnState) {
+        this.maxParallel = maxParallel;
+        this.allowDifferentRecipes = allowDifferentRecipes;
+        recipe = (R[]) Array.newInstance(type, allowDifferentRecipes ? maxParallel : 1);
+        stuck = new boolean[maxParallel];
+        stopped = new boolean[maxParallel];
+        tick = new int[maxParallel];
     }
 
     public void tick(Level level) {

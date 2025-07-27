@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.tcathebluecreper.totally_immersive.api.crafting.TIRecipe;
 import org.tcathebluecreper.totally_immersive.api.crafting.TIRecipeProcess;
 import org.tcathebluecreper.totally_immersive.api.multiblock.TIMultiblockState;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 public class RotaryKilnState implements TIMultiblockState<RotaryKilnRecipe, RotaryKilnState> {
     @Override
     public TIRecipeProcess<RotaryKilnRecipe, RotaryKilnState> getRecipeProcess() {
-        return new TIRecipeProcess<>(RotaryKilnRecipe.class, new ArrayList<>(), this);
+        return new TIRecipeProcess<>(RotaryKilnRecipe.class, new ArrayList<>(), this, (process, tick) -> true, 16, true);
     }
 
     @Override
@@ -32,5 +33,9 @@ public class RotaryKilnState implements TIMultiblockState<RotaryKilnRecipe, Rota
     @Override
     public void readSaveNBT(CompoundTag nbt) {
 
+    }
+
+    public TIRecipe findRecipe(RotaryKilnState state) {
+        return null;
     }
 }

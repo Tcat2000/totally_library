@@ -19,7 +19,7 @@ public class RotaryKilnRecipeSerializer extends TIRecipeSerializer<RotaryKilnRec
 
     @Override
     public RotaryKilnRecipe resumeRecipe(IMultiblockState state, Level level, Integer parallel) {
-        return null;d
+        return null;
     }
 
     @Override

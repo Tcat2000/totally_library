@@ -30,6 +30,8 @@ import net.minecraftforge.items.wrapper.RangedWrapper;
 import org.tcathebluecreper.totally_immersive.api.crafting.RangedDetectorWrapper;
 import org.tcathebluecreper.totally_immersive.api.crafting.TIRecipeProcess;
 import org.tcathebluecreper.totally_immersive.api.multiblock.TIMultiblockState;
+import org.tcathebluecreper.totally_immersive.api.waila.IUnifiedWaila;
+import org.tcathebluecreper.totally_immersive.api.waila.UnifiedWaila;
 
 import java.util.List;
 
@@ -163,5 +165,46 @@ public class GrinderState implements TIMultiblockState<GrinderRecipe, GrinderSta
         if(!sideHasInput && !input.getValue().getStackInSlot(0).isEmpty()) iProbeInfo.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.input_items")).item(input.getValue().getStackInSlot(0));
         if(!sideHasProcess && !processSlot.getValue().getStackInSlot(0).isEmpty()) processSlot.getValue().displayItems(iProbeInfo.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.processing_items")));
         if(!sideHasOutput && !output.getValue().getStackInSlot(0).isEmpty()) iProbeInfo.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.output_items")).item(output.getValue().getStackInSlot(0));
+    }
+
+    public void getWailaData(BlockEntity be, IUnifiedWaila waila, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData) {
+//        LazyOptional<IItemHandler> sideItemCap;
+//        LazyOptional<IEnergyStorage> sideEnergyCap;
+//        if(be instanceof MultiblockBlockEntityMaster<?>) {
+//            sideItemCap = ((MultiblockBlockEntityMaster<?>) be).getHelper().getCapability(ForgeCapabilities.ITEM_HANDLER, iProbeHitData.getSideHit());
+//            sideEnergyCap = ((MultiblockBlockEntityMaster<?>) be).getHelper().getCapability(ForgeCapabilities.ENERGY, iProbeHitData.getSideHit());
+//        }
+//        else {
+//            sideItemCap = ((MultiblockBlockEntityDummy<?>) be).getHelper().getCapability(ForgeCapabilities.ITEM_HANDLER, iProbeHitData.getSideHit());
+//            sideEnergyCap = ((MultiblockBlockEntityDummy<?>) be).getHelper().getCapability(ForgeCapabilities.ENERGY, iProbeHitData.getSideHit());
+//        }
+//
+//        boolean sideHasInput = false;
+//        boolean sideHasProcess = false;
+//        boolean sideHasOutput = false;
+//        boolean sideHasCap = sideEnergyCap.isPresent();
+//
+//        if(sideItemCap.isPresent()) {
+//            RangedDetectorWrapper itemCap = (RangedDetectorWrapper) sideItemCap.orElse(null);
+//
+//            sideHasInput = input.getValue().compare(itemCap);
+//            sideHasProcess = processSlot.getValue().compare(itemCap);
+//            sideHasOutput = output.getValue().compare(itemCap);
+//        }
+//
+//
+//        if(sideHasInput && !input.getValue().getStackInSlot(0).isEmpty()) waila.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.local_items")).item(input.getValue().getStackInSlot(0));
+//        if(sideHasProcess && !processSlot.getValue().getStackInSlot(0).isEmpty()) processSlot.getValue().displayItems(waila.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.local_items")));
+//        if(sideHasOutput && !output.getValue().getStackInSlot(0).isEmpty()) waila.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.local_items")).item(output.getValue().getStackInSlot(0));
+//        if(sideHasCap) waila.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.local_energy")).progress(energy.getEnergyStored(), energy.getMaxEnergyStored(), waila.defaultProgressStyle().suffix("FE").filledColor(Config.rfbarFilledColor).alternateFilledColor(Config.rfbarAlternateFilledColor).borderColor(Config.rfbarBorderColor).numberFormat(Config.rfFormat.get()));
+//
+//        waila.padding(10,10);
+//
+//        if(!sideHasCap) waila.progress(energy.getEnergyStored(), energy.getMaxEnergyStored(), waila.defaultProgressStyle().suffix("FE").filledColor(Config.rfbarFilledColor).alternateFilledColor(Config.rfbarAlternateFilledColor).borderColor(Config.rfbarBorderColor).numberFormat(Config.rfFormat.get()));
+//        process.displayBars(waila, PROCESS_TIME, true, true);
+//
+//        if(!sideHasInput && !input.getValue().getStackInSlot(0).isEmpty()) waila.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.input_items")).item(input.getValue().getStackInSlot(0));
+//        if(!sideHasProcess && !processSlot.getValue().getStackInSlot(0).isEmpty()) processSlot.getValue().displayItems(waila.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.processing_items")));
+//        if(!sideHasOutput && !output.getValue().getStackInSlot(0).isEmpty()) waila.vertical().text(Component.translatable("top.totally_immersive.chemical_bath.output_items")).item(output.getValue().getStackInSlot(0));
     }
 }

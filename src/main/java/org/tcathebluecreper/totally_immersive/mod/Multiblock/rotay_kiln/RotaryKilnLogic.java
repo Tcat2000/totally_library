@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultib
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.function.Function;
@@ -11,11 +12,11 @@ import java.util.function.Function;
 public class RotaryKilnLogic implements IMultiblockLogic<RotaryKilnState> {
     @Override
     public RotaryKilnState createInitialState(IInitialMultiblockContext capabilitySource) {
-        return null;
+        return new RotaryKilnState();
     }
 
     @Override
     public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) {
-        return null;
+        return pos -> Shapes.block();
     }
 }

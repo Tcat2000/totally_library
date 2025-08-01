@@ -43,10 +43,13 @@ public class ChemicalBathRenderer extends TIBlockEntityRenderer<MultiblockBlockE
 
         if(progress == -1) matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(state.process.tick[0] - 140 - pPartialTick, 20)) * mirrored, 0, 0);
         else if(progress >= 20 && progress <= 120) {
-//            System.out.println((progress - 20 + (pPartialTick)) + ", " + AnimationUtils.lerp(0,3, AnimationUtils.amount(progress - 20 + (pPartialTick), state.process.PROCESS_TIME - 40)));
-            matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(state.process.tick[0] + 20 + (pPartialTick), 120)) * mirrored, 0, 0);
+            matrixStack.translate(AnimationUtils.lerp(0,3, AnimationUtils.amount(state.process.tick[0] - 20 + (pPartialTick), 100)) * mirrored, 0, 0);
+        }
+        else if(progress > 140) {
+            matrixStack.translate(AnimationUtils.lerp(3,0, AnimationUtils.amount(state.process.tick[0] - 140 + (pPartialTick), 60)) * mirrored, 0, 0);
         }
         else if(progress > 120) matrixStack.translate(3 * mirrored, 0, 0);
+
         renderPart(craneTop, matrixStack, pBuffer, pPackedLight, pPackedOverlay);
 
         float lowerDist = 0;
@@ -62,7 +65,7 @@ public class ChemicalBathRenderer extends TIBlockEntityRenderer<MultiblockBlockE
                 lowerDist = 0;
             }
 //            else if(progress == -1) lowerDist = 0;
-            if(progress >= 120) {
+            if(progress >= 120 && progress <= 140) {
                 if(progress <= 130) lowerDist = -AnimationUtils.lerp(0, 0.5f, AnimationUtils.amount(progress - 120, 10));
                 else lowerDist = -AnimationUtils.lerp(0, 0.5f, 1 - AnimationUtils.amount(progress - 130, 10));
             }

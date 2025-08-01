@@ -114,13 +114,12 @@ public class ChemicalBathState implements TIMultiblockState<ChemicalBathRecipe, 
                 })),
                 new TIRecipeProcess.TickAction<>(140, ((process, parallel) -> {
                     if(process.recipe[0].output.insertTo(output.getValue(), 0)) {
-                        processSlot.getValue().setStackInSlot(0, ItemStack.EMPTY);
-                        process.tick[parallel] = 0;
-                        process.stuck[parallel] = false;
+                       processSlot.getValue().setStackInSlot(0, ItemStack.EMPTY);
+                       process.stuck[parallel] = false;
                     }
                     else process.stuck[parallel] = true;
                 })),
-                new TIRecipeProcess.TickAction<>(160, ((process, parallel) -> true))
+                new TIRecipeProcess.TickAction<>(200, ((process, parallel) -> true))
             ),
             this,
             (process, parallel) -> {

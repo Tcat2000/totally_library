@@ -34,6 +34,7 @@ public class ChemicalBathRenderer extends TIBlockEntityRenderer<MultiblockBlockE
     @Override
     public void render(MultiblockBlockEntityMaster<ChemicalBathState> te, float pPartialTick, PoseStack matrixStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         ChemicalBathState state = te.getHelper().getContext().getState();
+        if(state.process.tick.length == 0) return;
         int mirrored = te.getBlockState().getValue(IEProperties.MIRRORED) ? -1 : 1;
         int progress = state.process.tick[0];
         matrixStack.pushPose();

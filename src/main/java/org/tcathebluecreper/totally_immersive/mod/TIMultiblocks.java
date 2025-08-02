@@ -50,7 +50,7 @@ public class TIMultiblocks {
             .build());
 
     public static final MultiblockRegistration<RotaryKilnState> ROTARY_KILN = add(metal(new RotaryKilnLogic(),"rotary_kiln")
-        .structure(Multiblock.GRINDER)
+        .structure(Multiblock.ROTARY_KILN)
         .build());
 
 

@@ -1,12 +1,12 @@
 # Made in Blockbench 4.12.4
 newmtl m_6ee2df4e-81c0-8d8d-a6ff-0754fbfc74fd
-map_Kd rotary_kiln.png
+map_Kd totally_immersive:multiblock/rotary_kiln.png
 newmtl m_23f7acc2-17a0-f5ed-78d0-844d2e153f53
-map_Kd concrete0.png
+map_Kd immersiveengineering:block/concrete/concrete0.png
 newmtl m_01b2c255-ffa8-0906-a604-21f5548941d2
-map_Kd light_engineering.png
+map_Kd immersiveengineering:block/metal_decoration/light_engineering.png
 newmtl m_7377772e-9ce0-e279-ccf1-7086079dc8e0
-map_Kd storage_steel.png
+map_Kd immersiveengineering:block/metal_decoration/storage_steel.png
 newmtl m_9456318a-bab4-97ad-faf1-d30e226bda19
 map_Kd multiblock_components.png
 newmtl m_615df2c1-a660-2e2f-b00b-aba835469f7b
@@ -14,7 +14,7 @@ map_Kd heavy_engineering.png
 newmtl m_0f7ee05c-9e90-6341-d622-bcf03cec595c
 map_Kd diesel_generator.png
 newmtl m_917ffc34-312b-d7d6-b993-4dcdb4ec721f
-map_Kd redstone_engineering.png
+map_Kd immersiveengineering:block/metal_decoration/redstone_engineering.png
 newmtl m_3e6462fa-109f-14ab-ee3d-ae5e45e3210e
 map_Kd arc_furnace.png
 newmtl m_0c1f3f3f-7f62-fcad-0dab-02d68ffe556a
@@ -22,7 +22,7 @@ map_Kd excavator.png
 newmtl m_e59208a1-b54e-291a-f58a-9adb7ab89bae
 map_Kd multiblock_base.png
 newmtl m_29361627-1cad-2e87-7652-8884f049d74f
-map_Kd sheetmetal_steel.png
+map_Kd immersiveengineering:block/metal_decoration/sheetmetal_steel.png
 newmtl m_721c694b-3733-f7b1-390c-b2cb56889b53
-map_Kd steel_scaffolding.png
+map_Kd immersiveengineering:block/metal_decoration/steel_scaffolding.png
 newmtl none

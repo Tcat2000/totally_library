@@ -106,6 +106,7 @@ public class ChemicalBathState implements TIMultiblockState<ChemicalBathRecipe, 
             ChemicalBathRecipe.class,
             List.of(
                 new TIRecipeProcess.TickAction<>(0, ((process, parallel) -> {
+                    if(process.tick[parallel] != 0) return;
                     if(process.recipe[0].input.canExtractFrom(input.getValue().getStackInSlot(0))) {
                         processSlot.getValue().setStackInSlot(parallel, process.recipe[0].input.extractFrom(input.getValue().getStackInSlot(0)));
                         process.stuck[parallel] = false;

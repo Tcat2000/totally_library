@@ -1,12 +1,10 @@
 package org.tcathebluecreper.totally_immersive.mod;
 
-import blusunrize.immersiveengineering.api.wires.utils.IElectricDamageSource;
 import blusunrize.immersiveengineering.common.util.IEDamageSources;
 import com.mojang.logging.LogUtils;
 import mcjty.theoneprobe.TheOneProbe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -39,9 +37,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 import org.tcathebluecreper.totally_immersive.mod.Multiblock.chemical_bath.ChemicalBathRenderer;
+import org.tcathebluecreper.totally_immersive.mod.Multiblock.rotay_kiln.RotaryKilnRenderer;
+import org.tcathebluecreper.totally_immersive.mod.block.ScreenBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
 import org.tcathebluecreper.totally_immersive.mod.block.track.BridgeBlockEntityRenderer;
-import org.tcathebluecreper.totally_immersive.mod.block.track.BridgeSlaveBlockEntity;
 import org.tcathebluecreper.totally_immersive.mod.block.track.BridgeSlaveBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.mod.block.track.TrackBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.mod.integration.theoneprobe.MultiblocksTOPProvider;
@@ -172,15 +171,19 @@ public class TotallyImmersive {
             TrackBlockEntityRenderer.tie = new TIDynamicModel(TrackBlockEntityRenderer.tieLocation);
             TrackBlockEntityRenderer.rail = new TIDynamicModel(TrackBlockEntityRenderer.railLocation);
 
+            RotaryKilnRenderer.barrel = new TIDynamicModel(RotaryKilnRenderer.barrelId);
+
             BridgeBlockEntityRenderer.beam = new TIDynamicModel(BridgeBlockEntityRenderer.beamLocation);
             BridgeBlockEntityRenderer.beamHorizontal = new TIDynamicModel(BridgeBlockEntityRenderer.beamHorizontalLocation);
         }
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             registerBERenderNoContext(event, TIMultiblocks.CHEMICAL_BATH.masterBE().get(), ChemicalBathRenderer::new);
+            registerBERenderNoContext(event, TIMultiblocks.ROTARY_KILN.masterBE().get(), RotaryKilnRenderer::new);
             registerBERenderNoContext(event, TIBlocks.TRACK_BLOCK_ENTITY.get(), TrackBlockEntityRenderer::new);
             registerBERenderNoContext(event, TIBlocks.BRIDGE_BLOCK_ENTITY.get(), BridgeBlockEntityRenderer::new);
             registerBERenderNoContext(event, TIBlocks.BRIDGE_SLAVE_BLOCK_ENTITY.get(), BridgeSlaveBlockEntityRenderer::new);
+            registerBERenderNoContext(event, TIBlocks.SCREEN_BLOCK_ENTITY.get(), ScreenBlockEntityRenderer::new);
         }
 
         private static <T extends BlockEntity>

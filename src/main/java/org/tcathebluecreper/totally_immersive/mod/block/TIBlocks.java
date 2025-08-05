@@ -102,6 +102,9 @@ public class TIBlocks {
     public static final RegistryObject<BridgeSlaveBlock> BRIDGE_SLAVE_BLOCK = register("bridge_slave", BridgeSlaveBlock::new);
     public static final RegistryObject<BlockEntityType<BridgeSlaveBlockEntity>> BRIDGE_SLAVE_BLOCK_ENTITY = BETs.register("bridge_slave", () -> new BlockEntityType<>(BridgeSlaveBlockEntity::new, Set.of(BRIDGE_SLAVE_BLOCK.get()), null));
 
+    public static final RegistryObject<ScreenBlock> SCREEN_BLOCK = register("screen_block", ScreenBlock::new);
+    public static final RegistryObject<BlockEntityType<ScreenBlockEntity>> SCREEN_BLOCK_ENTITY = BETs.register("screen_block", () -> new BlockEntityType<>(ScreenBlockEntity::new, Set.of(SCREEN_BLOCK.get()), null));
+
     protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {
         RegistryObject<T> blk = BLOCKS.register(name, block);
         TIItems.ITEMS.register(itemName, () -> item.apply(blk.get()));

@@ -38,6 +38,7 @@ public class MultiblocksTOPProvider implements IProbeInfoProvider {
             master = (MultiblockBlockEntityMaster<?>) level.getBlockEntity(dummy.getBlockPos().offset(TIMath.rotateBlockPos(TIMath.invertBlockPosAxis(dummy.getHelper().getPositionInMB(), Direction.Axis.Y), Direction.SOUTH, dummy.getBlockState().getValue(IEProperties.FACING_HORIZONTAL))).offset(TIMath.rotateBlockPos(TIMath.invertBlockPos(dummy.getHelper().getMultiblock().masterPosInMB()), Direction.SOUTH, dummy.getBlockState().getValue(IEProperties.FACING_HORIZONTAL))));
         }
         else master = (MultiblockBlockEntityMaster<?>) BE;
+        if(master == null) return;
         try {
             ((MultiblockBlockEntityMaster<TIMultiblockState<?,?>>)master).getHelper().getContext().getState().getTOPData(BE, probeMode, iProbeInfo, player, level, blockState, iProbeHitData);
         } catch(Exception e) {

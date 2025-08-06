@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import org.tcathebluecreper.totally_immersive.api.lib.ITMultiblockBlock;
-import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
-import org.tcathebluecreper.totally_immersive.mod.item.TIItems;
+import org.tcathebluecreper.totally_immersive.mod.TIBlocks;
+import org.tcathebluecreper.totally_immersive.mod.TIItems;
 
 public class MultiblockBuilder {
     public final ResourceLocation id;

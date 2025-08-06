@@ -1,0 +1,13 @@
+{
+    "type": "totally_immersive:grinder",
+    "inputItem": {
+        "item": "totally_immersive:cement",
+        "count": 1
+    },
+    "outputItem": {
+        "item": "totally_immersive:cement_powder",
+        "count": 1
+    },
+    "energyCost": 128,
+    "priority": 1
+}

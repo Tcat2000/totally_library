@@ -15,11 +15,11 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.*;
 import org.jetbrains.annotations.NotNull;
-import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.mod.TIBlocks;
 
 import java.util.*;
 
-import static org.tcathebluecreper.totally_immersive.mod.item.TIItems.SPRAY_CAN;
+import static org.tcathebluecreper.totally_immersive.mod.TIItems.SPRAY_CAN;
 
 public class MarkingBlock extends Block {
     public static Property<Marking> MARKING_TOP;

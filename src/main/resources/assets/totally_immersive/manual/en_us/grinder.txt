@@ -1,0 +1,5 @@
+Grinder
+On the Grind!
+<&grinder>
+The grinder is similar to the crusher, and can perform many of the same recipes, but with one big difference:
+The grinder can grind items into finer powders, making it ideal for concrete production.

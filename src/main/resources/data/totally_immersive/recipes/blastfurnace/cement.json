@@ -1,0 +1,10 @@
+{
+    "type":"immersiveengineering:blast_furnace",
+    "input": {
+        "item":"minecraft:diorite"
+    },
+    "result": {
+        "item":"totally_immersive:cement"
+    },
+    "time":1200
+}

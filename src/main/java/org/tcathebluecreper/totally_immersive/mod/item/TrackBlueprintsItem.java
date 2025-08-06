@@ -28,7 +28,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
-import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.mod.TIBlocks;
 import org.tcathebluecreper.totally_immersive.mod.block.track.TrackBlock;
 import org.tcathebluecreper.totally_immersive.mod.block.track.TrackBlockEntity;
 

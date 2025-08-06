@@ -4,12 +4,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.tcathebluecreper.totally_immersive.api.NBT.TINBTUtils;
-import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.mod.TIBlocks;
 
 public class BridgeSlaveBlockEntity extends BlockEntity {
     public BlockPos coreBlock = new BlockPos(0,0,0);

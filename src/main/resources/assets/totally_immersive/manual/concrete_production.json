@@ -1,0 +1,8 @@
+{
+    "concrete_production": {
+        "type": "item_display",
+        "items":[
+            {"item":"immersiveengineering:concrete"}
+        ]
+    }
+}

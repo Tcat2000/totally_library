@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.mod.block;
+package org.tcathebluecreper.totally_immersive.mod;
 
 import blusunrize.immersiveengineering.common.blocks.generic.ConnectorBlock;
 import blusunrize.immersiveengineering.common.blocks.metal.BasicConnectorBlock;
@@ -14,10 +14,12 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import org.tcathebluecreper.totally_immersive.mod.block.ScreenBlock;
+import org.tcathebluecreper.totally_immersive.mod.block.ScreenBlockEntity;
 import org.tcathebluecreper.totally_immersive.mod.block.markings.Marking;
 import org.tcathebluecreper.totally_immersive.mod.block.markings.MarkingBlock;
 import org.tcathebluecreper.totally_immersive.mod.block.track.*;
-import org.tcathebluecreper.totally_immersive.mod.item.TIItems;
+import org.tcathebluecreper.totally_immersive.mod.TIItems;
 
 import java.util.Set;
 import java.util.function.Function;
@@ -104,6 +106,8 @@ public class TIBlocks {
 
     public static final RegistryObject<ScreenBlock> SCREEN_BLOCK = register("screen_block", ScreenBlock::new);
     public static final RegistryObject<BlockEntityType<ScreenBlockEntity>> SCREEN_BLOCK_ENTITY = BETs.register("screen_block", () -> new BlockEntityType<>(ScreenBlockEntity::new, Set.of(SCREEN_BLOCK.get()), null));
+    public static final RegistryObject<Block> FINE_GRAVEL_BLOCK = register("fine_gravel", () -> new Block(BlockBehaviour.Properties.of()));
+    public static final RegistryObject<Block> CONCRETE_MIX_BLOCK = register("concrete_mix", () -> new Block(BlockBehaviour.Properties.of()));
 
     protected static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, String itemName, Function<T, Item> item) {
         RegistryObject<T> blk = BLOCKS.register(name, block);

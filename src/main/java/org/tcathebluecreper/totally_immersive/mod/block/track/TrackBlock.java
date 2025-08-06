@@ -39,7 +39,7 @@ import org.tcathebluecreper.totally_immersive.api.RenderablePart;
 import org.tcathebluecreper.totally_immersive.api.TIBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.api.TIMath;
 import org.tcathebluecreper.totally_immersive.api.lib.TIDynamicModel;
-import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.mod.TIBlocks;
 import org.tcathebluecreper.totally_immersive.api.lib.AnimationUtils;
 
 import java.util.*;

@@ -20,7 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
+import org.tcathebluecreper.totally_immersive.mod.TIBlocks;
 import org.tcathebluecreper.totally_immersive.mod.block.markings.Marking;
 import org.tcathebluecreper.totally_immersive.mod.block.markings.MarkingBlock;
 

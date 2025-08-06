@@ -1,0 +1,9 @@
+Concrete Production
+Rock hard!
+<&concrete_production>
+Concrete is made by mixing Course Sand with Cement Powder, the latter being made using one of the following process.
+The first cement you will need to make is made in a similar process to steel: by placing diorite (limestone) in a Blast Furnace.
+Once some Concrete has been obtained, you will have the option to build a Rotary Kiln, which will make more Cement, and do so faster.
+Once Cement is obtained, it must be ground into a powder, this can be done manually using an Engineer's Hammer, or automatically using a Grinding Mill.
+Cement production using the rotary kiln can be done more efficiently using some additional machines, namely the HRU (Heat Recovery Unit) and the Aggregate Preheater.
+The HRU cools down the Cement after coming out of the Rotary Kiln and produces heat, witch can be then be put in the A. Preheater to warm the Diorite before smelting.

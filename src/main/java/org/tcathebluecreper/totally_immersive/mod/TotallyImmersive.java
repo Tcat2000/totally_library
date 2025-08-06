@@ -6,6 +6,7 @@ import mcjty.theoneprobe.TheOneProbe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -39,12 +40,10 @@ import org.slf4j.Logger;
 import org.tcathebluecreper.totally_immersive.mod.Multiblock.chemical_bath.ChemicalBathRenderer;
 import org.tcathebluecreper.totally_immersive.mod.Multiblock.rotay_kiln.RotaryKilnRenderer;
 import org.tcathebluecreper.totally_immersive.mod.block.ScreenBlockEntityRenderer;
-import org.tcathebluecreper.totally_immersive.mod.block.TIBlocks;
 import org.tcathebluecreper.totally_immersive.mod.block.track.BridgeBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.mod.block.track.BridgeSlaveBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.mod.block.track.TrackBlockEntityRenderer;
 import org.tcathebluecreper.totally_immersive.mod.integration.theoneprobe.MultiblocksTOPProvider;
-import org.tcathebluecreper.totally_immersive.mod.item.TIItems;
 import org.tcathebluecreper.totally_immersive.api.lib.TIDynamicModel;
 
 import java.util.function.Supplier;
@@ -155,8 +154,8 @@ public class TotallyImmersive {
         }
 
         @SubscribeEvent
-        public static void registerModels(ModelEvent.RegisterAdditional ev)
-        {
+        public static void registerModels(ModelEvent.RegisterAdditional ev) {
+            ev.register(ResourceLocation.fromNamespaceAndPath(MODID, "multiblocks/chemical_bath"));
             ManualEntries.RegisterModels(ev);
         }
     }

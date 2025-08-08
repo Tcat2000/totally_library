@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistra
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.IEMultiblocks;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import net.minecraft.core.BlockPos;

@@ -13,21 +13,27 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.tcathebluecreper.totally_immersive.api.lib.ITMultiblockBlock;
+import org.tcathebluecreper.totally_immersive.api.lib.TIDynamicModel;
+import org.tcathebluecreper.totally_immersive.api.multiblock.trait.ITrait;
 import org.tcathebluecreper.totally_immersive.mod.TIBlocks;
 import org.tcathebluecreper.totally_immersive.mod.TIItems;
 
+import java.util.ArrayList;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class MultiblockBuilder {
     public BlockPos masterOffset;
     public BlockPos triggerOffset;
     public BlockPos size;
-    public DynamicModel manualModel;
+    public TIDynamicModel manualModel;
+    public ArrayList<ITrait> traits = new ArrayList<>();
 
-    public <S extends IMultiblockState> BakedMultiblock bake(ResourceLocation id) {
-        S state = (S) new IMultiblockState() {
+    public BakedMultiblock bake(ResourceLocation id) {
+        Supplier<TraitMultiblockState> state = () -> new TraitMultiblockState(traits) {
             @Override
             public void writeSaveNBT(CompoundTag nbt) {
 
@@ -38,15 +44,15 @@ public class MultiblockBuilder {
 
             }
         };
-        IMultiblockLogic<S> logic = new IMultiblockLogic<S>() {
+        IMultiblockLogic<TraitMultiblockState> logic = new IMultiblockLogic<TraitMultiblockState>() {
             @Override
-            public S createInitialState(IInitialMultiblockContext capabilitySource) {
+            public TraitMultiblockState createInitialState(IInitialMultiblockContext capabilitySource) {
                 return null;
             }
 
             @Override
             public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) {
-                return null;
+                return pos -> Shapes.block();
             }
         };
         TIMultiblock multiblock = new BakedMultiblock(

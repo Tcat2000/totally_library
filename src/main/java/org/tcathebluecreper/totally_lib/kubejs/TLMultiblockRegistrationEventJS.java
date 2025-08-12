@@ -22,5 +22,7 @@ public class TLMultiblockRegistrationEventJS extends EventJS {
         this.consumer = consumer;
     }
 
-    public TLMultiblockBuilder multiblock(ResourceLocation id) {return new TLMultiblockBuilder(id, manager, consumer);}
+    public TLMultiblockBuilder multiblock(ResourceLocation id) {
+        return new TLMultiblockBuilder(id, manager, consumer);
+    }
 }

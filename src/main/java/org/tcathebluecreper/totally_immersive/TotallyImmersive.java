@@ -49,7 +49,7 @@ import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(TotallyImmersive.MODID)
+//@Mod(TotallyImmersive.MODID)
 public class TotallyImmersive {
 
     // Define mod id in a common place for everything to reference

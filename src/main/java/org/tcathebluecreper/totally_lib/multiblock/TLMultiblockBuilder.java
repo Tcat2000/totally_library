@@ -65,7 +65,8 @@ public class TLMultiblockBuilder {
                 return manualScale;
             }
         };
-
-        return new RegisterableMultiblock(multiblock, state, logic);
+        RegisterableMultiblock reg = new RegisterableMultiblock(multiblock, state, logic);
+        consumer.accept(reg);
+        return reg;
     }
 }

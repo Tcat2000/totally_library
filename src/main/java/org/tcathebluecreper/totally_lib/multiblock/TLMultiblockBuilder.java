@@ -8,43 +8,43 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.tcathebluecreper.totally_lib.RegistrationManager;
 import org.tcathebluecreper.totally_lib.lib.ITMultiblockBlock;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_immersive.TIBlocks;
-import org.tcathebluecreper.totally_immersive.TIItems;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class TLMultiblockBuilder {
     public BlockPos masterOffset;
     public BlockPos triggerOffset;
     public BlockPos size;
+    public int manualScale = 0;
     public TIDynamicModel manualModel;
     public ArrayList<ITrait> traits = new ArrayList<>();
 
-    public TLMultiblock bake(ResourceLocation id) {
-        Supplier<TraitMultiblockState> state = () -> new TraitMultiblockState(traits) {
-            @Override
-            public void writeSaveNBT(CompoundTag nbt) {
+    private final ResourceLocation id;
+    private final RegistrationManager manager;
+    private final Consumer<RegisterableMultiblock> consumer;
 
-            }
+    public TLMultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<RegisterableMultiblock> consumer) {
+        this.id = id;
+        this.manager = manager;
+        this.consumer = consumer;
+    }
 
-            @Override
-            public void readSaveNBT(CompoundTag nbt) {
 
-            }
-        };
-        IMultiblockLogic<TraitMultiblockState> logic = new IMultiblockLogic<TraitMultiblockState>() {
+    public RegisterableMultiblock bake() {
+        Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state = (capabilitySource) -> new TraitMultiblockState(traits);
+        IMultiblockLogic<TraitMultiblockState> logic = new IMultiblockLogic<>() {
             @Override
             public TraitMultiblockState createInitialState(IInitialMultiblockContext capabilitySource) {
-                return null;
+                return state.apply(capabilitySource);
             }
 
             @Override
@@ -52,20 +52,20 @@ public class TLMultiblockBuilder {
                 return pos -> Shapes.block();
             }
         };
-        TIMultiblock multiblock = new TLMultiblock(
-            new TIMultiblock(id, masterOffset, triggerOffset, size, logic, manualModel) {
-                @Override
-                public float getManualScale() {
-                    return 0;
-                }
+        MultiblockRegistration<TraitMultiblockState> registration = new IEMultiblockBuilder<>(logic, id.getPath())
+                .defaultBEs(manager.getRegistry(id.getNamespace()).blockEntityType())
+                .customBlock(
+                        manager.getRegistry(id.getNamespace()).blocks(), manager.getRegistry(id.getNamespace()).items(),
+                        r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),
+                        MultiblockItem::new)
+                .build();
+        TIMultiblock multiblock = new TIMultiblock(id, masterOffset, triggerOffset, size, registration, manualModel) {
+            @Override
+            public float getManualScale() {
+                return manualScale;
             }
-        );
-        MultiblockRegistration registration = new IEMultiblockBuilder<>(logic, id.getPath())
-            .defaultBEs(TIBlocks.BETs)
-            .customBlock(
-                TIBlocks.BLOCKS, TIItems.ITEMS,
-                r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),
-                MultiblockItem::new)
-            .build();
+        };
+
+        return new RegisterableMultiblock(multiblock, state, logic);
     }
 }

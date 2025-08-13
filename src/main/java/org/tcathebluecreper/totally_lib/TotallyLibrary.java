@@ -12,6 +12,7 @@ import org.tcathebluecreper.totally_lib.kubejs.Plugin;
 import org.tcathebluecreper.totally_lib.kubejs.TLMultiblockRegistrationEventJS;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockRegistrationEvent;
+import org.tcathebluecreper.totally_lib.test.TestMultiblock;
 
 @Mod(TotallyLibrary.MODID)
 public class TotallyLibrary {
@@ -21,20 +22,29 @@ public class TotallyLibrary {
 
     public TotallyLibrary() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        MinecraftForge.EVENT_BUS.register(this);
-        modEventBus.register(this);
+        MinecraftForge.EVENT_BUS.register(new ForgeEvents());
+        modEventBus.register(new ModEvents());
+
+
+        MinecraftForge.EVENT_BUS.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+
+        System.out.println("mb=" + TestMultiblock.testMB);
 
         ModMultiblocks.init();
     }
 
-    @SubscribeEvent
-    public static void RegisterEvent(RegisterEvent event) {
-        MinecraftForge.EVENT_BUS.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
-        Plugin.MultiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+    private static class ModEvents {
+//        @SubscribeEvent
+//        public void RegisterEvent(RegisterEvent event) {
+//            System.out.println("register event");
+//            MinecraftForge.EVENT_BUS.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+//            Plugin.MultiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+//        }
     }
-
-    @SubscribeEvent
-    public static void registerMultiblocks(TLMultiblockRegistrationEvent event) {
-        System.out.println("running event!");
+    private static class ForgeEvents {
+        @SubscribeEvent
+        public void registerMultiblocks(TLMultiblockRegistrationEvent event) {
+            System.out.println("running event!");
+        }
     }
 }

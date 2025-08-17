@@ -20,9 +20,15 @@ import java.util.function.Consumer;
 
 public abstract class TIMultiblock extends IETemplateMultiblock {
     public final TIDynamicModel model;
+    public final BlockPos masterFromOrigin;
+    public final BlockPos triggerFromOrigin;
+    public final BlockPos size;
     public  TIMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic, TIDynamicModel manualModel) {
         super(loc, masterFromOrigin, triggerFromOrigin, size, logic);
         model = manualModel;
+        this.masterFromOrigin = masterFromOrigin;
+        this.triggerFromOrigin = triggerFromOrigin;
+        this.size = size;
     }
 
     @Override

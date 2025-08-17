@@ -7,11 +7,11 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import java.util.function.Function;
 
 public class RegisterableMultiblock {
-    public final MultiblockHandler.IMultiblock multiblock;
+    public final TIMultiblock multiblock;
     public final Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state;
     public final IMultiblockLogic<TraitMultiblockState> logic;
 
-    public RegisterableMultiblock(MultiblockHandler.IMultiblock multiblock, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state, IMultiblockLogic<TraitMultiblockState> logic) {
+    public RegisterableMultiblock(TIMultiblock multiblock, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state, IMultiblockLogic<TraitMultiblockState> logic) {
         this.multiblock = multiblock;
         this.state = state;
         this.logic = logic;

@@ -40,7 +40,7 @@ public class RegistrationManager {
     public static class MultiRegister {
         public final String modId;
         private final IEventBus eventBus;
-        HashMap<ResourceKey<?>, DeferredRegister<?>> reg;
+        HashMap<ResourceKey<?>, DeferredRegister<?>> reg = new HashMap<>();
 
         public MultiRegister(String modId, IEventBus eventBus) {
             this.modId = modId;

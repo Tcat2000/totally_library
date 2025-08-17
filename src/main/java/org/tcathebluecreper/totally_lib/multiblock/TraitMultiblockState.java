@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class TraitMultiblockState implements IMultiblockState {
     final TraitHolder traits;
-    public CompoundTag customData;
+    public CompoundTag customData = new CompoundTag();
 
     public TraitMultiblockState(TraitHolder traits) {
         this.traits = traits;

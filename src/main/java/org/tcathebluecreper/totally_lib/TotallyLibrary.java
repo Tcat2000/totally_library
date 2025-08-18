@@ -9,10 +9,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
@@ -37,25 +40,17 @@ public class TotallyLibrary {
 
         modEventBus.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
 
+
         ModMultiblocks.init();
     }
 
     private static class ModEvents {
-        private boolean first = true;
-        @SubscribeEvent
-        public void RegisterEvent(RegisterEvent event) {
-            if(first) {
-                Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
-                TLMultiblockBuilder.init();
-            }
-            first = false;
-        }
         @SubscribeEvent
         public void registerMultiblocks(TLMultiblockRegistrationEvent event) {
 //            event.multiblock(ResourceLocation.fromNamespaceAndPath("test","multiblock")).size(3,3,3).masterOffset(1,1,2).triggerOffset(1,1,2).bake();
         }
+
     }
     private static class ForgeEvents {
-
     }
 }

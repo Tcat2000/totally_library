@@ -1,6 +1,7 @@
 package org.tcathebluecreper.totally_lib.kubejs;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
@@ -17,6 +18,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
+import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,12 +28,17 @@ import java.util.Optional;
 public class Plugin extends KubeJSPlugin {
     public static EventGroup multiblockEventsGroup = EventGroup.of("IEMultiblockEvents");
     public static EventHandler multiblockRegisterEventJS = multiblockEventsGroup.startup("registerMultiblocks", () -> TLMultiblockRegistrationEventJS.class);
-    public static DataJsonGenerator dataJsonGenerator;
 
     @Override
     public void registerEvents() {
         super.registerEvents();
         multiblockEventsGroup.register();
+    }
+
+    @Override
+    public void initStartup() { // 1
+        Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+        TLMultiblockBuilder.init();
     }
 
     @Override
@@ -52,7 +59,7 @@ public class Plugin extends KubeJSPlugin {
                 out.put("textures", textures);
 
                 out.putString("loader","immersiveengineering:basic_split");
-                out.putBoolean("dynamic", false);
+//                out.putBoolean("dynamic", false);
                 CompoundTag innerModel = new CompoundTag();
                 innerModel.putString("parent","block/multiblock/chemical_bath/chemical_bath");
                 out.put("inner_model", innerModel);
@@ -66,7 +73,11 @@ public class Plugin extends KubeJSPlugin {
                 }
                 out.put("split_parts", blockPoses);
 
-                generator.json(ResourceLocation.fromNamespaceAndPath("test","block/multiblock/multiblock/multiblock_split"), NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, out));
+                JsonObject json = NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, out).getAsJsonObject();
+
+                json.addProperty("dynamic", false);
+
+                generator.json(ResourceLocation.fromNamespaceAndPath("test","models/block/multiblock/multiblock/multiblock_split"), json);
 
             } catch(IOException e) {
                 throw new RuntimeException(e);

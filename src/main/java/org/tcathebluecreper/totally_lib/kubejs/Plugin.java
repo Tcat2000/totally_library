@@ -6,6 +6,7 @@ import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.event.EventGroup;
 import dev.latvian.mods.kubejs.event.EventHandler;
 import dev.latvian.mods.kubejs.generator.AssetJsonGenerator;
+import dev.latvian.mods.kubejs.script.BindingsEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +14,8 @@ import net.minecraft.server.packs.resources.Resource;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
+import org.tcathebluecreper.totally_lib.multiblock.trait.EnergyTrait;
+import org.tcathebluecreper.totally_lib.multiblock.trait.ItemTrait;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -32,6 +35,12 @@ public class Plugin extends KubeJSPlugin {
     public void initStartup() { // 1
         Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
         TLMultiblockBuilder.init();
+    }
+
+    @Override
+    public void registerBindings(BindingsEvent event) {
+        event.add("TLEnergyTrait", EnergyTrait.class);
+        event.add("TLItemTrait", ItemTrait.class);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.tcathebluecreper.totally_lib.multiblock.trait;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraftforge.energy.EnergyStorage;
 
 public class EnergyTrait implements ITrait {
@@ -30,7 +31,7 @@ public class EnergyTrait implements ITrait {
 
     @Override
     public void readSaveNBT(CompoundTag tag) {
-        storage.deserializeNBT(tag.get(getName()));
+        if(tag.contains(getName())) storage.deserializeNBT(tag.get(getName()));
     }
 
     @Override

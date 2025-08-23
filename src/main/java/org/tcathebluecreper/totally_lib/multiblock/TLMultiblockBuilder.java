@@ -20,6 +20,7 @@ import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -32,7 +33,7 @@ public class TLMultiblockBuilder {
     public BlockPos size;
     public int manualScale = 0;
     public TIDynamicModel manualModel;
-    public Supplier<ArrayList<ITrait>> traits = ArrayList::new;
+    public Supplier<List<ITrait>> traits = ArrayList::new;
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
@@ -50,7 +51,10 @@ public class TLMultiblockBuilder {
     public TLMultiblockBuilder triggerOffset(int x, int y, int z) {triggerOffset = new BlockPos(x,y,z); return this;}
     public TLMultiblockBuilder size(BlockPos size) {this.size = size; return this;}
     public TLMultiblockBuilder size(int x, int y, int z) {size = new BlockPos(x,y,z); return this;}
-    public TLMultiblockBuilder traits(Supplier<ArrayList<ITrait>> traits) {this.traits = traits; return this;}
+    public TLMultiblockBuilder traits(Supplier<List<ITrait>> traits) {
+        this.traits = () -> new ArrayList<>(traits.get());
+        return this;
+    }
 
     public RegisterableMultiblock bake() {
         Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state = (capabilitySource) -> new TraitMultiblockState(traits.get());

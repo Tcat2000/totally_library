@@ -6,6 +6,7 @@ import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.TraitHolder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TraitMultiblockState implements IMultiblockState {
     final TraitHolder traits;
@@ -15,7 +16,7 @@ public class TraitMultiblockState implements IMultiblockState {
         this.traits = traits;
     }
 
-    public TraitMultiblockState(ArrayList<ITrait> traits) {
+    public TraitMultiblockState(List<ITrait> traits) {
         this.traits = new TraitHolder(traits);
     }
 

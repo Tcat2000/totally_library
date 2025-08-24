@@ -15,6 +15,7 @@ import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
 import org.tcathebluecreper.totally_lib.multiblock.trait.EnergyTrait;
+import org.tcathebluecreper.totally_lib.multiblock.trait.FluidTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ItemTrait;
 
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class Plugin extends KubeJSPlugin {
     public void registerBindings(BindingsEvent event) {
         event.add("TLEnergyTrait", EnergyTrait.class);
         event.add("TLItemTrait", ItemTrait.class);
+        event.add("TLFluidTrait", FluidTrait.class);
     }
 
     @Override

@@ -8,9 +8,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.tcathebluecreper.totally_lib.lib.CacheMap;
 
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 public class RegistrationManager {
     private final IEventBus eventBus;
@@ -24,16 +26,16 @@ public class RegistrationManager {
         return registries.getAndAdd(modId, () -> new MultiRegister(modId, eventBus));
     }
 
-    public <R> void register(ResourceKey<Registry<R>> key, String modId, String id, R registered) {
-        registries.getAndAdd(modId, () -> new MultiRegister(modId, eventBus)).getRegistry(key).register(id, () -> registered);
+    public <R> RegistryObject<R> register(ResourceKey<Registry<R>> key, String modId, String id, Supplier<R> registered) {
+        return registries.getAndAdd(modId, () -> new MultiRegister(modId, eventBus)).getRegistry(key).register(id, registered);
     }
 
-    public void registerBlock(String modId, String id, Block block) {
-        registries.getAndAdd(modId, () -> new MultiRegister(modId, eventBus)).getRegistry(Registries.BLOCK).register(id, () -> block);
+    public RegistryObject<Block> registerBlock(String modId, String id, Block block) {
+        return registries.getAndAdd(modId, () -> new MultiRegister(modId, eventBus)).getRegistry(Registries.BLOCK).register(id, () -> block);
     }
 
-    public void registerItem(String modId, String id, Item item) {
-        registries.getAndAdd(modId, () -> new MultiRegister(modId, eventBus)).getRegistry(Registries.ITEM).register(id, () -> item);
+    public RegistryObject<Item> registerItem(String modId, String id, Item item) {
+        return registries.getAndAdd(modId, () -> new MultiRegister(modId, eventBus)).getRegistry(Registries.ITEM).register(id, () -> item);
     }
 
 

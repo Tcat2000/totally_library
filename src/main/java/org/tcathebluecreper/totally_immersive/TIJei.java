@@ -32,25 +32,25 @@ public class TIJei implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get()), ChemicalBathJEICategory.UID);
-        registration.addRecipeCatalyst(new ItemStack(TIMultiblocks.GRINDER.blockItem().get()), GrinderJEICategory.UID);
+//        registration.addRecipeCatalyst(new ItemStack(TIMultiblocks.CHEMICAL_BATH.blockItem().get()), ChemicalBathJEICategory.UID);
+//        registration.addRecipeCatalyst(new ItemStack(TIMultiblocks.GRINDER.blockItem().get()), GrinderJEICategory.UID);
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         ClientLevel world = Minecraft.getInstance().level;
         assert world != null;
-        registration.addRecipes(ChemicalBathJEICategory.UID, new ArrayList<>(ChemicalBathRecipe.recipes.getRecipes(world)).stream().filter((r) -> !r.jeiHide.get()).toList());
-        registration.addRecipes(GrinderJEICategory.UID, new ArrayList<>(GrinderRecipe.recipes.getRecipes(world)).stream().filter((r) -> !r.jeiHide.get()).toList());
+//        registration.addRecipes(ChemicalBathJEICategory.UID, new ArrayList<>(ChemicalBathRecipe.recipes.getRecipes(world)).stream().filter((r) -> !r.jeiHide.get()).toList());
+//        registration.addRecipes(GrinderJEICategory.UID, new ArrayList<>(GrinderRecipe.recipes.getRecipes(world)).stream().filter((r) -> !r.jeiHide.get()).toList());
     }
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
-        registration.addRecipeCategories(
-                new ChemicalBathJEICategory(guiHelper),
-                new GrinderJEICategory(guiHelper)
-        );
+//        IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
+//        registration.addRecipeCategories(
+//                new ChemicalBathJEICategory(guiHelper),
+//                new GrinderJEICategory(guiHelper)
+//        );
     }
 
     @Override

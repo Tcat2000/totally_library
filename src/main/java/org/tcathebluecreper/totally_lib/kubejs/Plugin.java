@@ -1,6 +1,8 @@
 package org.tcathebluecreper.totally_lib.kubejs;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.JsonOps;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.event.EventGroup;
@@ -13,11 +15,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
+import org.tcathebluecreper.totally_lib.multiblock.RegisterableMultiblock;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
 import org.tcathebluecreper.totally_lib.multiblock.trait.EnergyTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.FluidTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ItemTrait;
 
+import javax.json.spi.JsonProvider;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -48,44 +52,190 @@ public class Plugin extends KubeJSPlugin {
     @Override
     public void generateAssetJsons(AssetJsonGenerator generator) {
         ModMultiblocks.allMultiblocks.forEach(multiblock -> {
-            try {
-                Optional<Resource> structure = Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("test","structures/multiblock.nbt"));
-//                Optional<Resource> model = Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("totally_immersive","block/multiblock/chemical_bath/chemical_bath.json"));
+            if(multiblock.assetGenData == null) return;
 
-                if(structure.isEmpty()) return;
-                CompoundTag src = NbtIo.readCompressed(structure.get().open());
-                CompoundTag out = new CompoundTag();
-                ListTag blockPoses = new ListTag();
+            String path = multiblock.id.getPath();
+            String name = path.split("/")[path.split("/").length - 1];
+            ResourceLocation pathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.id.getNamespace(), "models/block/multiblock/" + path + "/" + name + "_split");
+            ResourceLocation readablePathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.id.getNamespace(), "block/multiblock/" + path + "/" + name + "_split");
+            ResourceLocation pathToBlockstate = ResourceLocation.fromNamespaceAndPath(multiblock.id.getNamespace(), "blockstates/" + name);
+            ResourceLocation pathToItemModel = ResourceLocation.fromNamespaceAndPath(multiblock.id.getNamespace(), "models/item/" + name);
 
-                out.putString("parent","minecraft:block/block");
-                CompoundTag textures = new CompoundTag();
-                textures.putString("particle","minecraft:block/diamond_block");
-                out.put("textures", textures);
+            CompoundTag out = new CompoundTag();
+            ListTag blockPoses = new ListTag();
 
-                out.putString("loader","immersiveengineering:basic_split");
+            out.putString("parent","minecraft:block/block");
+            CompoundTag textures = new CompoundTag();
+            textures.putString("particle","minecraft:block/diamond_block");
+            out.put("textures", textures);
+
+            out.putString("loader","immersiveengineering:basic_split");
 //                out.putBoolean("dynamic", false);
-                CompoundTag innerModel = new CompoundTag();
-                innerModel.putString("parent","block/multiblock/chemical_bath/chemical_bath");
-                out.put("inner_model", innerModel);
 
-                for(Tag tag : ((ListTag) src.get("blocks"))) {
-                    ListTag pos = (ListTag) ((CompoundTag)tag).get("pos");
-                    pos.set(0, IntTag.valueOf(pos.getInt(0) - multiblock.multiblock.masterFromOrigin.getX()));
-                    pos.set(1, IntTag.valueOf(pos.getInt(1) - multiblock.multiblock.masterFromOrigin.getY()));
-                    pos.set(2, IntTag.valueOf(pos.getInt(2) - multiblock.multiblock.masterFromOrigin.getZ()));
-                    blockPoses.add(pos);
-                }
-                out.put("split_parts", blockPoses);
+            out.put("inner_model", JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, multiblock.assetGenData.innerModel));
 
-                JsonObject json = NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, out).getAsJsonObject();
-
-                json.addProperty("dynamic", false);
-
-                generator.json(ResourceLocation.fromNamespaceAndPath("test","models/block/multiblock/multiblock/multiblock_split"), json);
-
-            } catch(IOException e) {
-                throw new RuntimeException(e);
+            for(int i = 0; i < multiblock.assetGenData.blocks.length; i++) {
+                int[] pos = multiblock.assetGenData.blocks[i];
+                ListTag tag = new ListTag();
+                tag.add(IntTag.valueOf(pos[0] - multiblock.multiblock.masterFromOrigin.getX()));
+                tag.add(IntTag.valueOf(pos[1] - multiblock.multiblock.masterFromOrigin.getY()));
+                tag.add(IntTag.valueOf(pos[2] - multiblock.multiblock.masterFromOrigin.getZ()));
+                blockPoses.add(tag);
             }
+            out.put("split_parts", blockPoses);
+
+            JsonObject json = NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, out).getAsJsonObject();
+
+            json.addProperty("dynamic", false);
+
+            System.out.println("generated json asset: " + json);
+            generator.json(pathToSplitModel, json);
+
+            JsonObject blockstate = new JsonObject();
+            JsonObject variants = new JsonObject();
+
+            JsonObject model = new JsonObject();
+            model.addProperty("model", readablePathToSplitModel.toString());
+            model.addProperty("uvlock", true);
+
+            model.addProperty("y", 0);
+            variants.add("facing=north,mirrored=false", model.deepCopy());
+            model.addProperty("y", 90);
+            variants.add("facing=east,mirrored=false", model.deepCopy());
+            model.addProperty("y", 180);
+            variants.add("facing=south,mirrored=false", model.deepCopy());
+            model.addProperty("y", 270);
+            variants.add("facing=west,mirrored=false", model.deepCopy());
+            model.addProperty("y", 0);
+            variants.add("facing=north,mirrored=true", model.deepCopy());
+            model.addProperty("y", 90);
+            variants.add("facing=east,mirrored=true", model.deepCopy());
+            model.addProperty("y", 180);
+            variants.add("facing=south,mirrored=true", model.deepCopy());
+            model.addProperty("y", 270);
+            variants.add("facing=west,mirrored=true", model.deepCopy());
+
+            blockstate.add("variants", variants);
+            generator.json(pathToBlockstate, blockstate);
+
+            float size = Math.max(multiblock.multiblock.size.getX(), Math.max(multiblock.multiblock.size.getY(), multiblock.multiblock.size.getZ()));
+
+            JsonObject itemModel = multiblock.assetGenData.innerModel.deepCopy();
+            JsonObject displayOptions = new JsonObject();
+
+
+            JsonObject display = new JsonObject();
+            JsonArray array = new JsonArray(3);
+            array.add(new JsonPrimitive(30));
+            array.add(new JsonPrimitive(225));
+            array.add(new JsonPrimitive(0));
+            display.add("rotation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            display.add("translation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0.625 / size));
+            array.add(new JsonPrimitive(0.625 / size));
+            array.add(new JsonPrimitive(0.625 / size));
+            display.add("scale", array);
+            displayOptions.add("gui", display);
+
+            display = new JsonObject();
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            display.add("rotation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(3));
+            array.add(new JsonPrimitive(0));
+            display.add("translation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0.25 / size));
+            array.add(new JsonPrimitive(0.25 / size));
+            array.add(new JsonPrimitive(0.25 / size));
+            display.add("scale", array);
+            displayOptions.add("ground", display);
+
+            display = new JsonObject();
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            display.add("rotation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            display.add("translation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0.5 / size));
+            array.add(new JsonPrimitive(0.5 / size));
+            array.add(new JsonPrimitive(0.5 / size));
+            display.add("scale", array);
+            displayOptions.add("fixed", display);
+
+            display = new JsonObject();
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(75));
+            array.add(new JsonPrimitive(45));
+            array.add(new JsonPrimitive(0));
+            display.add("rotation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(2.5));
+            array.add(new JsonPrimitive(0));
+            display.add("translation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0.375 / size));
+            array.add(new JsonPrimitive(0.375 / size));
+            array.add(new JsonPrimitive(0.375 / size));
+            display.add("scale", array);
+            displayOptions.add("thirdperson_righthand", display);
+
+            display = new JsonObject();
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(45));
+            array.add(new JsonPrimitive(0));
+            display.add("rotation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            display.add("translation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0.4 / size));
+            array.add(new JsonPrimitive(0.4 / size));
+            array.add(new JsonPrimitive(0.4 / size));
+            display.add("scale", array);
+            displayOptions.add("firstperson_righthand", display);
+
+            display = new JsonObject();
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(225));
+            array.add(new JsonPrimitive(0));
+            display.add("rotation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            array.add(new JsonPrimitive(0));
+            display.add("translation", array);
+            array = new JsonArray(3);
+            array.add(new JsonPrimitive(0.4 / size));
+            array.add(new JsonPrimitive(0.4 / size));
+            array.add(new JsonPrimitive(0.4 / size));
+            display.add("scale", array);
+            displayOptions.add("firstperson_lefthand", display);
+
+
+            itemModel.add("display", displayOptions);
+
+            generator.json(pathToItemModel, itemModel);
         });
     }
 }

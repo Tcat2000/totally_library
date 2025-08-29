@@ -1,0 +1,12 @@
+{
+    "parent" : "minecraft:block/block",
+    "inner_model" : {
+        "parent" : "totally_lib:block/model"
+    },
+    "textures" : {
+        "particle" : "minecraft:block/diamond_block"
+    },
+    "split_parts" : [ [ -1, -1, -2 ], [ -1, -1, -1 ], [ -1, -1, 0 ], [ 0, -1, -2 ], [ 0, -1, -1 ], [ 0, -1, 0 ], [ 1, -1, -2 ], [ 1, -1, -1 ], [ 1, -1, 0 ], [ -1, 0, -2 ], [ -1, 0, -1 ], [ -1, 0, 0 ], [ 0, 0, -2 ], [ 0, 0, -1 ], [ 0, 0, 0 ], [ 1, 0, -2 ], [ 1, 0, -1 ], [ 1, 0, 0 ], [ -1, 1, -2 ], [ -1, 1, -1 ], [ -1, 1, 0 ], [ 0, 1, -2 ], [ 0, 1, -1 ], [ 0, 1, 0 ], [ 1, 1, -2 ], [ 1, 1, -1 ], [ 1, 1, 0 ] ],
+    "loader" : "immersiveengineering:basic_split",
+    "dynamic" : false
+}

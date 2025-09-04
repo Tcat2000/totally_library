@@ -9,21 +9,16 @@ import dev.latvian.mods.kubejs.event.EventGroup;
 import dev.latvian.mods.kubejs.event.EventHandler;
 import dev.latvian.mods.kubejs.generator.AssetJsonGenerator;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
-import org.tcathebluecreper.totally_lib.multiblock.RegisterableMultiblock;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
 import org.tcathebluecreper.totally_lib.multiblock.trait.EnergyTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.FluidTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ItemTrait;
-
-import javax.json.spi.JsonProvider;
-import java.io.IOException;
-import java.util.Optional;
+import org.tcathebluecreper.totally_lib.multiblock.trait.TraitIOSides;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeSerializer;
 
 
 public class Plugin extends KubeJSPlugin {
@@ -37,8 +32,12 @@ public class Plugin extends KubeJSPlugin {
     }
 
     @Override
-    public void initStartup() { // 1
-        Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+    public void initStartup() {
+        try {
+            Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
         TLMultiblockBuilder.init();
     }
 
@@ -47,6 +46,15 @@ public class Plugin extends KubeJSPlugin {
         event.add("TLEnergyTrait", EnergyTrait.class);
         event.add("TLItemTrait", ItemTrait.class);
         event.add("TLFluidTrait", FluidTrait.class);
+        event.add("TraitIOSides", TraitIOSides.class);
+
+        event.add("BooleanProvider", TLRecipeSerializer.BooleanProvider.class);
+        event.add("FloatProvider", TLRecipeSerializer.FloatProvider.class);
+        event.add("FluidProvider", TLRecipeSerializer.FluidProvider.class);
+        event.add("FluidStackProvider", TLRecipeSerializer.FluidStackProvider.class);
+        event.add("IntProvider", TLRecipeSerializer.IntProvider.class);
+        event.add("ItemProvider", TLRecipeSerializer.ItemProvider.class);
+        event.add("ItemStackProvider", TLRecipeSerializer.ItemStackProvider.class);
     }
 
     @Override

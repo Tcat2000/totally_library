@@ -14,27 +14,27 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.tcathebluecreper.totally_immersive.TIContent;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipe;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeSerializer;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipe;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeSerializer;
 
 import java.util.*;
 
-public class GrinderRecipe extends TIRecipe {
+public class GrinderRecipe extends TLRecipe {
     public static RegistryObject<GrinderRecipeSerializer> SERIALIZER;
     public static CachedRecipeList<GrinderRecipe> recipes = new CachedRecipeList<>(TIContent.TIRecipes.GRINDER);
 
-    public final TIRecipeSerializer.IngredientProvider input;
-    public final TIRecipeSerializer.ItemStackProvider output;
-    public final TIRecipeSerializer.IntProvider energyCost;
-    public final TIRecipeSerializer.IntProvider priority;
-    public final TIRecipeSerializer.BooleanProvider jeiHide;
+    public final TLRecipeSerializer.IngredientProvider input;
+    public final TLRecipeSerializer.ItemStackProvider output;
+    public final TLRecipeSerializer.IntProvider energyCost;
+    public final TLRecipeSerializer.IntProvider priority;
+    public final TLRecipeSerializer.BooleanProvider jeiHide;
     public <T extends Recipe<?>> GrinderRecipe(ResourceLocation id, ProviderList<?> providers) {
         super(id, providers);
-        this.input = (TIRecipeSerializer.IngredientProvider) providers.get("inputItem").get();
-        this.output = (TIRecipeSerializer.ItemStackProvider) providers.get("outputItem").get();
-        this.energyCost = (TIRecipeSerializer.IntProvider) providers.get("energyCost").get();
-        this.priority = (TIRecipeSerializer.IntProvider) providers.get("priority").get();
-        this.jeiHide = (TIRecipeSerializer.BooleanProvider) providers.get("jeiHide").get();
+        this.input = (TLRecipeSerializer.IngredientProvider) providers.get("inputItem").get();
+        this.output = (TLRecipeSerializer.ItemStackProvider) providers.get("outputItem").get();
+        this.energyCost = (TLRecipeSerializer.IntProvider) providers.get("energyCost").get();
+        this.priority = (TLRecipeSerializer.IntProvider) providers.get("priority").get();
+        this.jeiHide = (TLRecipeSerializer.BooleanProvider) providers.get("jeiHide").get();
     }
 
     @Override

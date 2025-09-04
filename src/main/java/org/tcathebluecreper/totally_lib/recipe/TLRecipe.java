@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_lib.crafting;
+package org.tcathebluecreper.totally_lib.recipe;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.core.RegistryAccess;
@@ -7,11 +7,13 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
+import org.tcathebluecreper.totally_lib.crafting.ProviderList;
 
-public abstract class TIRecipe implements Recipe<Container> {
+public abstract class TLRecipe implements Recipe<Container> {
     public final ResourceLocation id;
     public final ProviderList<?> providers;
-    public TIRecipe(ResourceLocation id, ProviderList<?> providers) {
+
+    public TLRecipe(ResourceLocation id, ProviderList<?> providers) {
         this.id = id;
         this.providers = providers;
     }

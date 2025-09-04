@@ -5,8 +5,8 @@ import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipe;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeSerializer;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipe;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeSerializer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,8 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class GrinderRecipeSerializer extends TIRecipeSerializer<GrinderRecipe> {
-    public GrinderRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, GrinderRecipe> constructor, Class<? extends TIRecipe> type) {
+public class GrinderRecipeSerializer extends TLRecipeSerializer<GrinderRecipe> {
+    public GrinderRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, GrinderRecipe> constructor, Class<? extends TLRecipe> type) {
         super(constructor, type);
     }
 
@@ -60,13 +60,13 @@ public class GrinderRecipeSerializer extends TIRecipeSerializer<GrinderRecipe> {
     }
 
     @Override
-    public ProviderList<TIRecipeSerializer.Provider<?>> getProviders() {
-        ProviderList<TIRecipeSerializer.Provider<?>> list = super.getProviders();
-        list.add(new TIRecipeSerializer.IngredientProvider("inputItem"));
-        list.add(new TIRecipeSerializer.ItemStackProvider("outputItem"));
-        list.add(new TIRecipeSerializer.IntProvider("energyCost"));
-        list.add(new TIRecipeSerializer.IntProvider("priority", 1));
-        list.add(new TIRecipeSerializer.BooleanProvider("jeiHide", false));
+    public ProviderList<TLRecipeSerializer.Provider<?>> getProviders() {
+        ProviderList<TLRecipeSerializer.Provider<?>> list = super.getProviders();
+        list.add(new TLRecipeSerializer.IngredientProvider("inputItem"));
+        list.add(new TLRecipeSerializer.ItemStackProvider("outputItem"));
+        list.add(new TLRecipeSerializer.IntProvider("energyCost"));
+        list.add(new TLRecipeSerializer.IntProvider("priority", 1));
+        list.add(new TLRecipeSerializer.BooleanProvider("jeiHide", false));
         return list;
     }
 }

@@ -5,8 +5,8 @@ import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipe;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeSerializer;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipe;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeSerializer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,8 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class ChemicalBathRecipeSerializer extends TIRecipeSerializer<ChemicalBathRecipe> {
-    public ChemicalBathRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, ChemicalBathRecipe> constructor, Class<? extends TIRecipe> type) {
+public class ChemicalBathRecipeSerializer extends TLRecipeSerializer<ChemicalBathRecipe> {
+    public ChemicalBathRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, ChemicalBathRecipe> constructor, Class<? extends TLRecipe> type) {
         super(constructor, type);
     }
 

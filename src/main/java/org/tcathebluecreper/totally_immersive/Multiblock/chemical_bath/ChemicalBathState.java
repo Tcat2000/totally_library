@@ -27,7 +27,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.tcathebluecreper.totally_lib.crafting.RangedDetectorWrapper;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeProcess;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;
 import org.tcathebluecreper.totally_lib.multiblock.TIMultiblockState;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class ChemicalBathState implements TIMultiblockState<ChemicalBathRecipe, 
     StoredCapability<ArrayFluidHandler> chemTank;
     StoredCapability<IEnergyStorage> power;
 
-    TIRecipeProcess<ChemicalBathRecipe, ChemicalBathState> process;
+    TLRecipeProcess<ChemicalBathRecipe, ChemicalBathState> process;
 
     public RedstoneControl.RSState redstoneState = RedstoneControl.RSState.enabledByDefault();
 
@@ -95,11 +95,11 @@ public class ChemicalBathState implements TIMultiblockState<ChemicalBathRecipe, 
         process.deserialize(nbt.getCompound("process"));
     }
 
-    protected TIRecipeProcess<ChemicalBathRecipe, ChemicalBathState> createProcess(int tick) {
-        return new TIRecipeProcess<>(
+    protected TLRecipeProcess<ChemicalBathRecipe, ChemicalBathState> createProcess(int tick) {
+        return new TLRecipeProcess<>(
             ChemicalBathRecipe.class,
             List.of(
-                new TIRecipeProcess.TickAction<>(0, ((process, parallel) -> {
+                new TLRecipeProcess.TickAction<>(0, ((process, parallel) -> {
                     if(process.tick[parallel] != 0) return;
                     if(process.recipe[0].input.canExtractFrom(input.getValue().getStackInSlot(0))) {
                         processSlot.getValue().setStackInSlot(parallel, process.recipe[0].input.extractFrom(input.getValue().getStackInSlot(0)));
@@ -107,14 +107,14 @@ public class ChemicalBathState implements TIMultiblockState<ChemicalBathRecipe, 
                     }
                     else process.stuck[parallel] = true;
                 })),
-                new TIRecipeProcess.TickAction<>(140, ((process, parallel) -> {
+                new TLRecipeProcess.TickAction<>(140, ((process, parallel) -> {
                     if(process.recipe[0].output.insertTo(output.getValue(), 0)) {
                        processSlot.getValue().setStackInSlot(0, ItemStack.EMPTY);
                        process.stuck[parallel] = false;
                     }
                     else process.stuck[parallel] = true;
                 })),
-                new TIRecipeProcess.TickAction<>(200, ((process, parallel) -> true))
+                new TLRecipeProcess.TickAction<>(200, ((process, parallel) -> true))
             ),
             this,
             (process, parallel) -> {
@@ -130,7 +130,7 @@ public class ChemicalBathState implements TIMultiblockState<ChemicalBathRecipe, 
     }
 
     @Override
-    public TIRecipeProcess<ChemicalBathRecipe, ChemicalBathState> getRecipeProcess() {
+    public TLRecipeProcess<ChemicalBathRecipe, ChemicalBathState> getRecipeProcess() {
         return process;
     }
 

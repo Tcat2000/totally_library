@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_lib.crafting;
+package org.tcathebluecreper.totally_lib.recipe;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -8,6 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.function.TriFunction;
+import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -16,22 +17,22 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 
-public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
+public class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
     public final Class<R> type;
     public final List<Action<R, S>> actions;
     public final S state;
-    public final BiFunction<TIRecipeProcess<R, S>, Integer, Boolean> tickLogic;
+    public final BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic;
     public int[] tick;
     private boolean needsCheck = true;
-    public boolean[] stopped; /// If the machine is disabled, i.e. by redstone control
-    public boolean[] stuck; /// If the machine is stuck mid-process, i.e. by running out of power
+    public boolean[] stopped; /// If the machine is disabled, i.e., by redstone control
+    public boolean[] stuck; /// If the machine is stuck mid-process, i.e., by running out of power
 
     public final int maxParallel;
     public final boolean allowDifferentRecipes;
 
     public R[] recipe;
 
-    public TIRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TIRecipeProcess<R, S>, Integer, Boolean> tickLogic) {
+    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic) {
         this.type = type;
         this.actions = actions;
         this.state = state;
@@ -44,7 +45,7 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
         maxParallel = 1;
         allowDifferentRecipes = false;
     }
-    public TIRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TIRecipeProcess<R, S>, Integer, Boolean> tickLogic, int initialTick) {
+    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic, int initialTick) {
         this.type = type;
         this.actions = actions;
         this.state = state;
@@ -58,7 +59,7 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
         maxParallel = 1;
         allowDifferentRecipes = false;
     }
-    public TIRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TIRecipeProcess<R, S>, Integer, Boolean> tickLogic, int[] initialTick, int maxParallel, boolean allowDifferentRecipes) {
+    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic, int[] initialTick, int maxParallel, boolean allowDifferentRecipes) {
         this.type = type;
         this.actions = actions;
         this.state = state;
@@ -72,7 +73,7 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
         stopped = new boolean[maxParallel];
         tick = new int[maxParallel];
     }
-    public TIRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TIRecipeProcess<R, S>, Integer, Boolean> tickLogic, int maxParallel, boolean allowDifferentRecipes) {
+    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic, int maxParallel, boolean allowDifferentRecipes) {
         this.type = type;
         this.actions = actions;
         this.state = state;
@@ -95,12 +96,12 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
                 }
             }
         }
-        else {
-            if(recipe[0] == null || needsCheck) {
-                if(checkAnyRunning()) resumeRecipe(level);
-                else recipe[0] = findRecipe(level);
-            }
-        }
+//        else {
+//            if(recipe[0] == null || needsCheck) {
+//                if(checkAnyRunning()) resumeRecipe(level);
+//                else recipe[0] = findRecipe(level);
+//            }
+//        }
 //        needsCheck = false;
         for(int p = 0; p < maxParallel; p++) {
             if(recipe[getRecipeIndex(p)] == null) continue;
@@ -110,7 +111,7 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
                 int finalP = p;
                 AtomicBoolean finished = new AtomicBoolean(false);
                 actions.forEach((action) -> {
-                    if(action.run(tick[finalP], this, finalP)) {
+                    if(action.run(tick[finalP], this, finalP, recipe.length)) {
                         finished.set(true);
                         tick[finalP] = 0;
                     }
@@ -161,6 +162,11 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
         for(boolean b : stuck) {
             buf.writeBoolean(b);
         }
+
+        buf.writeVarInt(recipe.length);
+        for(R r : recipe) {
+            buf.writeResourceLocation(r.id);
+        }
     }
     public void fromNetwork(FriendlyByteBuf buf) {
         tick = buf.readVarIntArray();
@@ -178,6 +184,12 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
             array[j] = buf.readBoolean();
         }
         stuck = array;
+
+        len = buf.readVarInt();
+        recipe = (R[]) Array.newInstance(type, len);
+        for(int j = 0; j < array.length; ++j) {
+            recipe[j] = buf.readResourceLocation();
+        }
     }
 
     public CompoundTag serialize() {
@@ -216,23 +228,23 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
         }
     }
 
-    public static class Action<R extends TIRecipe, S extends IMultiblockState> {
-        public final TriFunction<Integer, TIRecipeProcess<R, S>, Integer, Boolean> logic;
+    public static class Action<R extends TLRecipe, S extends IMultiblockState> {
+        public final TriFunction<Integer, TLRecipeProcess<R, S>, Integer, Boolean> logic;
 
-        public Action(TriFunction<Integer, TIRecipeProcess<R, S>, Integer, Boolean> logic) {
+        public Action(TriFunction<Integer, TLRecipeProcess<R, S>, Integer, Boolean> logic) {
             this.logic = logic;
         }
-        public boolean run(int tick, TIRecipeProcess<R, S> context, int parallel) {
+        public boolean run(int tick, TLRecipeProcess<R, S> context, int parallel, int length) {
             return logic.apply(tick, context, parallel);
         }
     }
-    public static class TickAction<R extends TIRecipe, S extends IMultiblockState> extends Action<R, S> {
+    public static class TickAction<R extends TLRecipe, S extends IMultiblockState> extends Action<R, S> {
         public final int tick;
-        public TickAction(int tick, BiFunction<TIRecipeProcess<R, S>, Integer, Boolean> logic) {
+        public TickAction(int tick, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> logic) {
             super((t, context, paral) -> logic.apply(context, paral));
             this.tick = tick;
         }
-        public TickAction(int tick, BiConsumer<TIRecipeProcess<R, S>, Integer> logic) {
+        public TickAction(int tick, BiConsumer<TLRecipeProcess<R, S>, Integer> logic) {
             super((t, context, paral) -> {
                 logic.accept(context, paral);
                 return false;
@@ -241,40 +253,40 @@ public class TIRecipeProcess<R extends TIRecipe, S extends IMultiblockState> {
         }
 
         @Override
-        public boolean run(int tick, TIRecipeProcess<R, S> context, int parallel) {
-            if(this.tick == tick) return super.run(tick, context, parallel);
+        public boolean run(int tick, TLRecipeProcess<R, S> context, int parallel, int length) {
+            if(this.tick == tick || length - this.tick - 1 == tick) return super.run(this.tick, context, parallel, length);
             return false;
         }
     }
-    public static class TickRangeAction<R extends TIRecipe, S extends IMultiblockState> extends Action<R, S> {
+    public static class TickRangeAction<R extends TLRecipe, S extends IMultiblockState> extends Action<R, S> {
         public final int start;
         public final int stop;
-        public TickRangeAction(int start, int stop, BiFunction<TIRecipeProcess<R, S>, Integer, Boolean> logic) {
+        public TickRangeAction(int start, int stop, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> logic) {
             super((t, context, parallel) -> logic.apply(context, parallel));
             this.start = start;
             this.stop = stop;
         }
 
         @Override
-        public boolean run(int tick, TIRecipeProcess<R, S> context, int parallel) {
-            if((tick >= start && tick <= stop) || start == stop) return super.run(tick, context, parallel);
+        public boolean run(int tick, TLRecipeProcess<R, S> context, int parallel, int length) {
+            if((tick >= start && tick <= stop) || start == stop) return super.run(tick, context, parallel, length);
             return true;
         }
     }
     public R findRecipe(Level level) {
         try {
-            return (R) TIRecipeSerializer.RecipeFineders.get(type).apply(state, level);
+            return (R) TLRecipeSerializer.RecipeFineders.get(type).apply(state, level);
         } catch(ClassCastException e) {
             throw new TIAPIException("A serializer for recipe " + type + " was initialized with an invalid type class, should the the same as the recipe it is for.");
         }
     }
-    public R resumeRecipe(Level level) {
-        try {
-            return (R) TIRecipeSerializer.RecipeFineders.get(type).apply(state, level);
-        } catch(ClassCastException e) {
-            throw new TIAPIException("A serializer for recipe " + type + " was initialized with an invalid type class, should the the same as the recipe it is for.");
-        }
-    }
+//    public R resumeRecipe(Level level) {
+//        try {
+//            return (R) TLRecipeSerializer.RecipeResumers.get(type).apply(state, level);
+//        } catch(ClassCastException e) {
+//            throw new TIAPIException("A serializer for recipe " + type + " was initialized with an invalid type class, should the the same as the recipe it is for.");
+//        }
+//    }
 
     public IProbeInfo displayBars(IProbeInfo info, int maxTime, boolean hideEmptyBars, boolean displayMaxProcesses) {
         int count = 0;

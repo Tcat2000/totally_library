@@ -23,7 +23,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.tcathebluecreper.totally_lib.crafting.RangedDetectorWrapper;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeProcess;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;
 import org.tcathebluecreper.totally_lib.multiblock.TIMultiblockState;
 import org.tcathebluecreper.totally_lib.waila.IUnifiedWaila;
 
@@ -39,7 +39,7 @@ public class GrinderState implements TIMultiblockState<GrinderRecipe, GrinderSta
     public StoredCapability<RangedDetectorWrapper> output;
     public StoredCapability<IEnergyStorage> power;
 
-    TIRecipeProcess<GrinderRecipe, GrinderState> process;
+    TLRecipeProcess<GrinderRecipe, GrinderState> process;
 
     public GrinderState(IInitialMultiblockContext<GrinderState> capabilitySource) {
         inventory = new ItemStackHandler(10);
@@ -77,18 +77,18 @@ public class GrinderState implements TIMultiblockState<GrinderRecipe, GrinderSta
         process.deserialize(nbt.getCompound("process"));
     }
 
-    protected TIRecipeProcess<GrinderRecipe, GrinderState> createProcess(int tick) {
-        return new TIRecipeProcess<>(
+    protected TLRecipeProcess<GrinderRecipe, GrinderState> createProcess(int tick) {
+        return new TLRecipeProcess<>(
             GrinderRecipe.class,
             List.of(
-                new TIRecipeProcess.TickAction<>(0, ((process, parallel) -> {
+                new TLRecipeProcess.TickAction<>(0, ((process, parallel) -> {
                     if(process.recipe[0].input.canExtractFrom(input.getValue().getStackInSlot(0))) {
                         processSlot.getValue().setStackInSlot(parallel, process.recipe[0].input.extractFrom(input.getValue().getStackInSlot(0)));
                         process.stuck[parallel] = false;
                     }
                     else process.stuck[parallel] = true;
                 })),
-                new TIRecipeProcess.TickAction<>(140, ((process, parallel) -> {
+                new TLRecipeProcess.TickAction<>(140, ((process, parallel) -> {
                     if(process.recipe[0].output.insertTo(output.getValue(), 0)) {
                         processSlot.getValue().setStackInSlot(parallel, ItemStack.EMPTY);
                         process.tick[parallel] = 0;
@@ -115,7 +115,7 @@ public class GrinderState implements TIMultiblockState<GrinderRecipe, GrinderSta
     }
 
     @Override
-    public TIRecipeProcess<GrinderRecipe, GrinderState> getRecipeProcess() {
+    public TLRecipeProcess<GrinderRecipe, GrinderState> getRecipeProcess() {
         return process;
     }
 

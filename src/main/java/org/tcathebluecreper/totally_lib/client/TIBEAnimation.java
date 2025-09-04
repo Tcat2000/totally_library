@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Vector3f;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeProcess;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 import org.tcathebluecreper.totally_lib.multiblock.TIMultiblockState;
 import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathState;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TIBEAnimation<P extends TIRecipeProcess<?,S>, S extends TIMultiblockState<?,S>> {
+public class TIBEAnimation<P extends TLRecipeProcess<?,S>, S extends TIMultiblockState<?,S>> {
     public final SubTickAnimationSetting setting;
     public final Map<String,List<AnimationLayer>> layers;
     public final Map<String, TIDynamicModel> bones;

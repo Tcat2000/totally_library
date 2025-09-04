@@ -1,10 +1,18 @@
 package org.tcathebluecreper.totally_lib;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.lowdragmc.lowdraglib.Platform;
 import com.mojang.logging.LogUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -15,10 +23,15 @@ import org.slf4j.Logger;
 import org.tcathebluecreper.totally_lib.dev_utils.*;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockRegistrationEvent;
+import org.tcathebluecreper.totally_lib.recipe.TLRegistrableRecipeSerializer;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Mod(TotallyLibrary.MODID)
 public class TotallyLibrary {
@@ -81,6 +94,16 @@ public class TotallyLibrary {
         @SubscribeEvent
         public void serverStarted(ServerStartedEvent event) {
             server = event.getServer();
+        }
+
+        @SubscribeEvent
+        public void addReloadListener(AddReloadListenerEvent event) {
+            event.addListener(new SimpleJsonResourceReloadListener(new Gson(), "") {
+                @Override
+                protected void apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler) {
+//                    TLRegistrableRecipeSerializer.getSerializers().forEach(TLRegistrableRecipeSerializer::clearRecipes);
+                }
+            });
         }
     }
 }

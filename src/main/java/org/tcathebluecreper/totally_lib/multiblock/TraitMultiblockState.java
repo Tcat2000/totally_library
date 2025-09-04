@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_lib.multiblock;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.nbt.CompoundTag;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
@@ -16,7 +17,7 @@ public class TraitMultiblockState implements IMultiblockState {
         this.traits = traits;
     }
 
-    public TraitMultiblockState(List<ITrait> traits) {
+    public TraitMultiblockState(IInitialMultiblockContext capSource, List<ITrait> traits) {
         this.traits = new TraitHolder(traits);
     }
 

@@ -1,0 +1,12 @@
+{
+    "type": "test:multiblock",
+    "length": 60,
+    "input": {
+        "item": "minecraft:iron_ingot",
+        "count": 1
+    },
+    "output": {
+        "item": "immersiveengineering:treated_wood_horizontal",
+        "count": 1
+    }
+}

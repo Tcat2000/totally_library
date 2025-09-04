@@ -3,11 +3,11 @@ package org.tcathebluecreper.totally_immersive.Multiblock.rotay_kiln;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.world.level.Level;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeSerializer;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeSerializer;
 
 import java.util.function.BiFunction;
 
-public class RotaryKilnRecipeSerializer extends TIRecipeSerializer<RotaryKilnRecipe> {
+public class RotaryKilnRecipeSerializer extends TLRecipeSerializer<RotaryKilnRecipe> {
     public RotaryKilnRecipeSerializer(BiFunction constructor, Class type) {
         super(constructor, type);
     }

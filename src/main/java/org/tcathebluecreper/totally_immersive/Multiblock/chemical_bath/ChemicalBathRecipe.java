@@ -12,31 +12,31 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.RegistryObject;
 import org.tcathebluecreper.totally_immersive.TIContent;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipe;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeSerializer;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipe;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeSerializer;
 
 import java.util.*;
 
-public class ChemicalBathRecipe extends TIRecipe {
+public class ChemicalBathRecipe extends TLRecipe {
     public static RegistryObject<ChemicalBathRecipeSerializer> SERIALIZER;
     public static CachedRecipeList<ChemicalBathRecipe> recipes = new CachedRecipeList<>(TIContent.TIRecipes.CHEMICAL_BATH);
 
-    public final TIRecipeSerializer.IngredientProvider input;
-    public final TIRecipeSerializer.FluidStackProvider fluidInput;
-    public final TIRecipeSerializer.ItemStackProvider output;
-    public final TIRecipeSerializer.IntProvider energyCost;
-    public final TIRecipeSerializer.IntProvider fluidRequirement;
-    public final TIRecipeSerializer.IntProvider priority;
-    public final TIRecipeSerializer.BooleanProvider jeiHide;
+    public final TLRecipeSerializer.IngredientProvider input;
+    public final TLRecipeSerializer.FluidStackProvider fluidInput;
+    public final TLRecipeSerializer.ItemStackProvider output;
+    public final TLRecipeSerializer.IntProvider energyCost;
+    public final TLRecipeSerializer.IntProvider fluidRequirement;
+    public final TLRecipeSerializer.IntProvider priority;
+    public final TLRecipeSerializer.BooleanProvider jeiHide;
     public <T extends Recipe<?>> ChemicalBathRecipe(ResourceLocation id, ProviderList<?> providers) {
         super(id, providers);
-        this.input = (TIRecipeSerializer.IngredientProvider) providers.get("inputItem").get();
-        this.output = (TIRecipeSerializer.ItemStackProvider) providers.get("outputItem").get();
-        this.fluidInput = (TIRecipeSerializer.FluidStackProvider) providers.get("fluidInput").get();
-        this.energyCost = (TIRecipeSerializer.IntProvider) providers.get("energyCost").get();
-        this.fluidRequirement = (TIRecipeSerializer.IntProvider) providers.get("fluidRequirement").get();
-        this.priority = (TIRecipeSerializer.IntProvider) providers.get("priority").get();
-        this.jeiHide = (TIRecipeSerializer.BooleanProvider) providers.get("jeiHide").get();
+        this.input = (TLRecipeSerializer.IngredientProvider) providers.get("inputItem").get();
+        this.output = (TLRecipeSerializer.ItemStackProvider) providers.get("outputItem").get();
+        this.fluidInput = (TLRecipeSerializer.FluidStackProvider) providers.get("fluidInput").get();
+        this.energyCost = (TLRecipeSerializer.IntProvider) providers.get("energyCost").get();
+        this.fluidRequirement = (TLRecipeSerializer.IntProvider) providers.get("fluidRequirement").get();
+        this.priority = (TLRecipeSerializer.IntProvider) providers.get("priority").get();
+        this.jeiHide = (TLRecipeSerializer.BooleanProvider) providers.get("jeiHide").get();
     }
 
     @Override

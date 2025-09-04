@@ -8,10 +8,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipe;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipeProcess;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipe;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;
 
-public interface TIMultiblockState<R extends TIRecipe,S extends IMultiblockState> extends IMultiblockState {
-    TIRecipeProcess<R,S> getRecipeProcess();
+public interface TIMultiblockState<R extends TLRecipe,S extends IMultiblockState> extends IMultiblockState {
+    TLRecipeProcess<R,S> getRecipeProcess();
     void getTOPData(BlockEntity be, ProbeMode probeMode, IProbeInfo iProbeInfo, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData);
 }

@@ -5,9 +5,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
-import org.tcathebluecreper.totally_lib.crafting.TIRecipe;
+import org.tcathebluecreper.totally_lib.recipe.TLRecipe;
 
-public class RotaryKilnRecipe extends TIRecipe {
+public class RotaryKilnRecipe extends TLRecipe {
     public RotaryKilnRecipe(ResourceLocation id, ProviderList<?> providers) {
         super(id, providers);
     }

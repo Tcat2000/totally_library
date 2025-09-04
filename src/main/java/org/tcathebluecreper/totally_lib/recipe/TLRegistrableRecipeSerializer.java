@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathRecipe;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
 
 import java.util.ArrayList;
@@ -57,7 +56,10 @@ public class TLRegistrableRecipeSerializer extends TLRecipeSerializer<TLRegistra
     }
 
     @Override
-    public TLRegistrableRecipe resumeRecipe(IMultiblockState state, Level level, Integer parallel) {
+    public TLRegistrableRecipe getRecipe(ResourceLocation id) {
+        for(TLRegistrableRecipe recipe : recipes) {
+            if(recipe.id == id) return recipe;
+        }
         return null;
     }
 

@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.integration.theoneprobe;
+package org.tcathebluecreper.totally_lib.theoneprobe;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;

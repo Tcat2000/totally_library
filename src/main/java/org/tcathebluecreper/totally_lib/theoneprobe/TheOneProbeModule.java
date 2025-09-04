@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_immersive.integration.theoneprobe;
+package org.tcathebluecreper.totally_lib.theoneprobe;
 
 import mcjty.theoneprobe.api.ITheOneProbe;
 

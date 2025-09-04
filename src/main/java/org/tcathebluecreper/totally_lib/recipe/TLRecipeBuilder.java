@@ -12,8 +12,9 @@ import org.apache.commons.lang3.function.TriFunction;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
-import org.tcathebluecreper.totally_lib.multiblock.RecipeTraitMultiblockState;
 import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
+import org.tcathebluecreper.totally_lib.recipe.action.Action;
+import org.tcathebluecreper.totally_lib.recipe.action.TickAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class TLRecipeBuilder {
     public BiFunction<TLRecipe, IMultiblockState, Boolean> checkCanExecute;
     public TriFunction<TLRecipe, IMultiblockState, Integer, Boolean> checkCanResume;
     public ProviderList<TLRecipeSerializer.Provider<?>> recipeProviders = new ProviderList<>();
-    public List<TLRecipeProcess.Action<TLRecipe, TraitMultiblockState>> process = new ArrayList<>();
+    public List<Action<TLRecipe, TraitMultiblockState>> process = new ArrayList<>();
     public BiFunction<TLRecipeProcess<TLRecipe, TraitMultiblockState>, Integer, Boolean> tickLogic;
 
     public static final RegistryObject<RecipeType<?>> TLRecipeRegistry = TotallyLibrary.regManager.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), TotallyLibrary.MODID, "recipe", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(MODID,"recipe")));
@@ -66,7 +67,7 @@ public class TLRecipeBuilder {
         return this;
     }
     public TLRecipeBuilder processTick(int tick, BiConsumer<TLRecipeProcess<TLRecipe, TraitMultiblockState>, Integer> logic) {
-        this.process.add(new TLRecipeProcess.TickAction<>(tick, logic));
+        this.process.add(new TickAction<>(tick, logic));
         return this;
     }
 

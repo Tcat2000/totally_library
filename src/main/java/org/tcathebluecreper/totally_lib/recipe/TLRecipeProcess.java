@@ -4,11 +4,14 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import mcjty.theoneprobe.api.IProbeInfo;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.function.TriFunction;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
+import org.tcathebluecreper.totally_lib.recipe.action.Action;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 
-public class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
+public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
     public final Class<R> type;
     public final List<Action<R, S>> actions;
     public final S state;
@@ -188,13 +191,14 @@ public class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
         len = buf.readVarInt();
         recipe = (R[]) Array.newInstance(type, len);
         for(int j = 0; j < array.length; ++j) {
-            recipe[j] = buf.readResourceLocation();
+            recipe[j] = getRecipe(buf.readResourceLocation());
         }
     }
 
     public CompoundTag serialize() {
         CompoundTag tag = new CompoundTag();
         tag.putIntArray("tick", tick);
+
 
         byte[] array = new byte[stopped.length];
         for(int j = 0; j < array.length; ++j) {
@@ -204,6 +208,7 @@ public class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
 
         tag.put("stopped", stoppedArray);
 
+
         array = new byte[stuck.length];
         for(int j = 0; j < array.length; ++j) {
             array[j] = (byte) (stuck[j] ? 1 : 0);
@@ -211,6 +216,14 @@ public class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
         stoppedArray = new ByteArrayTag(array);
 
         tag.put("stuck", stoppedArray);
+
+
+        ListTag recipeList = new ListTag();
+        for(int j = 0; j < recipe.length; j++) {
+            recipeList.add(StringTag.valueOf(recipe[j].id.toString()));
+        }
+        tag.put("recipe", recipeList);
+
         return tag;
     }
 
@@ -226,67 +239,15 @@ public class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
         for(int j = 0; j < array.length; ++j) {
             stuck[j] = array[j] == 1;
         }
+
+        ListTag list = tag.getList("recipe", StringTag.TAG_STRING);
+        for(int j = 0; j < list.size(); ++j) {
+            recipe[j] = getRecipe(ResourceLocation.parse(list.getString(j)));
+        }
     }
 
-    public static class Action<R extends TLRecipe, S extends IMultiblockState> {
-        public final TriFunction<Integer, TLRecipeProcess<R, S>, Integer, Boolean> logic;
-
-        public Action(TriFunction<Integer, TLRecipeProcess<R, S>, Integer, Boolean> logic) {
-            this.logic = logic;
-        }
-        public boolean run(int tick, TLRecipeProcess<R, S> context, int parallel, int length) {
-            return logic.apply(tick, context, parallel);
-        }
-    }
-    public static class TickAction<R extends TLRecipe, S extends IMultiblockState> extends Action<R, S> {
-        public final int tick;
-        public TickAction(int tick, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> logic) {
-            super((t, context, paral) -> logic.apply(context, paral));
-            this.tick = tick;
-        }
-        public TickAction(int tick, BiConsumer<TLRecipeProcess<R, S>, Integer> logic) {
-            super((t, context, paral) -> {
-                logic.accept(context, paral);
-                return false;
-            });
-            this.tick = tick;
-        }
-
-        @Override
-        public boolean run(int tick, TLRecipeProcess<R, S> context, int parallel, int length) {
-            if(this.tick == tick || length - this.tick - 1 == tick) return super.run(this.tick, context, parallel, length);
-            return false;
-        }
-    }
-    public static class TickRangeAction<R extends TLRecipe, S extends IMultiblockState> extends Action<R, S> {
-        public final int start;
-        public final int stop;
-        public TickRangeAction(int start, int stop, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> logic) {
-            super((t, context, parallel) -> logic.apply(context, parallel));
-            this.start = start;
-            this.stop = stop;
-        }
-
-        @Override
-        public boolean run(int tick, TLRecipeProcess<R, S> context, int parallel, int length) {
-            if((tick >= start && tick <= stop) || start == stop) return super.run(tick, context, parallel, length);
-            return true;
-        }
-    }
-    public R findRecipe(Level level) {
-        try {
-            return (R) TLRecipeSerializer.RecipeFineders.get(type).apply(state, level);
-        } catch(ClassCastException e) {
-            throw new TIAPIException("A serializer for recipe " + type + " was initialized with an invalid type class, should the the same as the recipe it is for.");
-        }
-    }
-//    public R resumeRecipe(Level level) {
-//        try {
-//            return (R) TLRecipeSerializer.RecipeResumers.get(type).apply(state, level);
-//        } catch(ClassCastException e) {
-//            throw new TIAPIException("A serializer for recipe " + type + " was initialized with an invalid type class, should the the same as the recipe it is for.");
-//        }
-//    }
+    public abstract R findRecipe(Level level);
+    public abstract R getRecipe(ResourceLocation id);
 
     public IProbeInfo displayBars(IProbeInfo info, int maxTime, boolean hideEmptyBars, boolean displayMaxProcesses) {
         int count = 0;

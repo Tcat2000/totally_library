@@ -17,7 +17,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
@@ -29,8 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class TLRecipeSerializer<R extends TLRecipe> implements RecipeSerializer<R> {
-    protected static final Map<Class<? extends TLRecipe>, BiFunction<IMultiblockState, Level, ? extends TLRecipe>> RecipeFineders = new HashMap<>();
-    protected static final Map<Class<? extends TLRecipe>, TriFunction<IMultiblockState, Level, Integer, ? extends TLRecipe>> RecipeResumers = new HashMap<>();
+    protected static final Map<Class<? extends TLRecipe>, BiFunction<IMultiblockState, Level, ? extends TLRecipe>> RecipeFinders = new HashMap<>();
     private final BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor;
 
     public ProviderList<Provider<?>> getProviders() {
@@ -39,8 +37,7 @@ public abstract class TLRecipeSerializer<R extends TLRecipe> implements RecipeSe
 
     public TLRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor, Class<? extends TLRecipe> type) {
         this.constructor = constructor;
-        RecipeFineders.put(type, this::findRecipe);
-        RecipeResumers.put(type, this::resumeRecipe);
+        RecipeFinders.put(type, this::findRecipe);
     }
 
     @Override
@@ -69,7 +66,7 @@ public abstract class TLRecipeSerializer<R extends TLRecipe> implements RecipeSe
     }
 
     public abstract R findRecipe(IMultiblockState state, Level level);
-    public abstract R resumeRecipe(IMultiblockState state, Level level, Integer parallel);
+    public abstract R getRecipe(ResourceLocation id);
 
     public abstract static class Provider<T> {
         public final String field;

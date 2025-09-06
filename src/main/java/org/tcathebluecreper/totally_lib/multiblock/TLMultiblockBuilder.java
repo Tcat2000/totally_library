@@ -41,12 +41,23 @@ public class TLMultiblockBuilder {
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
-    private final Consumer<RegisterableMultiblock> consumer;
+    private final Consumer<RegistrableMultiblock> consumer;
 
-    public TLMultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<RegisterableMultiblock> consumer) {
+    private final TIMultiblock multiblock;
+
+    private final boolean reload;
+    private final static HashMap<ResourceLocation, MultiblockInfo> multiblockInfo = new HashMap<>();
+
+    public TLMultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<RegistrableMultiblock> consumer, boolean reload) {
         this.id = id;
         this.manager = manager;
         this.consumer = consumer;
+        this.reload = reload;
+
+        if(reload) {
+            multiblock = multiblocksToRegister.get(id).get();
+        }
+        else multiblock = null;
     }
 
     public TLMultiblockBuilder masterOffset(BlockPos offset) {masterOffset = offset; return this;}
@@ -86,25 +97,26 @@ public class TLMultiblockBuilder {
         return this;
     }
     public TLMultiblockBuilder recipe(Function<RecipeBuilder, RecipeBuilder.TLBuiltRecipeInfo> builder) {
-        recipeInfo = builder.apply(new RecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}));
+        recipeInfo = builder.apply(new RecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}, reload));
         return this;
     }
 
-    public RegisterableMultiblock build() {
-        Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state = (capabilitySource) -> {
+    public RegistrableMultiblock build() {
+        MultiblockInfo info = reload ? multiblockInfo.getOrDefault(id, new MultiblockInfo()) : new MultiblockInfo();
+        info.state = (capabilitySource) -> {
             if(recipeInfo == null) new TraitMultiblockState(capabilitySource, traits.get());
             return new RecipeTraitMultiblockState(capabilitySource, traits.get(), recipeInfo.createProcess);
         };
 
-        BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> tickLogic = recipeInfo == null ? (s, c) -> {} : (s, c) -> {
+        info.tickLogic = recipeInfo == null ? (s, c) -> {} : (s, c) -> {
             if(c.getState() instanceof RecipeTraitMultiblockState) {
                 ((RecipeTraitMultiblockState) c.getState()).process.tick(c.getLevel().getRawLevel());
             }
         };
-        IMultiblockLogic<TraitMultiblockState> logic = new TLMultiblockLogic(pos -> Shapes.block(), tickLogic, tickLogic, state);
+        info.logic = reload ? info.logic.reconstruct(pos -> Shapes.block(), info.tickLogic, info.tickLogic, info.state) : new TLMultiblockLogic(pos -> Shapes.block(), info.tickLogic, info.tickLogic, info.state);
 
 
-        MultiblockRegistration<TraitMultiblockState> registration = new IEMultiblockBuilder<>(logic, id.getPath())
+        info.registration = reload ? info.registration : new IEMultiblockBuilder<>(info.logic, id.getPath())
             .defaultBEs(manager.getRegistry(id.getNamespace()).blockEntityType())
             .customBlock(
                 manager.getRegistry(id.getNamespace()).blocks(), manager.getRegistry(id.getNamespace()).items(),
@@ -114,17 +126,20 @@ public class TLMultiblockBuilder {
             .build();
 
 
-        TIMultiblock multiblockClass = new TIMultiblock(id, masterOffset, triggerOffset, size, registration, manualModel) {
+        info.multiblockClass = reload ? info.multiblockClass : new TIMultiblock(id, masterOffset, triggerOffset, size, info.registration, manualModel) {
             @Override
             public float getManualScale() {
                 return manualScale;
             }
         };
-        multiblocksToRegister.put(id, Lazy.of(() -> multiblockClass));
+        multiblocksToRegister.put(id, Lazy.of(() -> info.multiblockClass));
 
-        RegisterableMultiblock reg = new RegisterableMultiblock(id, multiblockClass, state, logic, hasModelInfo() ? new RegisterableMultiblock.AssetGenerationData(blocks, model) : null);
-        consumer.accept(reg);
-        return reg;
+        info.reg = reload ? info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new RegistrableMultiblock.AssetGenerationData(blocks, model) : null) : new RegistrableMultiblock(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new RegistrableMultiblock.AssetGenerationData(blocks, model) : null);
+        consumer.accept(info.reg);
+
+        multiblockInfo.put(id, info);
+
+        return info.reg;
     }
 
     public static void init() {
@@ -133,5 +148,14 @@ public class TLMultiblockBuilder {
 
     private boolean hasModelInfo() {
         return model != null && blocks.length != 0;
+    }
+
+    private static class MultiblockInfo {
+        RegistrableMultiblock reg;
+        TIMultiblock multiblockClass;
+        MultiblockRegistration<TraitMultiblockState> registration;
+        TLMultiblockLogic logic;
+        BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> tickLogic;
+        Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state;
     }
 }

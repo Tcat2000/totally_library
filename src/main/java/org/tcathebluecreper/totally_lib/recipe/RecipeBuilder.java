@@ -18,6 +18,7 @@ import org.tcathebluecreper.totally_lib.recipe.action.TickAction;
 import org.tcathebluecreper.totally_lib.recipe.provider.Provider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
@@ -36,11 +37,15 @@ public class RecipeBuilder {
     public BiFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Boolean> tickLogic;
 
     public static final RegistryObject<RecipeType<?>> TLRegistrableRecipeRegistry = TotallyLibrary.regManager.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), TotallyLibrary.MODID, "recipe", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(MODID,"recipe")));
+    public static final HashMap<ResourceLocation, RegistryObject<ModularRecipeSerializer>> serializers = new HashMap<>();
 
-    public RecipeBuilder(ResourceLocation id, RegistrationManager manager, Consumer<TLBuiltRecipeInfo> consumer) {
+    public final boolean reload;
+
+    public RecipeBuilder(ResourceLocation id, RegistrationManager manager, Consumer<TLBuiltRecipeInfo> consumer, boolean reload) {
         this.id = id;
         this.manager = manager;
         this.consumer = consumer;
+        this.reload = reload;
     }
     @RemapForJS("lengthInt")
     public RecipeBuilder length(int length) {
@@ -77,11 +82,12 @@ public class RecipeBuilder {
 
         BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipe = (id, providers) -> new ModularRecipe(id, providers, getSerializer.get().get(), TLRegistrableRecipeRegistry, getLength.apply(providers), checkCanExecute, checkCanResume, getSerializer.get().get());
 
-        AtomicReference<Supplier<RegistryObject<RecipeSerializer<?>>>> ro = new AtomicReference<>();
-        RegistryObject<RecipeSerializer<?>> reg = manager.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), id.getNamespace(), id.getPath(), () -> new ModularRecipeSerializer(recipe, ModularRecipe.class, recipeProviders, new IERecipeTypes.TypeWithClass<>((RegistryObject<RecipeType<ModularRecipe>>) (Object) TLRegistrableRecipeRegistry, ModularRecipe.class)));
+        AtomicReference<Supplier<RegistryObject<ModularRecipeSerializer>>> ro = new AtomicReference<>();
+        RegistryObject<ModularRecipeSerializer> reg = reload ? serializers.get(id) : (RegistryObject<ModularRecipeSerializer>) (Object) manager.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), id.getNamespace(), id.getPath(), () -> new ModularRecipeSerializer(recipe, ModularRecipe.class, recipeProviders, new IERecipeTypes.TypeWithClass<>((RegistryObject<RecipeType<ModularRecipe>>) (Object) TLRegistrableRecipeRegistry, ModularRecipe.class)));
+        serializers.put(id, reg);
         ro.set(() -> reg);
 
-        getSerializer.set(() -> (ModularRecipeSerializer) reg.get());
+        getSerializer.set(reg);
 
         Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess = state -> new CraftingRecipeProcess<>(ModularRecipe.class, process, state, tickLogic, 0, getSerializer.get().get());
 

@@ -9,14 +9,16 @@ import java.util.function.Consumer;
 
 public class TLMultiblockRegistrationEvent extends Event implements IModBusEvent {
     private final RegistrationManager manager;
-    private final Consumer<RegisterableMultiblock> consumer;
+    private final Consumer<RegistrableMultiblock> consumer;
+    private final boolean reload;
 
-    public TLMultiblockRegistrationEvent(RegistrationManager manager, Consumer<RegisterableMultiblock> consumer) {
+    public TLMultiblockRegistrationEvent(RegistrationManager manager, Consumer<RegistrableMultiblock> consumer, boolean reload) {
         this.manager = manager;
         this.consumer = consumer;
+        this.reload = reload;
     }
 
     public TLMultiblockBuilder multiblock(ResourceLocation id) {
-        return new TLMultiblockBuilder(id, manager, consumer);
+        return new TLMultiblockBuilder(id, manager, consumer, reload);
     }
 }

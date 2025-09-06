@@ -18,16 +18,27 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class TLMultiblockLogic implements IMultiblockLogic<TraitMultiblockState>, IClientTickableComponent<TraitMultiblockState>, IServerTickableComponent<TraitMultiblockState> {
-    public final Function<BlockPos, VoxelShape> shape;
-    public final BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> serverTick;
-    public final BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> clientTick;
-    public final Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> stateConstructor;
+    private Function<BlockPos, VoxelShape> shape;
+    public Function<BlockPos, VoxelShape> getShape() {return shape;}
+    private BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> serverTick;
+    public BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> getServerTick() {return serverTick;}
+    private BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> clientTick;
+    public BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> getClientTick() {return clientTick;}
+    private Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> stateConstructor;
+    public Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> getStateConstructor() {return stateConstructor;}
 
     public TLMultiblockLogic(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> stateConstructor) {
         this.shape = shape;
         this.serverTick = serverTick;
         this.clientTick = clientTick;
         this.stateConstructor = stateConstructor;
+    }
+    public TLMultiblockLogic reconstruct(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> stateConstructor) {
+        this.shape = shape;
+        this.serverTick = serverTick;
+        this.clientTick = clientTick;
+        this.stateConstructor = stateConstructor;
+        return this;
     }
 
     @Override

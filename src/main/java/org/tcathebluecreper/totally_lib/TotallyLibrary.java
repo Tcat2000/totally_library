@@ -63,7 +63,7 @@ public class TotallyLibrary {
         StructureArg.init();
 
 
-        modEventBus.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+        modEventBus.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add, false));
 
 
         ModMultiblocks.init();

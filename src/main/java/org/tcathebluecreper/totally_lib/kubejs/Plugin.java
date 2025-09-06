@@ -34,7 +34,7 @@ public class Plugin extends KubeJSPlugin {
     @Override
     public void initStartup() {
         try {
-            Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add));
+            Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add, false));
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
@@ -61,14 +61,14 @@ public class Plugin extends KubeJSPlugin {
     @Override
     public void generateAssetJsons(AssetJsonGenerator generator) {
         ModMultiblocks.allMultiblocks.forEach(multiblock -> {
-            if(multiblock.assetGenData == null) return;
+            if(multiblock.getAssetGenData() == null) return;
 
-            String path = multiblock.id.getPath();
+            String path = multiblock.getId().getPath();
             String name = path.split("/")[path.split("/").length - 1];
-            ResourceLocation pathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.id.getNamespace(), "models/block/multiblock/" + path + "/" + name + "_split");
-            ResourceLocation readablePathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.id.getNamespace(), "block/multiblock/" + path + "/" + name + "_split");
-            ResourceLocation pathToBlockstate = ResourceLocation.fromNamespaceAndPath(multiblock.id.getNamespace(), "blockstates/" + name);
-            ResourceLocation pathToItemModel = ResourceLocation.fromNamespaceAndPath(multiblock.id.getNamespace(), "models/item/" + name);
+            ResourceLocation pathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "models/block/multiblock/" + path + "/" + name + "_split");
+            ResourceLocation readablePathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "block/multiblock/" + path + "/" + name + "_split");
+            ResourceLocation pathToBlockstate = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "blockstates/" + name);
+            ResourceLocation pathToItemModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "models/item/" + name);
 
             CompoundTag out = new CompoundTag();
             ListTag blockPoses = new ListTag();
@@ -81,14 +81,14 @@ public class Plugin extends KubeJSPlugin {
             out.putString("loader","immersiveengineering:basic_split");
 //                out.putBoolean("dynamic", false);
 
-            out.put("inner_model", JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, multiblock.assetGenData.innerModel));
+            out.put("inner_model", JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, multiblock.getAssetGenData().getInnerModel()));
 
-            for(int i = 0; i < multiblock.assetGenData.blocks.length; i++) {
-                int[] pos = multiblock.assetGenData.blocks[i];
+            for(int i = 0; i < multiblock.getAssetGenData().getBlocks().length; i++) {
+                int[] pos = multiblock.getAssetGenData().getBlocks()[i];
                 ListTag tag = new ListTag();
-                tag.add(IntTag.valueOf(pos[0] - multiblock.multiblock.masterFromOrigin.getX()));
-                tag.add(IntTag.valueOf(pos[1] - multiblock.multiblock.masterFromOrigin.getY()));
-                tag.add(IntTag.valueOf(pos[2] - multiblock.multiblock.masterFromOrigin.getZ()));
+                tag.add(IntTag.valueOf(pos[0] - multiblock.getMultiblock().masterFromOrigin.getX()));
+                tag.add(IntTag.valueOf(pos[1] - multiblock.getMultiblock().masterFromOrigin.getY()));
+                tag.add(IntTag.valueOf(pos[2] - multiblock.getMultiblock().masterFromOrigin.getZ()));
                 blockPoses.add(tag);
             }
             out.put("split_parts", blockPoses);
@@ -127,9 +127,9 @@ public class Plugin extends KubeJSPlugin {
             blockstate.add("variants", variants);
             generator.json(pathToBlockstate, blockstate);
 
-            float size = Math.max(multiblock.multiblock.size.getX(), Math.max(multiblock.multiblock.size.getY(), multiblock.multiblock.size.getZ()));
+            float size = Math.max(multiblock.getMultiblock().size.getX(), Math.max(multiblock.getMultiblock().size.getY(), multiblock.getMultiblock().size.getZ()));
 
-            JsonObject itemModel = multiblock.assetGenData.innerModel.deepCopy();
+            JsonObject itemModel = multiblock.getAssetGenData().getInnerModel().deepCopy();
             JsonObject displayOptions = new JsonObject();
 
 

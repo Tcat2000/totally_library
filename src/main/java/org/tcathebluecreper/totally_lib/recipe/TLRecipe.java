@@ -7,9 +7,15 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
+import org.tcathebluecreper.totally_lib.recipe.provider.Provider;
+
+import java.util.NoSuchElementException;
 
 public abstract class TLRecipe implements Recipe<Container> {
+    private static final Logger log = LogManager.getLogger(TLRecipe.class);
     public final ResourceLocation id;
     public final ProviderList<?> providers;
 
@@ -44,4 +50,13 @@ public abstract class TLRecipe implements Recipe<Container> {
 
     public abstract int length();
     public abstract boolean checkCanExecute(IMultiblockState state);
+
+    public Provider<?> getProvider(String id) {
+        try {
+            return providers.get(id).get();
+        } catch(NoSuchElementException e) {
+            log.error("Recipe does not have provider '{}': {}", id, e);
+            return null;
+        }
+    }
 }

@@ -15,9 +15,11 @@ import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;
+import org.tcathebluecreper.totally_lib.recipe.provider.Provider;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 
@@ -267,5 +269,23 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
         }
         if(displayMaxProcesses) info.text(Component.translatable("top.totally_immersive.process.max_processes").append(" " + count + "/" + maxParallel));
         return info;
+    }
+
+    public Provider<?> getProvider(String id) {
+        try {
+            return recipe[0].providers.get(id).get();
+        } catch(NoSuchElementException e) {
+            log.error("Recipe does not have provider '{}': {}", id, e);
+            return null;
+        }
+    }
+
+    public Provider<?> getProvider(int parallel, String id) {
+        try {
+            return recipe[parallel].providers.get(id).get();
+        } catch(NoSuchElementException e) {
+            log.error("Recipe does not have provider '{}': {}", id, e);
+            return null;
+        }
     }
 }

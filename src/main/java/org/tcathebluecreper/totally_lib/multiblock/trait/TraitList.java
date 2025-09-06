@@ -5,12 +5,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
-public class TraitHolder extends ArrayList<ITrait> {
-    public TraitHolder() {
+public class TraitList extends ArrayList<ITrait> {
+    public TraitList() {
     }
 
-    public TraitHolder(@NotNull Collection<? extends ITrait> c) {
+    public Optional<ITrait> get(String id) {
+        return stream().filter(trait -> trait.getName().equals(id)).findFirst();
+    }
+
+    public TraitList(@NotNull Collection<? extends ITrait> c) {
         super(c);
     }
 

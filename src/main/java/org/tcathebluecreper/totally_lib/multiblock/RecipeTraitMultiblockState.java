@@ -3,7 +3,7 @@ package org.tcathebluecreper.totally_lib.multiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import net.minecraft.nbt.CompoundTag;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitHolder;
+import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
 import org.tcathebluecreper.totally_lib.recipe.CraftingRecipeProcess;
 import org.tcathebluecreper.totally_lib.recipe.ModularRecipe;
 import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class RecipeTraitMultiblockState extends TraitMultiblockState {
     public TLRecipeProcess<ModularRecipe, TraitMultiblockState> process;
 
-    public RecipeTraitMultiblockState(TraitHolder traits, Function<TraitMultiblockState, TLRecipeProcess<ModularRecipe, TraitMultiblockState>> process) {
+    public RecipeTraitMultiblockState(TraitList traits, Function<TraitMultiblockState, TLRecipeProcess<ModularRecipe, TraitMultiblockState>> process) {
         super(traits);
         this.process = process.apply(this);
     }

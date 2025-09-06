@@ -12,7 +12,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitHolder;
+import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -53,7 +53,7 @@ public class TLMultiblockLogic implements IMultiblockLogic<TraitMultiblockState>
 
     @Override
     public <T> LazyOptional<T> getCapability(IMultiblockContext<TraitMultiblockState> ctx, CapabilityPosition position, Capability<T> cap) {
-        TraitHolder traits = ctx.getState().traits;
+        TraitList traits = ctx.getState().traits;
         for(ITrait trait : traits) {
             if(trait.getCapType() != cap) continue;
             if(trait.getExposure().containsKey(position.posInMultiblock()) && (trait.getExposure().get(position.posInMultiblock()).test(position.side()) || position.side() == null)) {

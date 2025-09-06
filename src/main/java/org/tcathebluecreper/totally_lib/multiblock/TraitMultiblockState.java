@@ -3,22 +3,25 @@ package org.tcathebluecreper.totally_lib.multiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.nbt.CompoundTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitHolder;
+import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class TraitMultiblockState implements IMultiblockState {
-    public final TraitHolder traits;
+    private static final Logger log = LoggerFactory.getLogger(TraitMultiblockState.class);
+    public final TraitList traits;
     public CompoundTag customData = new CompoundTag();
 
-    public TraitMultiblockState(TraitHolder traits) {
+    public TraitMultiblockState(TraitList traits) {
         this.traits = traits;
     }
 
     public TraitMultiblockState(IInitialMultiblockContext capSource, List<ITrait> traits) {
-        this.traits = new TraitHolder(traits);
+        this.traits = new TraitList(traits);
     }
 
 
@@ -44,5 +47,14 @@ public class TraitMultiblockState implements IMultiblockState {
     public void readSyncNBT(CompoundTag nbt) {
         customData = nbt.getCompound("data");
         traits.load(nbt);
+    }
+
+    public ITrait getTrait(String id) {
+        try {
+            return traits.get(id).get();
+        } catch(NoSuchElementException e) {
+            log.error("Recipe does not have provider '{}': {}", id, e);
+            return null;
+        }
     }
 }

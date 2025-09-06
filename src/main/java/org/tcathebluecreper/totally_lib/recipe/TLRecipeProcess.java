@@ -10,17 +10,20 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;
 
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 
 public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
+    private static final Logger log = LogManager.getLogger(TLRecipeProcess.class);
     public final Class<R> type;
     public final List<Action<R, S>> actions;
     public final S state;
@@ -91,36 +94,40 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
     }
 
     public void tick(Level level) {
-        if(tick.length == 0 || recipe.length != (allowDifferentRecipes ? maxParallel : 1) || stuck.length == 0 || stopped.length == 0) return;
-        if(allowDifferentRecipes) {
+        try {
+            if(tick.length == 0 || recipe.length != (allowDifferentRecipes ? maxParallel : 1) || stuck.length == 0 || stopped.length == 0)
+                return;
+            if(allowDifferentRecipes) {
+                for(int p = 0; p < maxParallel; p++) {
+                    if(tick[p] == 0 && needsCheck) {
+                        recipe[p] = findRecipe(level);
+                    }
+                }
+            } else {
+                if(recipe[0] == null && needsCheck) {
+                    recipe[0] = findRecipe(level);
+                }
+            }
+//        needsCheck = false;
             for(int p = 0; p < maxParallel; p++) {
-                if(tick[p] == 0 && needsCheck || tick[p] != 0 && recipe[p] == null) {
-                    recipe[p] = findRecipe(level);
+                if(recipe[getRecipeIndex(p)] == null) continue;
+                if(tickLogic != null) stuck[p] = !tickLogic.apply(this, p);
+                int P = getRecipeIndex(p);
+                if(recipe[P] != null && !stopped[p]) {
+                    int finalP = p;
+                    AtomicBoolean finished = new AtomicBoolean(false);
+                    actions.forEach((action) -> {
+                        if(action.run(tick[finalP], this, finalP, recipe[0].length())) {
+                            finished.set(true);
+                            tick[finalP] = 0;
+                        }
+                    });
+                    if(!stuck[p] && !finished.get()) tick[p]++;
                 }
             }
         }
-//        else {
-//            if(recipe[0] == null || needsCheck) {
-//                if(checkAnyRunning()) resumeRecipe(level);
-//                else recipe[0] = findRecipe(level);
-//            }
-//        }
-//        needsCheck = false;
-        for(int p = 0; p < maxParallel; p++) {
-            if(recipe[getRecipeIndex(p)] == null) continue;
-            stuck[p] = !tickLogic.apply(this, p);
-            int P = getRecipeIndex(p);
-            if(recipe[P] != null && !stopped[p]) {
-                int finalP = p;
-                AtomicBoolean finished = new AtomicBoolean(false);
-                actions.forEach((action) -> {
-                    if(action.run(tick[finalP], this, finalP, recipe.length)) {
-                        finished.set(true);
-                        tick[finalP] = 0;
-                    }
-                });
-                if(!stuck[p] && !finished.get()) tick[p]++;
-            }
+        catch(Exception e) {
+            log.error("ticking error: ", e);
         }
     }
 
@@ -220,7 +227,8 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 
         ListTag recipeList = new ListTag();
         for(int j = 0; j < recipe.length; j++) {
-            recipeList.add(StringTag.valueOf(recipe[j].id.toString()));
+            if(recipe[j] != null) recipeList.add(StringTag.valueOf(recipe[j].id.toString()));
+            else recipeList.add(StringTag.valueOf(""));
         }
         tag.put("recipe", recipeList);
 

@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
@@ -13,17 +14,18 @@ import java.util.List;
 public class ItemTrait extends TLTrait {
     public final String name;
 
-    StoredCapability<ItemStackHandler> storage;
+    public StoredCapability<ItemStackHandler> storage;
 
     public ItemTrait(String name, int stacks) {
         this.name = name;
         this.storage = new StoredCapability<>(new ItemStackHandler(stacks));
     }
 
-    public ItemTrait(String name, List<ItemStack> startingStacks) {
+    public ItemTrait(String name, List<ItemStack> startingStacks, int emptyStacks) {
         this.name = name;
         NonNullList<ItemStack> list = NonNullList.create();
         list.addAll(startingStacks);
+        for(int i = 0; i < emptyStacks; i++) list.add(ItemStack.EMPTY);
         this.storage = new StoredCapability<>(new ItemStackHandler(list));
     }
 

@@ -25,7 +25,7 @@ public class TickAction<R extends TLRecipe, S extends IMultiblockState> extends 
 
     @Override
     public boolean run(int tick, TLRecipeProcess<R, S> context, int parallel, int length) {
-        if(this.tick == tick || length - this.tick - 1 == tick) return super.run(this.tick, context, parallel, length);
+        if(this.tick == tick || length + this.tick + 1 == tick) return super.run(this.tick, context, parallel, length);
         return false;
     }
 }

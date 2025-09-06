@@ -15,17 +15,15 @@ public class TLRegistrableRecipe extends TLRecipe {
     public final RecipeSerializer<?> serializer;
     public final Supplier<RecipeType<?>> getRecipeType;
     public final int length;
-    public final BiFunction<TLRecipe, IMultiblockState, Boolean> checkCanExecuteFunction;
-    public final TriFunction<TLRecipe, IMultiblockState, Integer, Boolean> checkCanResumeFunction;
+    public final BiFunction<TLRegistrableRecipe, IMultiblockState, Boolean> checkCanExecuteFunction;
     public final TLRegistrableRecipeSerializer type;
 
-    public TLRegistrableRecipe(ResourceLocation id, ProviderList<?> providers, RecipeSerializer<?> serializer, Supplier<RecipeType<?>> getRecipeType, int length, BiFunction<TLRecipe, IMultiblockState, Boolean> checkCanExecuteFunction, TriFunction<TLRecipe, IMultiblockState, Integer, Boolean> checkCanResumeFunction, TLRegistrableRecipeSerializer type) {
+    public TLRegistrableRecipe(ResourceLocation id, ProviderList<?> providers, RecipeSerializer<?> serializer, Supplier<RecipeType<?>> getRecipeType, int length, BiFunction<TLRegistrableRecipe, IMultiblockState, Boolean> checkCanExecuteFunction, TriFunction<TLRegistrableRecipe, IMultiblockState, Integer, Boolean> checkCanResumeFunction, TLRegistrableRecipeSerializer type) {
         super(id, providers);
         this.serializer = serializer;
         this.getRecipeType = getRecipeType;
         this.length = length;
         this.checkCanExecuteFunction = checkCanExecuteFunction;
-        this.checkCanResumeFunction = checkCanResumeFunction;
         this.type = type;
     }
 
@@ -37,11 +35,6 @@ public class TLRegistrableRecipe extends TLRecipe {
     @Override
     public boolean checkCanExecute(IMultiblockState state) {
         return checkCanExecuteFunction.apply(this, state);
-    }
-
-    @Override
-    public boolean checkCanResume(IMultiblockState state, Integer parallel) {
-        return checkCanResumeFunction.apply(this, state, parallel);
     }
 
     @Override

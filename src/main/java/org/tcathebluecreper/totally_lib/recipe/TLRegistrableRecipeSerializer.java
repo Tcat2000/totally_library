@@ -38,20 +38,9 @@ public class TLRegistrableRecipeSerializer extends TLRecipeSerializer<TLRegistra
 
     @Override
     public TLRegistrableRecipe findRecipe(IMultiblockState state, Level level) {
-//        for(ChemicalBathRecipe recipe : Util.memoize(
-//        (lvl) -> {
-//            List<TLRecipe> list =
-//                new ArrayList<>(
-//                    ChemicalBathRecipe.recipes.getRecipes((Level) lvl)
-//                        .stream()
-//                        .sorted(
-//                            Comparator.comparingInt(a -> a.priority.get())
-//                        )
-//                        .toList());
-//            Collections.reverse(list);
-//            return list;
-//        }).apply(level)) {
-//        if(recipe.checkCanExecute(state)) return recipe;
+        for(TLRegistrableRecipe recipe : recipes) {
+            if(recipe.checkCanExecute(state)) return recipe;
+        }
         return null;
     }
 

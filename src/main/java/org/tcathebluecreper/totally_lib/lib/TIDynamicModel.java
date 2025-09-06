@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
+import static org.tcathebluecreper.totally_lib.TotallyLibrary.MODID;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class TIDynamicModel

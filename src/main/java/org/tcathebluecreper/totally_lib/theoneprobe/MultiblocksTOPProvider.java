@@ -16,9 +16,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.TIMath;
-import org.tcathebluecreper.totally_lib.multiblock.TIMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockState;
 
-import static org.tcathebluecreper.totally_immersive.TotallyImmersive.MODID;
+import static org.tcathebluecreper.totally_lib.TotallyLibrary.MODID;
 
 public class MultiblocksTOPProvider implements IProbeInfoProvider {
     private static final Logger log = LogManager.getLogger(MultiblocksTOPProvider.class);
@@ -40,7 +40,7 @@ public class MultiblocksTOPProvider implements IProbeInfoProvider {
         else master = (MultiblockBlockEntityMaster<?>) BE;
         if(master == null) return;
         try {
-            ((MultiblockBlockEntityMaster<TIMultiblockState<?,?>>)master).getHelper().getContext().getState().getTOPData(BE, probeMode, iProbeInfo, player, level, blockState, iProbeHitData);
+            ((MultiblockBlockEntityMaster<TLMultiblockState<?,?>>)master).getHelper().getContext().getState().getTOPData(BE, probeMode, iProbeInfo, player, level, blockState, iProbeHitData);
         } catch(Exception e) {
             log.error("error: ", e);
         }

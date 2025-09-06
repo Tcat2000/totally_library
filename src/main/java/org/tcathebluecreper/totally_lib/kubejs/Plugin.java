@@ -55,6 +55,7 @@ public class Plugin extends KubeJSPlugin {
         event.add("IntProvider", TLRecipeSerializer.IntProvider.class);
         event.add("ItemProvider", TLRecipeSerializer.ItemProvider.class);
         event.add("ItemStackProvider", TLRecipeSerializer.ItemStackProvider.class);
+        event.add("IngredientProvider", TLRecipeSerializer.IngredientProvider.class);
     }
 
     @Override

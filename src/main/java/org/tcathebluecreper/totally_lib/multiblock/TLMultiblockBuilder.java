@@ -6,8 +6,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultib
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import com.google.gson.JsonObject;
@@ -15,16 +13,12 @@ import dev.latvian.mods.rhino.NativeObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.common.util.LazyOptional;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.lib.ITMultiblockBlock;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitHolder;
 import org.tcathebluecreper.totally_lib.recipe.TLBuiltRecipeInfo;
 import org.tcathebluecreper.totally_lib.recipe.TLRecipeBuilder;
 
@@ -108,7 +102,7 @@ public class TLMultiblockBuilder {
                 ((RecipeTraitMultiblockState) c.getState()).process.tick(c.getLevel().getRawLevel());
             }
         };
-        IMultiblockLogic<TraitMultiblockState> logic = new TLMultiblockLogic(pos -> Shapes.block(), (s,c) -> {}, (s,c) -> {}, state);
+        IMultiblockLogic<TraitMultiblockState> logic = new TLMultiblockLogic(pos -> Shapes.block(), tickLogic, tickLogic, state);
 
 
         MultiblockRegistration<TraitMultiblockState> registration = new IEMultiblockBuilder<>(logic, id.getPath())

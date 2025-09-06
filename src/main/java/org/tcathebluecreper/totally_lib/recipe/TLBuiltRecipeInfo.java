@@ -10,11 +10,11 @@ import java.util.function.Supplier;
 
 public class TLBuiltRecipeInfo {
     public final Supplier<TLRegistrableRecipeSerializer> getSerializer;
-    public final BiFunction<ResourceLocation, ProviderList<TLRecipeSerializer.Provider<?>>, TLRegistrableRecipe> recipeConstructor;
-    public final ProviderList<TLRecipeSerializer.Provider<?>> recipeProviders;
-    public final Function<TraitMultiblockState, TLRecipeProcess<TLRecipe, TraitMultiblockState>> createProcess;
+    public final BiFunction<ResourceLocation, ProviderList<TLRegistrableRecipeSerializer.Provider<?>>, TLRegistrableRecipe> recipeConstructor;
+    public final ProviderList<TLRegistrableRecipeSerializer.Provider<?>> recipeProviders;
+    public final Function<TraitMultiblockState, TLCraftingRecipeProcess<TLRegistrableRecipe, TraitMultiblockState>> createProcess;
 
-    public TLBuiltRecipeInfo(Supplier<TLRegistrableRecipeSerializer> getSerializer, BiFunction<ResourceLocation, ProviderList<TLRecipeSerializer.Provider<?>>, TLRegistrableRecipe> recipeConstructor, ProviderList<TLRecipeSerializer.Provider<?>> recipeProviders, Function<TraitMultiblockState, TLRecipeProcess<TLRecipe, TraitMultiblockState>> createProcess) {
+    public TLBuiltRecipeInfo(Supplier<TLRegistrableRecipeSerializer> getSerializer, BiFunction<ResourceLocation, ProviderList<TLRegistrableRecipeSerializer.Provider<?>>, TLRegistrableRecipe> recipeConstructor, ProviderList<TLRegistrableRecipeSerializer.Provider<?>> recipeProviders, Function<TraitMultiblockState, TLCraftingRecipeProcess<TLRegistrableRecipe, TraitMultiblockState>> createProcess) {
         this.getSerializer = getSerializer;
         this.recipeConstructor = recipeConstructor;
         this.recipeProviders = recipeProviders;

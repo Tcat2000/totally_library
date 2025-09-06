@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TraitMultiblockState implements IMultiblockState {
-    final TraitHolder traits;
+    public final TraitHolder traits;
     public CompoundTag customData = new CompoundTag();
 
     public TraitMultiblockState(TraitHolder traits) {
@@ -31,7 +31,7 @@ public class TraitMultiblockState implements IMultiblockState {
     @Override
     public void writeSyncNBT(CompoundTag nbt) {
         nbt.put("data", customData);
-        traits.load(nbt);
+        traits.save(nbt);
     }
 
     @Override

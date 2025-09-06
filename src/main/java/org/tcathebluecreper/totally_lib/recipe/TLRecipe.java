@@ -44,5 +44,4 @@ public abstract class TLRecipe implements Recipe<Container> {
 
     public abstract int length();
     public abstract boolean checkCanExecute(IMultiblockState state);
-    public abstract boolean checkCanResume(IMultiblockState state, Integer parallel);
 }

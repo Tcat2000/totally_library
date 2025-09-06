@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public abstract class TLTrait implements ITrait {
-    private Map<BlockPos, Predicate<RelativeBlockFace>> exposure = new HashMap<>();
+    private final Map<BlockPos, Predicate<RelativeBlockFace>> exposure = new HashMap<>();
     @Override
     public ITrait expose(BlockPos pos, Predicate<RelativeBlockFace> side) {
         exposure.put(pos, side);

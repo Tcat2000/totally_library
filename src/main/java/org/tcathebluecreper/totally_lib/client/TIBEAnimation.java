@@ -6,15 +6,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Vector3f;
 import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
-import org.tcathebluecreper.totally_lib.multiblock.TIMultiblockState;
-import org.tcathebluecreper.totally_immersive.Multiblock.chemical_bath.ChemicalBathState;
+import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TIBEAnimation<P extends TLRecipeProcess<?,S>, S extends TIMultiblockState<?,S>> {
+public class TIBEAnimation<P extends TLRecipeProcess<?,S>, S extends TLMultiblockState<?,S>> {
     public final SubTickAnimationSetting setting;
     public final Map<String,List<AnimationLayer>> layers;
     public final Map<String, TIDynamicModel> bones;
@@ -31,7 +30,7 @@ public class TIBEAnimation<P extends TLRecipeProcess<?,S>, S extends TIMultibloc
         }));
         this.layers = map;
     }
-    public void render(MultiblockBlockEntityMaster<ChemicalBathState> te, float pPartialTick, PoseStack matrixStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+    public void render(MultiblockBlockEntityMaster<TLMultiblockState<?,S>> te, float pPartialTick, PoseStack matrixStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         float frame = te.getHelper().getContext().getState().getRecipeProcess().tick[0] + pPartialTick;
         bones.forEach((name, model) -> {
             matrixStack.pushPose();

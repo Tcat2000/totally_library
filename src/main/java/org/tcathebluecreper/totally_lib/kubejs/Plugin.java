@@ -18,7 +18,7 @@ import org.tcathebluecreper.totally_lib.multiblock.trait.EnergyTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.FluidTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ItemTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.TraitIOSides;
-import org.tcathebluecreper.totally_lib.recipe.TLRecipeSerializer;
+import org.tcathebluecreper.totally_lib.recipe.provider.*;
 
 
 public class Plugin extends KubeJSPlugin {
@@ -48,14 +48,14 @@ public class Plugin extends KubeJSPlugin {
         event.add("TLFluidTrait", FluidTrait.class);
         event.add("TraitIOSides", TraitIOSides.class);
 
-        event.add("BooleanProvider", TLRecipeSerializer.BooleanProvider.class);
-        event.add("FloatProvider", TLRecipeSerializer.FloatProvider.class);
-        event.add("FluidProvider", TLRecipeSerializer.FluidProvider.class);
-        event.add("FluidStackProvider", TLRecipeSerializer.FluidStackProvider.class);
-        event.add("IntProvider", TLRecipeSerializer.IntProvider.class);
-        event.add("ItemProvider", TLRecipeSerializer.ItemProvider.class);
-        event.add("ItemStackProvider", TLRecipeSerializer.ItemStackProvider.class);
-        event.add("IngredientProvider", TLRecipeSerializer.IngredientProvider.class);
+        event.add("BooleanProvider", BooleanProvider.class);
+        event.add("FloatProvider", FloatProvider.class);
+        event.add("FluidProvider", FluidProvider.class);
+        event.add("FluidStackProvider", FluidStackProvider.class);
+        event.add("IntProvider", IntProvider.class);
+        event.add("ItemProvider", ItemProvider.class);
+        event.add("ItemStackProvider", ItemStackProvider.class);
+        event.add("IngredientProvider", IngredientProvider.class);
     }
 
     @Override

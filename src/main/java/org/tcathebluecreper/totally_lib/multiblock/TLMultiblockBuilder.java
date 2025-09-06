@@ -19,8 +19,7 @@ import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.lib.ITMultiblockBlock;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.recipe.TLBuiltRecipeInfo;
-import org.tcathebluecreper.totally_lib.recipe.TLRecipeBuilder;
+import org.tcathebluecreper.totally_lib.recipe.RecipeBuilder;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -38,7 +37,7 @@ public class TLMultiblockBuilder {
     public Supplier<List<ITrait>> traits = ArrayList::new;
     public int[][] blocks = new int[0][];
     public JsonObject model = null;
-    public TLBuiltRecipeInfo recipeInfo = null;
+    public RecipeBuilder.TLBuiltRecipeInfo recipeInfo = null;
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
@@ -86,8 +85,8 @@ public class TLMultiblockBuilder {
         model.addProperty("flip_v", true);
         return this;
     }
-    public TLMultiblockBuilder recipe(Function<TLRecipeBuilder, TLBuiltRecipeInfo> builder) {
-        recipeInfo = builder.apply(new TLRecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}));
+    public TLMultiblockBuilder recipe(Function<RecipeBuilder, RecipeBuilder.TLBuiltRecipeInfo> builder) {
+        recipeInfo = builder.apply(new RecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}));
         return this;
     }
 

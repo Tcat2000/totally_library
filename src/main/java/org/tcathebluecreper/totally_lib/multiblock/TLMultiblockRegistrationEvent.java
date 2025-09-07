@@ -18,7 +18,7 @@ public class TLMultiblockRegistrationEvent extends Event implements IModBusEvent
         this.reload = reload;
     }
 
-    public TLMultiblockBuilder multiblock(ResourceLocation id) {
-        return new TLMultiblockBuilder(id, manager, consumer, reload);
+    public MultiblockBuilder multiblock(ResourceLocation id) {
+        return new MultiblockBuilder(id, manager, consumer, reload);
     }
 }

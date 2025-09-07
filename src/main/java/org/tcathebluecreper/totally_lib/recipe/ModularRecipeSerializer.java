@@ -19,11 +19,11 @@ public class ModularRecipeSerializer extends TLRecipeSerializer<ModularRecipe> {
     private static final List<ModularRecipeSerializer> serializers = new ArrayList<>();
     public static List<ModularRecipeSerializer> getSerializers() {return serializers;}
 
-
-    public final ProviderList<Provider<?>> providers;
     private List<ModularRecipe> recipes = new ArrayList<>();
-    private final IERecipeTypes.TypeWithClass<ModularRecipe> ieType;
-    private final CachedRecipeList<ModularRecipe> allRecipes;
+
+    private ProviderList<Provider<?>> providers;
+    private IERecipeTypes.TypeWithClass<ModularRecipe> ieType;
+    private CachedRecipeList<ModularRecipe> allRecipes;
 
     public ModularRecipeSerializer(BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> constructor, Class<? extends TLRecipe> type, ProviderList<Provider<?>> providers, IERecipeTypes.TypeWithClass<ModularRecipe> ieType) {
         super(constructor, type);
@@ -32,10 +32,18 @@ public class ModularRecipeSerializer extends TLRecipeSerializer<ModularRecipe> {
         this.ieType = ieType;
         this.allRecipes = new CachedRecipeList<>(ieType);
     }
+    public ModularRecipeSerializer reconstruct(BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> constructor, Class<? extends TLRecipe> type, ProviderList<Provider<?>> providers, IERecipeTypes.TypeWithClass<ModularRecipe> ieType) {
+        this.constructor = constructor;
+        this.providers = providers;
+        serializers.add(this);
+        this.ieType = ieType;
+        this.allRecipes = new CachedRecipeList<>(ieType);
+        return this;
+    }
 
     @Override
     public ModularRecipe findRecipe(IMultiblockState state, Level level) {
-        for(ModularRecipe recipe : recipes) {
+        for(ModularRecipe recipe : getRecipes()) {
             if(recipe.checkCanExecute(state)) return recipe;
         }
         return null;
@@ -43,7 +51,7 @@ public class ModularRecipeSerializer extends TLRecipeSerializer<ModularRecipe> {
 
     @Override
     public ModularRecipe getRecipe(ResourceLocation id) {
-        for(ModularRecipe recipe : recipes) {
+        for(ModularRecipe recipe : getRecipes()) {
             if(recipe.id == id) return recipe;
         }
         return null;
@@ -57,7 +65,6 @@ public class ModularRecipeSerializer extends TLRecipeSerializer<ModularRecipe> {
     @Override
     public ModularRecipe fromJson(ResourceLocation recipeLoc, JsonObject recipeJson, ICondition.IContext context) {
         ModularRecipe recipe = super.fromJson(recipeLoc, recipeJson, context);
-        recipes.add(recipe);
         return recipe;
     }
 

@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
@@ -27,7 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class TLMultiblockBuilder {
+public class MultiblockBuilder {
     public static final Map<ResourceLocation, Lazy<TIMultiblock>> multiblocksToRegister = new HashMap<>();
     public BlockPos masterOffset;
     public BlockPos triggerOffset;
@@ -37,7 +36,7 @@ public class TLMultiblockBuilder {
     public Supplier<List<ITrait>> traits = ArrayList::new;
     public int[][] blocks = new int[0][];
     public JsonObject model = null;
-    public RecipeBuilder.TLBuiltRecipeInfo recipeInfo = null;
+    public RecipeBuilder.RecipeInfo recipeInfo = null;
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
@@ -48,7 +47,7 @@ public class TLMultiblockBuilder {
     private final boolean reload;
     private final static HashMap<ResourceLocation, MultiblockInfo> multiblockInfo = new HashMap<>();
 
-    public TLMultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<RegistrableMultiblock> consumer, boolean reload) {
+    public MultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<RegistrableMultiblock> consumer, boolean reload) {
         this.id = id;
         this.manager = manager;
         this.consumer = consumer;
@@ -60,24 +59,24 @@ public class TLMultiblockBuilder {
         else multiblock = null;
     }
 
-    public TLMultiblockBuilder masterOffset(BlockPos offset) {masterOffset = offset; return this;}
-    public TLMultiblockBuilder masterOffset(int x, int y, int z) {masterOffset = new BlockPos(x,y,z); return this;}
-    public TLMultiblockBuilder triggerOffset(BlockPos offset) {triggerOffset = offset; return this;}
-    public TLMultiblockBuilder triggerOffset(int x, int y, int z) {triggerOffset = new BlockPos(x,y,z); return this;}
-    public TLMultiblockBuilder size(BlockPos size) {this.size = size; return this;}
-    public TLMultiblockBuilder size(int x, int y, int z) {size = new BlockPos(x,y,z); return this;}
-    public TLMultiblockBuilder traits(Supplier<List<ITrait>> traits) {
+    public MultiblockBuilder masterOffset(BlockPos offset) {masterOffset = offset; return this;}
+    public MultiblockBuilder masterOffset(int x, int y, int z) {masterOffset = new BlockPos(x,y,z); return this;}
+    public MultiblockBuilder triggerOffset(BlockPos offset) {triggerOffset = offset; return this;}
+    public MultiblockBuilder triggerOffset(int x, int y, int z) {triggerOffset = new BlockPos(x,y,z); return this;}
+    public MultiblockBuilder size(BlockPos size) {this.size = size; return this;}
+    public MultiblockBuilder size(int x, int y, int z) {size = new BlockPos(x,y,z); return this;}
+    public MultiblockBuilder traits(Supplier<List<ITrait>> traits) {
         this.traits = () -> new ArrayList<>(traits.get());
         return this;
     }
-    public TLMultiblockBuilder form(List<List<Double>> blocks) {
+    public MultiblockBuilder form(List<List<Double>> blocks) {
         this.blocks = new int[blocks.size()][];
         for(int i = 0; i < blocks.size(); i++) {
             this.blocks[i] = new int[]{(int) Math.round(blocks.get(i).get(0)), (int) Math.round(blocks.get(i).get(1)), (int) Math.round(blocks.get(i).get(2))};
         }
         return this;
     }
-    public TLMultiblockBuilder obj(String modelLocation, NativeObject o) {
+    public MultiblockBuilder obj(String modelLocation, NativeObject o) {
         model = new JsonObject();
         model.addProperty("parent","minecraft:block/block");
 
@@ -96,16 +95,18 @@ public class TLMultiblockBuilder {
         model.addProperty("flip_v", true);
         return this;
     }
-    public TLMultiblockBuilder recipe(Function<RecipeBuilder, RecipeBuilder.TLBuiltRecipeInfo> builder) {
-        recipeInfo = builder.apply(new RecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}, reload));
+    public MultiblockBuilder recipe(Consumer<RecipeBuilder> builder) {
+        RecipeBuilder recipeBuilder = new RecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}, reload);
+        builder.accept(recipeBuilder);
+        recipeInfo = recipeBuilder.build();
         return this;
     }
 
     public RegistrableMultiblock build() {
         MultiblockInfo info = reload ? multiblockInfo.getOrDefault(id, new MultiblockInfo()) : new MultiblockInfo();
         info.state = (capabilitySource) -> {
-            if(recipeInfo == null) new TraitMultiblockState(capabilitySource, traits.get());
-            return new RecipeTraitMultiblockState(capabilitySource, traits.get(), recipeInfo.createProcess);
+            if(recipeInfo == null) return new TraitMultiblockState(capabilitySource, traits.get());
+            return new RecipeTraitMultiblockState(capabilitySource, traits.get(), recipeInfo.getCreateProcess());
         };
 
         info.tickLogic = recipeInfo == null ? (s, c) -> {} : (s, c) -> {

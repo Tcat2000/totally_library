@@ -122,6 +122,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
                         if(action.run(tick[finalP], this, finalP, recipe[0].length())) {
                             finished.set(true);
                             tick[finalP] = 0;
+                            recipe[finalP] = null;
                         }
                     });
                     if(!stuck[p] && !finished.get()) tick[p]++;

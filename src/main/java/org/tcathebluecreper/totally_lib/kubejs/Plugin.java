@@ -13,7 +13,7 @@ import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
-import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
+import org.tcathebluecreper.totally_lib.multiblock.MultiblockBuilder;
 import org.tcathebluecreper.totally_lib.multiblock.trait.EnergyTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.FluidTrait;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ItemTrait;
@@ -38,7 +38,7 @@ public class Plugin extends KubeJSPlugin {
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
-        TLMultiblockBuilder.init();
+        MultiblockBuilder.init();
     }
 
     @Override

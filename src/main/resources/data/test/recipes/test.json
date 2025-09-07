@@ -8,5 +8,9 @@
     "output": {
         "item": "immersiveengineering:treated_wood_horizontal",
         "count": 1
+    },
+    "output2": {
+        "item": "immersiveengineering:treated_wood_horizontal",
+        "count": 1
     }
 }

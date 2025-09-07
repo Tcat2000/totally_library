@@ -16,7 +16,7 @@ import java.util.function.BiFunction;
 
 public abstract class TLRecipeSerializer<R extends TLRecipe> implements RecipeSerializer<R> {
     protected static final Map<Class<? extends TLRecipe>, BiFunction<IMultiblockState, Level, ? extends TLRecipe>> RecipeFinders = new HashMap<>();
-    private final BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor;
+    protected BiFunction<ResourceLocation, ProviderList<Provider<?>>, R> constructor;
 
     public ProviderList<Provider<?>> getProviders() {
         return new ProviderList<>();

@@ -2,6 +2,7 @@ package org.tcathebluecreper.totally_lib.recipe;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import dev.latvian.mods.rhino.util.HideFromJS;
 import dev.latvian.mods.rhino.util.RemapForJS;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -28,7 +29,7 @@ import static org.tcathebluecreper.totally_lib.TotallyLibrary.MODID;
 public class RecipeBuilder {
     private final ResourceLocation id;
     private final RegistrationManager manager;
-    private final Consumer<TLBuiltRecipeInfo> consumer;
+    private final Consumer<RecipeInfo> consumer;
     public Function<ProviderList<Provider<?>>, Integer> getLength = (list) -> 20;
     public BiFunction<ModularRecipe, IMultiblockState, Boolean> checkCanExecute;
     public TriFunction<ModularRecipe, IMultiblockState, Integer, Boolean> checkCanResume;
@@ -37,11 +38,11 @@ public class RecipeBuilder {
     public BiFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Boolean> tickLogic;
 
     public static final RegistryObject<RecipeType<?>> TLRegistrableRecipeRegistry = TotallyLibrary.regManager.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), TotallyLibrary.MODID, "recipe", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(MODID,"recipe")));
-    public static final HashMap<ResourceLocation, RegistryObject<ModularRecipeSerializer>> serializers = new HashMap<>();
+    public static final HashMap<ResourceLocation, RecipeInfo> serializers = new HashMap<>();
 
     public final boolean reload;
 
-    public RecipeBuilder(ResourceLocation id, RegistrationManager manager, Consumer<TLBuiltRecipeInfo> consumer, boolean reload) {
+    public RecipeBuilder(ResourceLocation id, RegistrationManager manager, Consumer<RecipeInfo> consumer, boolean reload) {
         this.id = id;
         this.manager = manager;
         this.consumer = consumer;
@@ -77,36 +78,56 @@ public class RecipeBuilder {
         return this;
     }
 
-    public TLBuiltRecipeInfo build() {
+    @HideFromJS
+    public RecipeInfo build() {
+        if(reload && !serializers.containsKey(id)) return null;
+        RecipeInfo info = reload ? serializers.get(id) : new RecipeInfo();
         AtomicReference<Supplier<ModularRecipeSerializer>> getSerializer = new AtomicReference<>();
 
-        BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipe = (id, providers) -> new ModularRecipe(id, providers, getSerializer.get().get(), TLRegistrableRecipeRegistry, getLength.apply(providers), checkCanExecute, checkCanResume, getSerializer.get().get());
+        info.recipeProviders = recipeProviders;
 
-        AtomicReference<Supplier<RegistryObject<ModularRecipeSerializer>>> ro = new AtomicReference<>();
-        RegistryObject<ModularRecipeSerializer> reg = reload ? serializers.get(id) : (RegistryObject<ModularRecipeSerializer>) (Object) manager.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), id.getNamespace(), id.getPath(), () -> new ModularRecipeSerializer(recipe, ModularRecipe.class, recipeProviders, new IERecipeTypes.TypeWithClass<>((RegistryObject<RecipeType<ModularRecipe>>) (Object) TLRegistrableRecipeRegistry, ModularRecipe.class)));
-        serializers.put(id, reg);
-        ro.set(() -> reg);
+        info.recipe = (id, providers) -> new ModularRecipe(id, providers, getSerializer.get().get(), TLRegistrableRecipeRegistry, getLength.apply(providers), checkCanExecute, checkCanResume, getSerializer.get().get());
 
-        getSerializer.set(reg);
+        if(reload) {
+            info.serializer = serializers.get(id).serializer;
+            info.serializer.get().reconstruct(info.recipe, ModularRecipe.class, recipeProviders, new IERecipeTypes.TypeWithClass<>((RegistryObject<RecipeType<ModularRecipe>>) (Object) TLRegistrableRecipeRegistry, ModularRecipe.class));
+        }
+        else {
+            RegistryObject<RecipeSerializer<?>> ro = manager.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), id.getNamespace(), id.getPath(), () -> new ModularRecipeSerializer(info.recipe, ModularRecipe.class, recipeProviders, new IERecipeTypes.TypeWithClass<>((RegistryObject<RecipeType<ModularRecipe>>) (Object) TLRegistrableRecipeRegistry, ModularRecipe.class)));
+            info.serializer = () -> (ModularRecipeSerializer) ro.get();
+        }
 
-        Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess = state -> new CraftingRecipeProcess<>(ModularRecipe.class, process, state, tickLogic, 0, getSerializer.get().get());
+        getSerializer.set(info.serializer);
 
-        TLBuiltRecipeInfo info = new TLBuiltRecipeInfo(() -> (ModularRecipeSerializer) getSerializer.get(), recipe, recipeProviders, createProcess);
+        info.createProcess = state -> new CraftingRecipeProcess<>(ModularRecipe.class, process, state, tickLogic, 0, getSerializer.get().get());
+
         consumer.accept(info);
+        serializers.put(id, info);
         return info;
     }
 
-    public static class TLBuiltRecipeInfo {
-        public final Supplier<ModularRecipeSerializer> getSerializer;
-        public final BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipeConstructor;
-        public final ProviderList<Provider<?>> recipeProviders;
-        public final Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess;
+    public static class RecipeInfo {
+        private Supplier<ModularRecipeSerializer> serializer;
+        public Supplier<ModularRecipeSerializer> getSerializer() {return serializer;}
+        private BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipe;
+        public BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> getRecipe() {return recipe;}
+        private ProviderList<Provider<?>> recipeProviders;
+        public ProviderList<Provider<?>> getRecipeProviders() {return recipeProviders;}
+        private Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess;
+        public Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> getCreateProcess() {return createProcess;}
 
-        public TLBuiltRecipeInfo(Supplier<ModularRecipeSerializer> getSerializer, BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipeConstructor, ProviderList<Provider<?>> recipeProviders, Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess) {
-            this.getSerializer = getSerializer;
-            this.recipeConstructor = recipeConstructor;
-            this.recipeProviders = recipeProviders;
-            this.createProcess = createProcess;
-        }
+//        public RecipeInfo(Supplier<ModularRecipeSerializer> getSerializer, BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipeConstructor, ProviderList<Provider<?>> recipeProviders, Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess) {
+//            this.serializer = getSerializer;
+//            this.recipeConstructor = recipeConstructor;
+//            this.recipeProviders = recipeProviders;
+//            this.createProcess = createProcess;
+//        }
+//        public RecipeInfo reconstruct(Supplier<ModularRecipeSerializer> getSerializer, BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipeConstructor, ProviderList<Provider<?>> recipeProviders, Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess) {
+//            this.serializer = getSerializer;
+//            this.recipeConstructor = recipeConstructor;
+//            this.recipeProviders = recipeProviders;
+//            this.createProcess = createProcess;
+//            return this;
+//        }
     }
 }

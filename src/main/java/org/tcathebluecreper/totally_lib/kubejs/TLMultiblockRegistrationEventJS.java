@@ -3,8 +3,8 @@ package org.tcathebluecreper.totally_lib.kubejs;
 import dev.latvian.mods.kubejs.event.EventJS;
 import net.minecraft.resources.ResourceLocation;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
+import org.tcathebluecreper.totally_lib.multiblock.MultiblockBuilder;
 import org.tcathebluecreper.totally_lib.multiblock.RegistrableMultiblock;
-import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
 
 import java.util.function.Consumer;
 
@@ -19,7 +19,7 @@ public class TLMultiblockRegistrationEventJS extends EventJS {
         this.reload = reload;
     }
 
-    public TLMultiblockBuilder multiblock(ResourceLocation id) {
-        return new TLMultiblockBuilder(id, manager, consumer, reload);
+    public MultiblockBuilder multiblock(ResourceLocation id) {
+        return new MultiblockBuilder(id, manager, consumer, reload);
     }
 }

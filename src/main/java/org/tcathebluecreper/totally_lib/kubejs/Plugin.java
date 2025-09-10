@@ -56,6 +56,8 @@ public class Plugin extends KubeJSPlugin {
         event.add("ItemProvider", ItemProvider.class);
         event.add("ItemStackProvider", ItemStackProvider.class);
         event.add("IngredientProvider", IngredientProvider.class);
+
+        event.add("Shapes", ShapesWrapper.class);
     }
 
     @Override

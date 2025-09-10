@@ -3,6 +3,7 @@ package org.tcathebluecreper.totally_lib.dev_utils;
 import com.lowdragmc.lowdraglib.gui.modular.IUIHolder;
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.modular.ModularUIGuiContainer;
+import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -21,6 +22,8 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.kubejs.Plugin;
 import org.tcathebluecreper.totally_lib.kubejs.TLMultiblockRegistrationEventJS;
@@ -29,8 +32,8 @@ import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TLCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+public class TLCommands {
+    public static void registerServer(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("tl_utils").requires(s -> s.hasPermission(2)).then(
             Commands.literal("selection")
             .executes(context -> {
@@ -92,41 +95,48 @@ public class TLCommand {
                     return 1;
                 }))
         );
-        dispatcher.register(Commands.literal("tl_editor").executes(context -> {
+    }
 
-            /// copied from MBD2
+    public static void registerClient(CommandDispatcher<CommandSourceStack> dispatcher) {
 
-            var holder = new IUIHolder() {
-                @Override
-                public ModularUI createUI(Player entityPlayer) {
-                    return null;
-                }
-
-                @Override
-                public boolean isInvalid() {
-                    return true;
-                }
-
-                @Override
-                public boolean isRemote() {
-                    return true;
-                }
-
-                @Override
-                public void markAsDirty() {
-
-                }
-            };
-
-            Minecraft minecraft = Minecraft.getInstance();
-            LocalPlayer entityPlayer = minecraft.player;
-            ModularUI uiTemplate  = new ModularUI(holder, entityPlayer).widget(new MultiblockEditor());
-            uiTemplate.initWidgets();
-            ModularUIGuiContainer ModularUIGuiContainer = new ModularUIGuiContainer(uiTemplate, entityPlayer.containerMenu.containerId);
-            minecraft.setScreen(ModularUIGuiContainer);
-            entityPlayer.containerMenu = ModularUIGuiContainer.getMenu();
-
+        dispatcher.register(Commands.literal("tl_editor").then(Commands.literal("shape").executes(context -> {
+            openGUI(new VoxelShapeEditor());
             return 1;
-        }));
+        }))
+            .then(Commands.literal("animation").executes(context -> {
+                openGUI(new AnimationEditor());
+                return 1;
+            })));
+    }
+    private static void openGUI(WidgetGroup gui) {
+        var holder = new IUIHolder() {
+            @Override
+            public ModularUI createUI(Player entityPlayer) {
+                return null;
+            }
+
+            @Override
+            public boolean isInvalid() {
+                return true;
+            }
+
+            @Override
+            public boolean isRemote() {
+                return true;
+            }
+
+            @Override
+            public void markAsDirty() {
+
+            }
+        };
+
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer entityPlayer = minecraft.player;
+        ModularUI uiTemplate = new ModularUI(holder, entityPlayer).widget(gui);
+        uiTemplate.initWidgets();
+        ModularUIGuiContainer ModularUIGuiContainer = new ModularUIGuiContainer(uiTemplate, entityPlayer.containerMenu.containerId);
+        minecraft.setScreen(ModularUIGuiContainer);
+        entityPlayer.containerMenu = ModularUIGuiContainer.getMenu();
     }
 }

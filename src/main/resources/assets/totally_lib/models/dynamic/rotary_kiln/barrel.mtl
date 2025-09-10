@@ -1,0 +1,10 @@
+# Made in Blockbench 4.12.4
+newmtl m_0f7ee05c-9e90-6341-d622-bcf03cec595c
+map_Kd immersiveengineering:block/multiblocks/diesel_generator
+newmtl m_01b2c255-ffa8-0906-a604-21f5548941d2
+map_Kd immersiveengineering:block/metal_decoration/light_engineering
+newmtl m_7377772e-9ce0-e279-ccf1-7086079dc8e0
+map_Kd immersiveengineering:block/metal/storage_steel
+newmtl m_6ee2df4e-81c0-8d8d-a6ff-0754fbfc74fd
+map_Kd totally_immersive:block/multiblock/rotary_kiln
+newmtl none

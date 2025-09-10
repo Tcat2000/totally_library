@@ -33,7 +33,8 @@ public class TIDynamicModel
 
     public TIDynamicModel(String desc)
     {
-        this.name = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic/"+desc);
+//        this.name = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic/"+desc);
+        this.name = ResourceLocation.fromNamespaceAndPath("minecraft", "block/stone");
         MODELS.add(this.name);
     }
 

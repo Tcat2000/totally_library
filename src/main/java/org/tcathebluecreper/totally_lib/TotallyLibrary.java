@@ -9,6 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -78,7 +79,11 @@ public class TotallyLibrary {
     private static class ForgeEvents {
         @SubscribeEvent
         public void onRegisterCommands(RegisterCommandsEvent event) {
-            TLCommand.register(event.getDispatcher());
+            TLCommands.registerServer(event.getDispatcher());
+        }
+        @SubscribeEvent
+        public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
+            TLCommands.registerClient(event.getDispatcher());
         }
 
         @SubscribeEvent

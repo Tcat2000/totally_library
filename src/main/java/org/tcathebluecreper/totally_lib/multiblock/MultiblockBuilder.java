@@ -126,6 +126,7 @@ public class MultiblockBuilder {
             .structure(() -> multiblocksToRegister.get(id).get())
             .build();
 
+        manualModel = new TIDynamicModel("chemical_bath/chemical_bath");
 
         info.multiblockClass = reload ? info.multiblockClass : new TIMultiblock(id, masterOffset, triggerOffset, size, info.registration, manualModel) {
             @Override

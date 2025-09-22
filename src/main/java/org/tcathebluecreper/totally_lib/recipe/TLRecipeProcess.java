@@ -10,10 +10,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import org.apache.commons.lang3.function.TriFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
+import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;
 import org.tcathebluecreper.totally_lib.recipe.provider.Provider;
 
@@ -29,7 +32,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
     public final Class<R> type;
     public final List<Action<R, S>> actions;
     public final S state;
-    public final BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic;
+    public final TriFunction<TLRecipeProcess<R, S>, Integer, Integer, Boolean> tickLogic;
     public int[] tick;
     private boolean needsCheck = true;
     public boolean[] stopped; /// If the machine is disabled, i.e., by redstone control
@@ -40,7 +43,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 
     public R[] recipe;
 
-    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic) {
+    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, TriFunction<TLRecipeProcess<R, S>, Integer, Integer, Boolean> tickLogic) {
         this.type = type;
         this.actions = actions;
         this.state = state;
@@ -53,7 +56,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
         maxParallel = 1;
         allowDifferentRecipes = false;
     }
-    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic, int initialTick) {
+    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, TriFunction<TLRecipeProcess<R, S>, Integer, Integer, Boolean> tickLogic, int initialTick) {
         this.type = type;
         this.actions = actions;
         this.state = state;
@@ -67,7 +70,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
         maxParallel = 1;
         allowDifferentRecipes = false;
     }
-    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic, int[] initialTick, int maxParallel, boolean allowDifferentRecipes) {
+    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, TriFunction<TLRecipeProcess<R, S>, Integer, Integer, Boolean> tickLogic, int[] initialTick, int maxParallel, boolean allowDifferentRecipes) {
         this.type = type;
         this.actions = actions;
         this.state = state;
@@ -81,7 +84,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
         stopped = new boolean[maxParallel];
         tick = new int[maxParallel];
     }
-    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, BiFunction<TLRecipeProcess<R, S>, Integer, Boolean> tickLogic, int maxParallel, boolean allowDifferentRecipes) {
+    public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, TriFunction<TLRecipeProcess<R, S>, Integer, Integer, Boolean> tickLogic, int maxParallel, boolean allowDifferentRecipes) {
         this.type = type;
         this.actions = actions;
         this.state = state;
@@ -113,7 +116,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 //        needsCheck = false;
             for(int p = 0; p < maxParallel; p++) {
                 if(recipe[getRecipeIndex(p)] == null) continue;
-                if(tickLogic != null) stuck[p] = !tickLogic.apply(this, p);
+                if(tickLogic != null) stuck[p] = !tickLogic.apply(this, tick[p], p);
                 int P = getRecipeIndex(p);
                 if(recipe[P] != null && !stopped[p]) {
                     int finalP = p;
@@ -286,6 +289,17 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
             return recipe[parallel].providers.get(id).get();
         } catch(NoSuchElementException e) {
             log.error("Recipe does not have provider '{}': {}", id, e);
+            return null;
+        }
+    }
+    public ITrait getTrait(String id) {
+        try {
+            return ((TraitMultiblockState)state).traits.get(id).get();
+        } catch(NoSuchElementException e) {
+            log.error("Recipe does not have trait '{}': {}", id, e);
+            return null;
+        } catch(ClassCastException e) {
+            log.error("Cannot get traits on multiblock without traits: {}", String.valueOf(e));
             return null;
         }
     }

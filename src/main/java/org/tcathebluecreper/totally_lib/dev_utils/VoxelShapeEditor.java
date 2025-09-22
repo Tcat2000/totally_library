@@ -1,27 +1,21 @@
 package org.tcathebluecreper.totally_lib.dev_utils;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
-import blusunrize.immersiveengineering.common.util.IELogger;
 import com.lowdragmc.lowdraglib.gui.texture.*;
 import com.lowdragmc.lowdraglib.gui.widget.*;
-import com.lowdragmc.lowdraglib.utils.TrackedDummyWorld;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
+import org.tcathebluecreper.totally_lib.dev_utils.widgets.MultiblockDisplayPanel;
+import org.tcathebluecreper.totally_lib.dev_utils.widgets.ScreenSpaceWidget;
 import org.tcathebluecreper.totally_lib.multiblock.*;
 
 import java.awt.*;
@@ -32,16 +26,14 @@ import java.util.regex.Pattern;
 
 public class VoxelShapeEditor extends WidgetGroup {
     private static final Logger log = LogManager.getLogger(VoxelShapeEditor.class);
-    private final WidgetGroup sceneWrapper;
-    private final SceneWidget scene;
-    private TrackedDummyWorld level;
+    private final MultiblockDisplayPanel mbDisplay;
     public VoxelShape shape = null;
 
     public ArrayList<AABBListWidget> parts = new ArrayList<>();
 
-    private final WidgetGroup side;
-    private final WidgetGroup top;
-    private final WidgetGroup sideTop;
+    private final ScreenSpaceWidget side;
+    private final ScreenSpaceWidget top;
+    private final ScreenSpaceWidget sideTop;
     private final DraggableScrollableWidgetGroup list;
     private final TextFieldWidget displayID;
     private ResourceLocation lastDisplayID;
@@ -52,22 +44,47 @@ public class VoxelShapeEditor extends WidgetGroup {
         super(0,0,100,100);
         initTemplate();
 
-        scene = new SceneWidget(0,30,100,100, null);
-        level = new TrackedDummyWorld();
+        mbDisplay = new MultiblockDisplayPanel(0,30,-205,0, this::postRender);
+        top = new ScreenSpaceWidget(0,0,-205, 30);
+        sideTop = new ScreenSpaceWidget(-205,0,0,30);
+        side = new ScreenSpaceWidget(-205,30,0,0);
+
+        list = new DraggableScrollableWidgetGroup(5,4,197,0);
+        side.addWidget(list);
+
+        ButtonWidget export = new ButtonWidget(190,7,50,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("export")), clickData -> {
+            log.info(export());
+        });
+        export.initTemplate();
+        top.addWidget(export);
+
+        addWidget(top);
+        addWidget(sideTop);
+        addWidget(mbDisplay);
+        addWidget(side);
+
+        displayID = new TextFieldWidget(60, 7, 120, 15, null, null);
+        if(!ModMultiblocks.allMultiblocks.isEmpty()) displayID.setCurrentString(ModMultiblocks.allMultiblocks.get(0).getId());
+        top.addWidget(new LabelWidget(5,10, "multiblock:"));
+        top.addWidget(displayID);
 
 
-//        level.setBlock(BlockPos.ZERO, mb.getMultiblock().getBlock().defaultBlockState(), 3);
-//        level.getBlockEntity(BlockPos.ZERO)
+
+        ButtonWidget add = new ButtonWidget(7,7,15,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("+")), clickData -> new AABBListWidget(parts, list, this::generateShape));
+        add.initTemplate();
+        sideTop.addWidget(add);
+
+        ButtonWidget remove = new ButtonWidget(26,7,15,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("-")), clickData -> {
+            AABBListWidget p = AABBListWidget.selected.get(parts);
+            if(p == null) return;
+            list.removeWidget(p);
+            parts.remove(p);
+            parts.forEach(AABBListWidget::update);
+        });
+        remove.initTemplate();
+        sideTop.addWidget(remove);
 
 
-        sceneWrapper = new WidgetGroup(0,30,0,0);
-        sceneWrapper.initTemplate();
-
-        scene.setRenderFacing(false);
-        scene.setRenderSelect(false);
-
-        top = new WidgetGroup();
-        top.initTemplate();
 
         importPanel = new WidgetGroup(0,0,300,40);
         importPanel.initTemplate();
@@ -76,6 +93,7 @@ public class VoxelShapeEditor extends WidgetGroup {
         importInput.initTemplate();
         importPanel.addWidget(importInput);
         importPanel.setVisible(false);
+        addWidget(importPanel);
 
         ButtonWidget load = new ButtonWidget(190,7,30,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("load")), clickData -> {
             importData();
@@ -85,72 +103,32 @@ public class VoxelShapeEditor extends WidgetGroup {
         importPanel.addWidget(load);
 
 
-        ButtonWidget export = new ButtonWidget(190,7,30,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("export")), clickData -> {
-            log.info(export());
-        });
-        export.initTemplate();
-        top.addWidget(export);
 
-        ButtonWidget imp = new ButtonWidget(240,7,30,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("import")), clickData -> {
+        ButtonWidget imp = new ButtonWidget(245,7,50,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("import")), clickData -> {
             importPanel.setVisible(true);
         });
         imp.initTemplate();
         top.addWidget(imp);
-
-        addWidget(top);
-
-        displayID = new TextFieldWidget(60, 7, 120, 15, null, null);
-        if(ModMultiblocks.allMultiblocks.size() > 0) displayID.setCurrentString(ModMultiblocks.allMultiblocks.get(0).getId());
-        top.addWidget(new LabelWidget(5,10, "multiblock:"));
-        top.addWidget(displayID);
-
-
-        side = new WidgetGroup(0,30,160,0);
-        side.initTemplate();
-
-        sceneWrapper.addWidget(scene);
-        addWidget(sceneWrapper);
-        addWidget(side);
-
-        list = new DraggableScrollableWidgetGroup(5,42,197,0);
-        side.addWidget(list);
-
-        sideTop = new WidgetGroup(0,0,0,30);
-        sideTop.initTemplate();
-        side.addWidget(sideTop);
-
-        ButtonWidget add = new ButtonWidget(7,7,15,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("+")), clickData -> new AABBListWidget(parts, list, this::generateShape));
-        add.initTemplate();
-        ButtonWidget remove = new ButtonWidget(26,7,15,15, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("-")), clickData -> {
-            AABBListWidget p =AABBListWidget.selected.get(parts);
-            if(p == null) return;
-            list.removeWidget(p);
-            parts.remove(p);
-            parts.forEach(AABBListWidget::update);
-        });
-        remove.initTemplate();
-
-        sideTop.addWidget(add);
-        sideTop.addWidget(remove);
-
-
-
-        addWidget(importPanel);
     }
 
     public String export() {
-        StringBuilder output = new StringBuilder();
-        output.append(".shape([");
+        try {
+            StringBuilder output = new StringBuilder();
+            output.append(".shape([");
 
-        for(int i = 0; i < parts.size(); i++) {
-            AABBListWidget data = parts.get(i);
-            if(data == null) continue;
-            output.append(data.toString());
+            for(AABBListWidget data : parts) {
+                if(data == null) continue;
+                output.append(data);
+            }
+
+            output.append("])");
+            return output.toString();
+        } catch(Exception e) {
+            log.error(e);
+            return "";
         }
-
-        output.append("])");
-        return output.toString();
     }
+
     public void importData() {
         int ct = parts.size();
         for(int i = 0; i < ct; i++) {
@@ -159,37 +137,34 @@ public class VoxelShapeEditor extends WidgetGroup {
         }
         String data = importInput.getCurrentString();
 
-        Pattern regex = Pattern.compile("/((?:(?:Shapes\\.(?:size|offset)\\(\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*))<?)/g");
-        Pattern subRegex = Pattern.compile("/Shapes\\.(size|offset)\\(\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*\\)/gm");
+        Pattern regex = Pattern.compile("(?:Shapes\\.(?:size|offset)\\(\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*,\\s*\\d*\\.?\\d*\\s*\\))<?", Pattern.MULTILINE);
+        Pattern subRegex = Pattern.compile("Shapes\\.(size|offset)\\(\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*,\\s*(\\d*\\.?\\d*)\\s*\\)", Pattern.MULTILINE);
         Matcher match = regex.matcher(data);
-        match.find();
 
-        int groupCount = match.groupCount();
 
-        for(int i = 0; i < groupCount; i++) {
-            Matcher subMatch = subRegex.matcher(match.group(i));
-            subMatch.find();
-            String type = subMatch.group();
-            double minX = Double.parseDouble(subMatch.group());
-            double minY = Double.parseDouble(subMatch.group());
-            double minZ = Double.parseDouble(subMatch.group());
-            double maxX = Double.parseDouble(subMatch.group());
-            double maxY = Double.parseDouble(subMatch.group());
-            double maxZ = Double.parseDouble(subMatch.group());
-            
-            AABBListWidget widget = new AABBListWidget(parts, this, this::generateShape);
-            
-            if(type.equals("size")) {
-                widget.mode = false;
-            }
-            else widget.mode = true;
+        while(match.find()) {
+            try {
+                Matcher subMatch = subRegex.matcher(match.group(0));
+                subMatch.find();
+                String type = subMatch.group(1);
+                double minX = Double.parseDouble(subMatch.group(2));
+                double minY = Double.parseDouble(subMatch.group(3));
+                double minZ = Double.parseDouble(subMatch.group(4));
+                double maxX = Double.parseDouble(subMatch.group(5));
+                double maxY = Double.parseDouble(subMatch.group(6));
+                double maxZ = Double.parseDouble(subMatch.group(7));
 
-            widget.minX.setCurrentString(minX);
-            widget.minY.setCurrentString(minY);
-            widget.minZ.setCurrentString(minZ);
-            widget.maxX.setCurrentString(maxX);
-            widget.maxY.setCurrentString(maxY);
-            widget.maxZ.setCurrentString(maxZ);
+                AABBListWidget widget = new AABBListWidget(parts, list, this::generateShape);
+
+                widget.mode = !type.equals("size");
+
+                widget.minX.setCurrentString(minX);
+                widget.minY.setCurrentString(minY);
+                widget.minZ.setCurrentString(minZ);
+                widget.maxX.setCurrentString(maxX);
+                widget.maxY.setCurrentString(maxY);
+                widget.maxZ.setCurrentString(maxZ);
+            } catch(Exception ignored) {}
         }
     }
 
@@ -197,55 +172,15 @@ public class VoxelShapeEditor extends WidgetGroup {
     public void updateScreen() {
         super.updateScreen();
         setSize(gui.getWidth(), gui.getHeight());
-        sceneWrapper.setSize(gui.getWidth() - 205, gui.getHeight() - 30);
-        scene.setSize(gui.getWidth() - 205, gui.getHeight());
-        side.setSize(205, gui.getHeight());
-        side.setSelfPosition(gui.getWidth() - 205, 0);
         list.setSize(197, gui.getHeight() - 46);
-        top.setSize(gui.getWidth() - 205, 30);
-        sideTop.setSize(gui.getWidth() - 205, 30);
 
         importPanel.setSelfPosition(gui.getScreenWidth() / 2 - 292 / 2, gui.getScreenHeight() / 2 - 40 / 2);
 
         if(ResourceLocation.isValidResourceLocation(displayID.getCurrentString()) && !ResourceLocation.parse(displayID.getCurrentString()).equals(lastDisplayID)) {
             ResourceLocation id = ResourceLocation.parse(displayID.getCurrentString());
             lastDisplayID = id;
-            loadMultiblock(id);
+            mbDisplay.loadMultiblock(id);
         }
-    }
-
-    public void loadMultiblock(ResourceLocation id) {
-        Optional<RegistrableMultiblock> op = ModMultiblocks.allMultiblocks.stream().filter(m -> m.getId().equals(id)).findFirst();
-        if(op.isEmpty()) return;
-        RegistrableMultiblock mb = op.get();
-
-        level = new TrackedDummyWorld();
-        scene.createScene(level);
-        scene.setRenderedCore(mb.getMultiblock().getTemplate(level).blocksWithoutAir().stream().map(StructureTemplate.StructureBlockInfo::pos).toList(), null);
-
-        scene.getRenderer().setOnLookingAt(null);
-        scene.setAfterWorldRender(this::postRender);
-        scene.getRenderer().setEndBatchLast(false);
-
-        mb.getMultiblock().getTemplate(level).blocksWithoutAir().forEach(block -> {
-            BlockState state = mb.getMultiblock().getBlock().defaultBlockState();
-            state = state.setValue(IEProperties.MULTIBLOCKSLAVE, !mb.getMultiblock().masterFromOrigin.equals(block.pos()));
-            if (state.hasProperty(IEProperties.MIRRORED)) {
-                state = state.setValue(IEProperties.MIRRORED, false);
-            }
-
-            if (state.hasProperty(IEProperties.FACING_HORIZONTAL)) {
-                state = state.setValue(IEProperties.FACING_HORIZONTAL, Direction.NORTH);
-            }
-
-            level.setBlockAndUpdate(block.pos(), state);
-            BlockEntity curr = level.getBlockEntity(block.pos());
-            if (curr instanceof MultiblockBlockEntityDummy<?> dummy) {
-                dummy.getHelper().setPositionInMB(block.pos());
-            } else if (!(curr instanceof MultiblockBlockEntityMaster)) {
-                IELogger.logger.error("Expected mb.getMultiblock() TE at {} during placement", block.pos());
-            }
-        });
     }
 
     private void postRender(SceneWidget sceneWidget) {
@@ -339,59 +274,15 @@ public class VoxelShapeEditor extends WidgetGroup {
             addWidget(new LabelWidget(4,10, String.valueOf(list.size())));
             addWidget(minLabel = new LabelWidget(27,10, "MIN:"));
             addWidget(maxLabel = new LabelWidget(27,26, "MAX:"));
-            addWidget(minX = new TextFieldWidget(49, 7, 45, 16, () -> String.valueOf(value.min(Direction.Axis.X)), text -> {
-                if(mode) {
-                    value = value.setMinX(Double.parseDouble(maxX.getCurrentString()));
-                    value = value.setMaxX(Double.parseDouble(maxX.getCurrentString()) + Double.parseDouble(text));
-                }
-                else value = value.setMinX(Double.parseDouble(text));
-                trigger.run();
-            }));
-            addWidget(minY = new TextFieldWidget(95, 7, 45, 16, () -> String.valueOf(value.min(Direction.Axis.Y)), text -> {
-                if(mode) {
-                    value = value.setMinY(Double.parseDouble(maxY.getCurrentString()));
-                    value = value.setMaxY(Double.parseDouble(maxY.getCurrentString()) + Double.parseDouble(text));
-                }
-                else value = value.setMinY(Double.parseDouble(text));
-                trigger.run();
-            }));
-            addWidget(minZ = new TextFieldWidget(141, 7, 45, 16, () -> String.valueOf(value.min(Direction.Axis.Z)), text -> {
-                if(mode) {
-                    value = value.setMinZ(Double.parseDouble(maxZ.getCurrentString()));
-                    value = value.setMaxZ(Double.parseDouble(maxZ.getCurrentString()) + Double.parseDouble(text));
-                }
-                else value = value.setMinZ(Double.parseDouble(text));
-                trigger.run();
-            }));
-            addWidget(maxX = new TextFieldWidget(49, 23, 45, 16, () -> String.valueOf(value.max(Direction.Axis.X)), text -> {
-                if(mode) {
-                    value = value.setMinX(Double.parseDouble(text));
-                    value = value.setMaxX(Double.parseDouble(minX.getCurrentString()) + Double.parseDouble(text));
-                }
-                else value = value.setMaxX(Double.parseDouble(text));
-                trigger.run();
-            }));
-            addWidget(maxY = new TextFieldWidget(95, 23, 45, 16, () -> String.valueOf(value.max(Direction.Axis.Y)), text -> {
-                if(mode) {
-                    value = value.setMinY(Double.parseDouble(text));
-                    value = value.setMaxY(Double.parseDouble(minY.getCurrentString()) + Double.parseDouble(text));
-                }
-                else value = value.setMaxY(Double.parseDouble(text));
-                trigger.run();
-            }));
-            addWidget(maxZ = new TextFieldWidget(141, 23, 45, 16, () -> String.valueOf(value.max(Direction.Axis.Z)), text -> {
-                if(mode) {
-                    value = value.setMinZ(Double.parseDouble(text));
-                    value = value.setMaxZ(Double.parseDouble(minZ.getCurrentString()) + Double.parseDouble(text));
-                }
-                else value = value.setMaxZ(Double.parseDouble(text));
-                trigger.run();
-            }));
+            addWidget(minX = new TextFieldWidget(49, 7, 45, 16, () -> String.valueOf(value.min(Direction.Axis.X)), null));
+            addWidget(minY = new TextFieldWidget(95, 7, 45, 16, () -> String.valueOf(value.min(Direction.Axis.Y)), null));
+            addWidget(minZ = new TextFieldWidget(141, 7, 45, 16, () -> String.valueOf(value.min(Direction.Axis.Z)), null));
+            addWidget(maxX = new TextFieldWidget(49, 23, 45, 16, () -> String.valueOf(value.max(Direction.Axis.X)), null));
+            addWidget(maxY = new TextFieldWidget(95, 23, 45, 16, () -> String.valueOf(value.max(Direction.Axis.Y)), null));
+            addWidget(maxZ = new TextFieldWidget(141, 23, 45, 16, () -> String.valueOf(value.max(Direction.Axis.Z)), null));
             update();
 
-            addWidget(new ButtonWidget(4,22, 10, 10, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("mode")), clickData -> {
-                toggleMode();
-            }));
+            addWidget(new ButtonWidget(4,22, 20, 10, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("mode")), clickData -> toggleMode()));
 
             selected.put(list, this);
             list.forEach(AABBListWidget::update);
@@ -437,16 +328,12 @@ public class VoxelShapeEditor extends WidgetGroup {
                     minY.setCurrentString(newMinY);
                     minZ.setCurrentString(newMinZ);
                 }
-            } catch(NumberFormatException e) {}
+            } catch(NumberFormatException ignored) {}
         }
 
         public void update() {
             this.setSelfPosition(2, list.indexOf(this) * 47 + 1);
             this.initTemplate();
-        }
-
-        public AABB getAABB() {
-            return value;
         }
 
         public VoxelShape getShape() {
@@ -481,23 +368,34 @@ public class VoxelShapeEditor extends WidgetGroup {
 
         @Override
         public String toString() {
-            StringBuilder output = new StringBuilder();
-
-            output.append("Shapes.offset(");
-            output.append(Double.parseDouble(minX.getCurrentString()));
-            output.append(",");
-            output.append(Double.parseDouble(minY.getCurrentString()));
-            output.append(",");
-            output.append(Double.parseDouble(minZ.getCurrentString()));
-            output.append(",");
-            output.append(Double.parseDouble(maxX.getCurrentString()));
-            output.append(",");
-            output.append(Double.parseDouble(maxY.getCurrentString()));
-            output.append(",");
-            output.append(Double.parseDouble(maxZ.getCurrentString()));
-            output.append(")");
-
-            return output.toString();
+            try {
+                if(mode) return "Shapes.offset(" +
+                    Double.parseDouble(minX.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(minY.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(minZ.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(maxX.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(maxY.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(maxZ.getCurrentString()) +
+                    "),";
+                return "Shapes.size(" +
+                    Double.parseDouble(minX.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(minY.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(minZ.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(maxX.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(maxY.getCurrentString()) +
+                    "," +
+                    Double.parseDouble(maxZ.getCurrentString()) +
+                    "),";
+            } catch(NumberFormatException ignored) {return "";}
         }
     }
 }

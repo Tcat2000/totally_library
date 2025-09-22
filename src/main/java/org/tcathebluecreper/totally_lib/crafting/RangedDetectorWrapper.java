@@ -70,4 +70,8 @@ public class RangedDetectorWrapper extends RangedWrapper {
         }
         return horizontal;
     }
+
+    public void setListener(BiConsumer<ItemHandlerIO, ItemStack> listener) {
+        this.listener = listener;
+    }
 }

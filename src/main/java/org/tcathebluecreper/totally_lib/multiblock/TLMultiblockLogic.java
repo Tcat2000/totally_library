@@ -43,6 +43,7 @@ public class TLMultiblockLogic implements IMultiblockLogic<TraitMultiblockState>
 
     @Override
     public TraitMultiblockState createInitialState(IInitialMultiblockContext<TraitMultiblockState> iInitialMultiblockContext) {
+        iInitialMultiblockContext.getSyncRunnable().run();
         return stateConstructor.apply(iInitialMultiblockContext);
     }
 
@@ -54,11 +55,13 @@ public class TLMultiblockLogic implements IMultiblockLogic<TraitMultiblockState>
     @Override
     public void tickServer(IMultiblockContext<TraitMultiblockState> iMultiblockContext) {
         serverTick.accept(this, iMultiblockContext);
+        iMultiblockContext.requestMasterBESync();
     }
 
     @Override
     public void tickClient(IMultiblockContext<TraitMultiblockState> iMultiblockContext) {
         clientTick.accept(this, iMultiblockContext);
+        iMultiblockContext.requestMasterBESync();
     }
 
 
@@ -68,7 +71,7 @@ public class TLMultiblockLogic implements IMultiblockLogic<TraitMultiblockState>
         for(ITrait trait : traits) {
             if(trait.getCapType() != cap) continue;
             if(trait.getExposure().containsKey(position.posInMultiblock()) && (trait.getExposure().get(position.posInMultiblock()).test(position.side()) || position.side() == null)) {
-                return trait.getCap().cast(ctx);
+                 return trait.getCap().cast(ctx);
             }
         }
         return LazyOptional.empty();

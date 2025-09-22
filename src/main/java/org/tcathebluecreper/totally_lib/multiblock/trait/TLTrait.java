@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public abstract class TLTrait implements ITrait {
+public abstract class TLTrait<TYPE> implements ITrait {
     private final Map<BlockPos, Predicate<RelativeBlockFace>> exposure = new HashMap<>();
     @Override
     public ITrait expose(BlockPos pos, Predicate<RelativeBlockFace> side) {
@@ -32,5 +32,9 @@ public abstract class TLTrait implements ITrait {
     @Override
     public Capability<?> getCapType() {
         return ForgeCapabilities.ENERGY;
+    }
+
+    public TYPE get() {
+        return (TYPE) getCap().getValue();
     }
 }

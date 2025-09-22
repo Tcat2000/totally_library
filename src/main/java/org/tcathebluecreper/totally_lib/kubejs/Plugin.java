@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_lib.kubejs;
 
+import blusunrize.immersiveengineering.api.IEProperties;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -9,9 +10,16 @@ import dev.latvian.mods.kubejs.event.EventGroup;
 import dev.latvian.mods.kubejs.event.EventHandler;
 import dev.latvian.mods.kubejs.generator.AssetJsonGenerator;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
+import org.tcathebluecreper.totally_lib.lib.AnimationUtils;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.MultiblockBuilder;
 import org.tcathebluecreper.totally_lib.multiblock.trait.EnergyTrait;
@@ -58,6 +66,17 @@ public class Plugin extends KubeJSPlugin {
         event.add("IngredientProvider", IngredientProvider.class);
 
         event.add("Shapes", ShapesWrapper.class);
+
+        event.add("LevelRenderer", LevelRenderer.class);
+        event.add("RenderType", RenderType.class);
+        event.add("AnimationUtils", AnimationUtils.class);
+        event.add("IClientFluidTypeExtensions", IClientFluidTypeExtensions.class);
+        event.add("Minecraft", Minecraft.class);
+        event.add("RenderUtils", RenderUtils.class);
+        event.add("Sheets", Sheets.class);
+        event.add("InventoryMenu", InventoryMenu.class);
+        event.add("IEProperties", IEProperties.class);
+        event.add("RenderUtils", RenderUtils.class);
     }
 
     @Override

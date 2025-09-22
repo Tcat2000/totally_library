@@ -22,6 +22,7 @@ public class TraitMultiblockState implements IMultiblockState {
 
     public TraitMultiblockState(IInitialMultiblockContext capSource, List<ITrait> traits) {
         this.traits = new TraitList(traits);
+        this.traits.setOnValueChanged(trait -> capSource.getSyncRunnable().run());
     }
 
 

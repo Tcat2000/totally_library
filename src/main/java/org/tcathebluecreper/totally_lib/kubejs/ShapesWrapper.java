@@ -4,10 +4,10 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ShapesWrapper {
-    public VoxelShape size(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-        return Shapes.box(minX, minY, minZ, maxX, maxY, maxZ);
+    public static VoxelShape size(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        return Shapes.box(minX / 16, minY / 16, minZ / 16, maxX / 16, maxY / 16, maxZ / 16);
     }
-    public VoxelShape offset(double sizeX, double sizeY, double sizeZ, double posX, double posY, double posZ) {
-        return Shapes.box(posX, posY, posZ, posX + sizeX, posY + sizeY, posZ + sizeZ);
+    public static VoxelShape offset(double sizeX, double sizeY, double sizeZ, double posX, double posY, double posZ) {
+        return Shapes.box(posX / 16, posY / 16, posZ / 16, (posX + sizeX) / 16, (posY + sizeY) / 16, (posZ + sizeZ) / 16);
     }
 }

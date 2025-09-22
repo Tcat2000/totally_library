@@ -22,7 +22,7 @@ public class ItemStackProvider extends Provider<ItemStack> {
     public Provider<ItemStack> fromJson(ResourceLocation recipeID, JsonObject json) {
         JsonObject data = json.getAsJsonObject(field);
         if(!data.has("item")) throw new RecipeSerializationException(recipeID, "Missing json field 'item'");
-        int count = data.has("count") ? data.get("count").getAsInt() : 1;
+        int count = data.has("amount") ? data.get("amount").getAsInt() : 1;
         Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(data.get("item").getAsString()));
         if(item == null)
             throw new RecipeSerializationException(recipeID, "Cannot find item '" + ResourceLocation.parse(data.get("item").getAsString()) + "'");
@@ -56,5 +56,10 @@ public class ItemStackProvider extends Provider<ItemStack> {
         if(handler.getStackInSlot(slot).isEmpty()) handler.setStackInSlot(slot, value.copy());
         else handler.getStackInSlot(slot).setCount(handler.getStackInSlot(slot).getCount() + value.getCount());
         return true;
+    }
+
+    @Override
+    public ItemStack get() {
+        return super.get().copy();
     }
 }

@@ -33,9 +33,12 @@ public class TIDynamicModel
 
     public TIDynamicModel(String desc)
     {
-//        this.name = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic/"+desc);
-        this.name = ResourceLocation.fromNamespaceAndPath("minecraft", "block/stone");
+        this.name = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic/"+desc);
         MODELS.add(this.name);
+    }
+    public TIDynamicModel(ResourceLocation location) {
+        this.name = location;
+        MODELS.add(location);
     }
 
     public BakedModel get()

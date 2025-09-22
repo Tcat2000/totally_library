@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -35,9 +34,11 @@ public abstract class TIMultiblock extends IETemplateMultiblock {
     public final BlockPos masterFromOrigin;
     public final BlockPos triggerFromOrigin;
     public final BlockPos size;
+    public final MultiblockRegistration<?> multiblockRegistration;
     public TIMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic, TIDynamicModel manualModel) {
         super(loc, masterFromOrigin, triggerFromOrigin, size, logic);
-        model = manualModel;
+        this.model = manualModel;
+        this.multiblockRegistration = logic;
         this.masterFromOrigin = masterFromOrigin;
         this.triggerFromOrigin = triggerFromOrigin;
         this.size = size;

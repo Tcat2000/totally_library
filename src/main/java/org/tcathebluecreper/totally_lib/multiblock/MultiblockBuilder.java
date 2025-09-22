@@ -12,12 +12,14 @@ import dev.latvian.mods.rhino.NativeObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.Lazy;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.lib.ITMultiblockBlock;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
+import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
 import org.tcathebluecreper.totally_lib.recipe.RecipeBuilder;
 
 import java.util.*;
@@ -37,6 +39,7 @@ public class MultiblockBuilder {
     public int[][] blocks = new int[0][];
     public JsonObject model = null;
     public RecipeBuilder.RecipeInfo recipeInfo = null;
+    public MachineShape shape = new MachineShape.SolidMachineShape();
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
@@ -114,7 +117,7 @@ public class MultiblockBuilder {
                 ((RecipeTraitMultiblockState) c.getState()).process.tick(c.getLevel().getRawLevel());
             }
         };
-        info.logic = reload ? info.logic.reconstruct(pos -> Shapes.block(), info.tickLogic, info.tickLogic, info.state) : new TLMultiblockLogic(pos -> Shapes.block(), info.tickLogic, info.tickLogic, info.state);
+        info.logic = reload ? info.logic.reconstruct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state) : new TLMultiblockLogic(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
 
 
         info.registration = reload ? info.registration : new IEMultiblockBuilder<>(info.logic, id.getPath())
@@ -136,13 +139,18 @@ public class MultiblockBuilder {
         };
         multiblocksToRegister.put(id, Lazy.of(() -> info.multiblockClass));
 
-        info.reg = reload ? info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new RegistrableMultiblock.AssetGenerationData(blocks, model) : null) : new RegistrableMultiblock(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new RegistrableMultiblock.AssetGenerationData(blocks, model) : null);
+        info.reg = reload ? info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new RegistrableMultiblock.AssetGenerationData(blocks, model) : null, new TraitList(traits.get())) : new RegistrableMultiblock(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new RegistrableMultiblock.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()));
         consumer.accept(info.reg);
 
         multiblockInfo.put(id, info);
 
         return info.reg;
     }
+    public MultiblockBuilder shape(List<VoxelShape> shapes) {
+        shape = new MachineShape(shapes);
+        return this;
+    }
+
 
     public static void init() {
         multiblocksToRegister.forEach((l,mb)->MultiblockHandler.registerMultiblock(mb.get()));

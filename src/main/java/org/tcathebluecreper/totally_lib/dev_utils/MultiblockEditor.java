@@ -18,7 +18,7 @@ public class MultiblockEditor extends Editor implements ILDLRegisterClient {
     public static final ConfigPanel.Tab BASIC = ConfigPanel.Tab.WIDGET;
 
     public MultiblockEditor() {
-        super(TotallyLibrary.multiblockFileLocation);
+        super("");
     }
 
     public void initEditorViews() {

@@ -35,7 +35,7 @@ public class RecipeBuilder {
     public TriFunction<ModularRecipe, IMultiblockState, Integer, Boolean> checkCanResume;
     public ProviderList<Provider<?>> recipeProviders = new ProviderList<>();
     public List<Action<ModularRecipe, TraitMultiblockState>> process = new ArrayList<>();
-    public BiFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Boolean> tickLogic;
+    public TriFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Integer, Boolean> tickLogic;
 
     public static final RegistryObject<RecipeType<?>> TLRegistrableRecipeRegistry = TotallyLibrary.regManager.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), TotallyLibrary.MODID, "recipe", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(MODID,"recipe")));
     public static final HashMap<ResourceLocation, RecipeInfo> serializers = new HashMap<>();
@@ -61,15 +61,11 @@ public class RecipeBuilder {
         this.checkCanExecute = condition;
         return this;
     }
-    public RecipeBuilder resumeCondition(TriFunction<ModularRecipe, IMultiblockState, Integer, Boolean> condition) {
-        this.checkCanResume = condition;
-        return this;
-    }
     public RecipeBuilder addProvider(Provider<?> provider) {
         recipeProviders.add(provider);
         return this;
     }
-    public RecipeBuilder tickLogic(BiFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Boolean> tickLogic) {
+    public RecipeBuilder tickLogic(TriFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Integer, Boolean> tickLogic) {
         this.tickLogic = tickLogic;
         return this;
     }

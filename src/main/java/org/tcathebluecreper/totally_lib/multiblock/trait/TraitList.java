@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class TraitList extends ArrayList<ITrait> {
     public TraitList() {
@@ -24,5 +25,9 @@ public class TraitList extends ArrayList<ITrait> {
     }
     public void load(CompoundTag tag) {
         forEach(iTrait -> iTrait.readSaveNBT(tag));
+    }
+
+    public void setOnValueChanged(Consumer<ITrait> consumer) {
+        forEach(trait -> trait.setOnValueChanged(consumer));
     }
 }

@@ -31,7 +31,7 @@ public class IngredientProvider extends Provider<Ingredient> {
     public Provider<Ingredient> fromJson(ResourceLocation recipeID, JsonObject json) {
         JsonObject data = json.getAsJsonObject(field);
         if(data == null) throw new RecipeSerializationException(recipeID, "Missing '" + field + "'");
-        int count = data.has("count") ? data.get("count").getAsInt() : 1;
+        int count = data.has("amount") ? data.get("amount").getAsInt() : 1;
         if(data.has("item")) {
             Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(data.get("item").getAsString()));
             if(item == null)

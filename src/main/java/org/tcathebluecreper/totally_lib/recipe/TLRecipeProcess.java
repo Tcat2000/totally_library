@@ -1,6 +1,5 @@
 package org.tcathebluecreper.totally_lib.recipe;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import mcjty.theoneprobe.api.IProbeInfo;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
@@ -13,21 +12,22 @@ import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
+import org.tcathebluecreper.totally_lib.dev_utils.TLUtils;
 import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
 import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;
 import org.tcathebluecreper.totally_lib.recipe.provider.Provider;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 
-public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockState> {
+public abstract class TLRecipeProcess<R extends TLRecipe, S extends TraitMultiblockState> {
     private static final Logger log = LogManager.getLogger(TLRecipeProcess.class);
     public final Class<R> type;
     public final List<Action<R, S>> actions;
@@ -41,7 +41,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
     public final int maxParallel;
     public final boolean allowDifferentRecipes;
 
-    public R[] recipe;
+    public Supplier<R>[] recipe;
 
     public TLRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, TriFunction<TLRecipeProcess<R, S>, Integer, Integer, Boolean> tickLogic) {
         this.type = type;
@@ -49,7 +49,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
         this.state = state;
         this.tickLogic = tickLogic;
 
-        recipe = (R[]) Array.newInstance(type, 1);
+        recipe = createEmptyRecipeArray(1);
         stuck = new boolean[1];
         stopped = new boolean[1];
         tick = new int[1];
@@ -63,7 +63,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
         this.tickLogic = tickLogic;
         this.tick = new int[]{initialTick};
 
-        recipe = (R[]) Array.newInstance(type, 1);
+        recipe = createEmptyRecipeArray(1);
         stuck = new boolean[1];
         stopped = new boolean[1];
         tick = new int[1];
@@ -79,7 +79,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 
         this.maxParallel = maxParallel;
         this.allowDifferentRecipes = allowDifferentRecipes;
-        recipe = (R[]) Array.newInstance(type, allowDifferentRecipes ? maxParallel : 1);
+        recipe = createEmptyRecipeArray(allowDifferentRecipes ? maxParallel : 1);
         stuck = new boolean[maxParallel];
         stopped = new boolean[maxParallel];
         tick = new int[maxParallel];
@@ -92,7 +92,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 
         this.maxParallel = maxParallel;
         this.allowDifferentRecipes = allowDifferentRecipes;
-        recipe = (R[]) Array.newInstance(type, allowDifferentRecipes ? maxParallel : 1);
+        recipe = createEmptyRecipeArray(allowDifferentRecipes ? maxParallel : 1);
         stuck = new boolean[maxParallel];
         stopped = new boolean[maxParallel];
         tick = new int[maxParallel];
@@ -105,27 +105,27 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
             if(allowDifferentRecipes) {
                 for(int p = 0; p < maxParallel; p++) {
                     if(tick[p] == 0 && needsCheck) {
-                        recipe[p] = findRecipe(level);
+                        recipe[p] = TLUtils.supplier(findRecipe(state.getLevel()));
                     }
                 }
             } else {
-                if(recipe[0] == null && needsCheck) {
-                    recipe[0] = findRecipe(level);
+                if(recipe[0].get() == null && needsCheck) {
+                    recipe[0] = TLUtils.supplier(findRecipe(state.getLevel()));
                 }
             }
 //        needsCheck = false;
             for(int p = 0; p < maxParallel; p++) {
-                if(recipe[getRecipeIndex(p)] == null) continue;
+                if(recipe[getRecipeIndex(p)].get() == null) continue;
                 if(tickLogic != null) stuck[p] = !tickLogic.apply(this, tick[p], p);
                 int P = getRecipeIndex(p);
-                if(recipe[P] != null && !stopped[p]) {
+                if(recipe[P].get() != null && !stopped[p]) {
                     int finalP = p;
                     AtomicBoolean finished = new AtomicBoolean(false);
                     actions.forEach((action) -> {
-                        if(action.run(tick[finalP], this, finalP, recipe[0].length())) {
+                        if(action.run(tick[finalP], this, finalP, recipe[P].get().length())) {
                             finished.set(true);
                             tick[finalP] = 0;
-                            recipe[finalP] = null;
+                            recipe[finalP] = () -> null;
                         }
                     });
                     if(!stuck[p] && !finished.get()) tick[p]++;
@@ -180,8 +180,9 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
         }
 
         buf.writeVarInt(recipe.length);
-        for(R r : recipe) {
-            buf.writeResourceLocation(r.id);
+        for(Supplier<R> r : recipe) {
+            if(r != null) buf.writeResourceLocation(r.get().id);
+            else buf.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("",""));
         }
     }
     public void fromNetwork(FriendlyByteBuf buf) {
@@ -202,9 +203,9 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
         stuck = array;
 
         len = buf.readVarInt();
-        recipe = (R[]) Array.newInstance(type, len);
+        recipe = createEmptyRecipeArray(len);
         for(int j = 0; j < array.length; ++j) {
-            recipe[j] = getRecipe(buf.readResourceLocation());
+            recipe[j] = () -> getRecipe(buf.readResourceLocation(), state.getLevel());
         }
     }
 
@@ -233,7 +234,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 
         ListTag recipeList = new ListTag();
         for(int j = 0; j < recipe.length; j++) {
-            if(recipe[j] != null) recipeList.add(StringTag.valueOf(recipe[j].id.toString()));
+            if(recipe[j].get() != null) recipeList.add(StringTag.valueOf(recipe[j].get().id.toString()));
             else recipeList.add(StringTag.valueOf(""));
         }
         tag.put("recipe", recipeList);
@@ -256,12 +257,14 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 
         ListTag list = tag.getList("recipe", StringTag.TAG_STRING);
         for(int j = 0; j < list.size(); ++j) {
-            recipe[j] = getRecipe(ResourceLocation.parse(list.getString(j)));
+
+            int finalJ = j;
+            recipe[j] = () -> getRecipe(ResourceLocation.parse(list.getString(finalJ)), state.getLevel());
         }
     }
 
     public abstract R findRecipe(Level level);
-    public abstract R getRecipe(ResourceLocation id);
+    public abstract R getRecipe(ResourceLocation id, Level level);
 
     public IProbeInfo displayBars(IProbeInfo info, int maxTime, boolean hideEmptyBars, boolean displayMaxProcesses) {
         int count = 0;
@@ -277,7 +280,11 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 
     public Provider<?> getProvider(String id) {
         try {
-            return recipe[0].providers.get(id).get();
+            if(recipe[0].get() == null) {
+                log.error("recipe is null");
+                return null;
+            }
+            return recipe[0].get().providers.get(id).get();
         } catch(NoSuchElementException e) {
             log.error("Recipe does not have provider '{}': {}", id, e);
             return null;
@@ -286,7 +293,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
 
     public Provider<?> getProvider(int parallel, String id) {
         try {
-            return recipe[parallel].providers.get(id).get();
+            return recipe[parallel].get().providers.get(id).get();
         } catch(NoSuchElementException e) {
             log.error("Recipe does not have provider '{}': {}", id, e);
             return null;
@@ -294,7 +301,7 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
     }
     public ITrait getTrait(String id) {
         try {
-            return ((TraitMultiblockState)state).traits.get(id).get();
+            return state.traits.get(id).get();
         } catch(NoSuchElementException e) {
             log.error("Recipe does not have trait '{}': {}", id, e);
             return null;
@@ -302,5 +309,11 @@ public abstract class TLRecipeProcess<R extends TLRecipe, S extends IMultiblockS
             log.error("Cannot get traits on multiblock without traits: {}", String.valueOf(e));
             return null;
         }
+    }
+
+    private Supplier<R>[] createEmptyRecipeArray(int len) {
+        Supplier<R>[] array = (Supplier<R>[]) Array.newInstance(Supplier.class, len);
+        Arrays.fill(array, (Supplier<R>) () -> null);
+        return array;
     }
 }

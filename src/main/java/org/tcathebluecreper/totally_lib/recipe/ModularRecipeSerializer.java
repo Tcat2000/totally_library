@@ -43,15 +43,15 @@ public class ModularRecipeSerializer extends TLRecipeSerializer<ModularRecipe> {
 
     @Override
     public ModularRecipe findRecipe(IMultiblockState state, Level level) {
-        for(ModularRecipe recipe : getRecipes()) {
+        for(ModularRecipe recipe : getRecipes(level)) {
             if(recipe.checkCanExecute(state)) return recipe;
         }
         return null;
     }
 
     @Override
-    public ModularRecipe getRecipe(ResourceLocation id) {
-        for(ModularRecipe recipe : getRecipes()) {
+    public ModularRecipe getRecipe(ResourceLocation id, Level level) {
+        for(ModularRecipe recipe : getRecipes(level)) {
             if(recipe.id == id) return recipe;
         }
         return null;
@@ -68,10 +68,11 @@ public class ModularRecipeSerializer extends TLRecipeSerializer<ModularRecipe> {
         return recipe;
     }
 
-    public List<ModularRecipe> getRecipes() {
+    public List<ModularRecipe> getRecipes(Level level) {
         recipes = new ArrayList<>();
 
-        allRecipes.getRecipes(Minecraft.getInstance().level).forEach(recipe -> {
+        if(level == null) System.out.println("Cannot get recipe manager because level is null!");
+        allRecipes.getRecipes(level).forEach(recipe -> {
             if(recipe.type == this) recipes.add(recipe);
         });
         return recipes;

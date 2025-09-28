@@ -1,32 +1,42 @@
 package org.tcathebluecreper.totally_lib.dev_utils;
 
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
+import com.lowdragmc.lowdraglib.client.renderer.block.RendererBlock;
+import com.lowdragmc.lowdraglib.client.renderer.block.RendererBlockEntity;
 import com.lowdragmc.lowdraglib.client.renderer.impl.IModelRenderer;
 import com.lowdragmc.lowdraglib.gui.editor.ColorPattern;
-import com.lowdragmc.lowdraglib.gui.editor.configurator.IRendererConfigurator;
 import com.lowdragmc.lowdraglib.gui.texture.*;
 import com.lowdragmc.lowdraglib.gui.util.ClickData;
 import com.lowdragmc.lowdraglib.gui.widget.*;
 import com.lowdragmc.lowdraglib.gui.widget.layout.Layout;
+import com.lowdragmc.lowdraglib.utils.BlockInfo;
+import com.lowdragmc.lowdraglib.utils.TrackedDummyWorld;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 import org.tcathebluecreper.totally_lib.dev_utils.widgets.MultiblockDisplayPanel;
@@ -91,7 +101,7 @@ public class AnimationEditor extends WidgetGroup {
         selectorTab = new TabButton(100,0,100,30);
         selectorTab.setTexture(new GuiTextureGroup(tabSelectedTexture, new TextTexture("SELECTOR")), new GuiTextureGroup(tabUnselectedTexture, new TextTexture("SELECTOR")));
 
-        partsList = new DraggableScrollableWidgetGroup(4, 48, 192, 192);
+        partsList = new DraggableScrollableWidgetGroup(4, 31, 192, 192);
         partsListContainer = new WidgetGroup();
         partsListContainer.setDynamicSized(true);
         partsListContainer.setLayout(Layout.VERTICAL_LEFT);
@@ -394,6 +404,7 @@ public class AnimationEditor extends WidgetGroup {
                 cursorSubPos = cursorPos;
                 if(cursorPos > animationLength) cursorPos = 0;
             }
+            partsList.setSize(inspector.getSizeWidth() - 8, inspector.getSizeHeight() - 10);
         }
 
         @Override
@@ -694,12 +705,13 @@ public class AnimationEditor extends WidgetGroup {
 
     public class AnimationPart extends WidgetGroup {
         List<BakedQuad> quads = new ArrayList<>();
-        IRendererConfigurator renderer;
+        SceneWidget renderer;
+        RendererBlockEntity holder;
         public AnimationPart() {
-            super(0,0,100,50);
+            super(0,0,192,50);
             initTemplate();
 
-            IModelRenderer model = new IModelRenderer(ResourceLocation.fromNamespaceAndPath("totally_immersive","dynamic/chemical_bath/chemical_bath"));
+            IModelRenderer2 model = new IModelRenderer2(ResourceLocation.fromNamespaceAndPath("minecraft", "block/diamond_block"));
 
             quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, null, Minecraft.getInstance().level.random));
             quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.UP, Minecraft.getInstance().level.random));
@@ -709,14 +721,14 @@ public class AnimationEditor extends WidgetGroup {
             quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.SOUTH, Minecraft.getInstance().level.random));
             quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.WEST, Minecraft.getInstance().level.random));
 
-            addWidget(new TextFieldWidget(30,20,50,15, null, null) {
+            addWidget(new TextFieldWidget(52,20,50,15, null, null) {
                 @Override
                 protected void onTextChanged(String newTextString) {
-                    quads = new ArrayList<>();
+                    quads.clear();
 
                     if(!ResourceLocation.isValidResourceLocation(newTextString)) return;
 
-                    IModelRenderer model = new IModelRenderer(ResourceLocation.parse(newTextString));
+//                    holder.setRenderer(new IModelRenderer(ResourceLocation.parse(newTextString)));
 
                     quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, null, Minecraft.getInstance().level.random));
                     quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.UP, Minecraft.getInstance().level.random));
@@ -727,38 +739,69 @@ public class AnimationEditor extends WidgetGroup {
                     quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.WEST, Minecraft.getInstance().level.random));
                 }
             });
+
+//            TrackedDummyWorld level = new TrackedDummyWorld();
+//            level.addBlock(BlockPos.ZERO, BlockInfo.fromBlock(RendererBlock.BLOCK));
+//            this.holder = (RendererBlockEntity)level.getBlockEntity(BlockPos.ZERO);
+//
+//            holder.setRenderer(new IModelRenderer(ResourceLocation.fromNamespaceAndPath("minecraft", "block/diamond_block")));
+//
+//            renderer = new SceneWidget(4, 4, 42, 42, level);
+//            renderer.setRenderedCore(List.of(BlockPos.ZERO), null);
+////            renderer.setAfterWorldRender(sceneWidget -> {
+////                var poseStack = new PoseStack();
+////                var tessellator = Tesselator.getInstance();
+////                var buffer = tessellator.getBuilder();
+////
+////                buffer.begin(RenderType.solid().mode(), RenderType.solid().format());
+////
+////                var lightTexture = Minecraft.getInstance().gameRenderer.lightTexture();
+////                lightTexture.turnOnLightLayer();
+////
+////                RenderSystem.clearColor(1,1,1,1);
+////
+////                RenderUtils.renderModelTESRFancy(quads, buffer, poseStack, mbDisplay.level, BlockPos.ZERO, false,-1, 15);
+////
+////
+////                model.renderItem(ItemStack.EMPTY, ItemDisplayContext.GUI, false, poseStack, MultiBufferSource.immediate(buffer), 15, 15, model.getItemBakedModel());
+////
+////                tessellator.end();
+////            });
+////            renderer.setRenderSelect(false);
+//            renderer.setRenderFacing(false);
+//            renderer.getRenderer().setOnLookingAt(null);
+//            renderer.createScene(level);
+//            renderer.setBackground(new ColorBorderTexture(1, ColorPattern.T_WHITE.color));
+//            renderer.setIntractable(false);
+//            addWidget(renderer);
+
+            var level = new TrackedDummyWorld();
+            level.addBlock(BlockPos.ZERO, BlockInfo.fromBlock(RendererBlock.BLOCK));
+            Optional.ofNullable(level.getBlockEntity(BlockPos.ZERO)).ifPresent(blockEntity -> {
+                if (blockEntity instanceof RendererBlockEntity holder) {
+                    holder.setRenderer(model);
+                }
+            });
+
+            var sceneWidget = new SceneWidget(5, 5, 40, 40, level);
+//            sceneWidget.setRenderFacing(false);
+//            sceneWidget.setRenderSelect(false);
+            sceneWidget.createScene(level);
+//            sceneWidget.getRenderer().setOnLookingAt(null); // better performance
+            sceneWidget.setRenderedCore(Collections.singleton(BlockPos.ZERO), null);
+            sceneWidget.setBackground(new ColorBorderTexture(2, ColorPattern.T_WHITE.color));
+
+            addWidget(sceneWidget);
         }
+    }
+    public static class IModelRenderer2 extends IModelRenderer {
+        public IModelRenderer2(ResourceLocation modelLocation) {
+            super(modelLocation);
+        }
+
         @Override
-        public void drawInBackground(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-            super.drawInBackground(graphics, mouseX, mouseY, partialTicks);
-
-            PoseStack poseStack = graphics.pose();
-            poseStack.pushPose();
-            poseStack.translate(getPositionX() + 10,getPositionY() + 10,150);
-            poseStack.mulPose(new Quaternionf().rotateAxis(45 * Mth.DEG_TO_RAD, 0, 1, 0));
-            poseStack.mulPose(new Quaternionf().rotateAxis(-45 * Mth.DEG_TO_RAD, 1, 0, 0));
-            poseStack.scale(10,-10,10);
-
-            VertexConsumer buf = graphics.bufferSource().getBuffer(RenderType.solid());
-
-
-
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-
-            RenderSystem.enableDepthTest();
-            RenderSystem.depthMask(true);
-
-            RenderUtils.renderModelTESRFancy(quads, buf, poseStack, mbDisplay.level, BlockPos.ZERO, false,-1, 15);
-//            graphics.renderItem(Items.DIAMOND_BLOCK.getDefaultInstance(), getPositionX(),getPositionY());
-
-            poseStack.popPose();
-            graphics.flush();
-
-            RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.ON_OSX);
-            RenderSystem.depthMask(false);
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-            RenderSystem.enableBlend();
-            RenderSystem.disableDepthTest();
+        public @Nullable BakedModel getItemBakedModel() {
+            return super.getItemBakedModel();
         }
     }
 }

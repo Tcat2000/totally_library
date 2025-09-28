@@ -2,7 +2,6 @@ package org.tcathebluecreper.totally_lib;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.lowdragmc.lowdraglib.Platform;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +20,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -28,9 +28,6 @@ import org.tcathebluecreper.totally_lib.dev_utils.*;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockRegistrationEvent;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -72,7 +69,10 @@ public class TotallyLibrary {
         modEventBus.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add, false));
 
 
-        ModMultiblocks.init();
+    }
+
+    public static boolean isLDLibLoaded() {
+        return ModList.get().isLoaded("ldlib");
     }
 
     private static class ModEvents {
@@ -82,7 +82,7 @@ public class TotallyLibrary {
         }
         @SubscribeEvent
         public void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            ModMultiblocks.allMultiblocks.forEach(mb -> {
+            ModMultiblocks.  allMultiblocks.forEach(mb -> {
 //                if(mb.needsBER()) registerBERenderNoContext(event, (BlockEntityType<MultiblockBlockEntityMaster<TraitMultiblockState>>) mb.getMultiblock().multiblockRegistration.masterBE().get(), () -> (BlockEntityRenderer<MultiblockBlockEntityMaster<TraitMultiblockState>>) mb.createRenderer());
             });
         }

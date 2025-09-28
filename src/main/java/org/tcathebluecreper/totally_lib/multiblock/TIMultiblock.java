@@ -63,8 +63,7 @@ public abstract class TIMultiblock extends IETemplateMultiblock {
         });
     }
 
-    @Override
-    public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
+    public boolean forceCreateStructure(Level world, BlockPos pos, Direction side, Player player) {
         Rotation rot = DirectionUtils.getRotationBetweenFacings(Direction.NORTH, side.getOpposite());
         if (rot == null) {
             return false;

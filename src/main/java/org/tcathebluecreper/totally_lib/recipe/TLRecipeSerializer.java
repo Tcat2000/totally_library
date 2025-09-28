@@ -53,5 +53,5 @@ public abstract class TLRecipeSerializer<R extends TLRecipe> implements RecipeSe
     }
 
     public abstract R findRecipe(IMultiblockState state, Level level);
-    public abstract R getRecipe(ResourceLocation id);
+    public abstract R getRecipe(ResourceLocation id, Level level);
 }

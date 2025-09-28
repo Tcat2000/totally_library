@@ -143,6 +143,7 @@ public class MultiblockBuilder {
         consumer.accept(info.reg);
 
         multiblockInfo.put(id, info);
+//        MultiblockHandler.registerMultiblock(info.multiblockClass);
 
         return info.reg;
     }

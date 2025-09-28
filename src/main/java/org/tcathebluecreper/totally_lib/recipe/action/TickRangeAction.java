@@ -1,12 +1,13 @@
 package org.tcathebluecreper.totally_lib.recipe.action;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
 import org.tcathebluecreper.totally_lib.recipe.TLRecipe;
 import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;
 
 import java.util.function.BiFunction;
 
-public class TickRangeAction<R extends TLRecipe, S extends IMultiblockState> extends Action<R, S> {
+public class TickRangeAction<R extends TLRecipe, S extends TraitMultiblockState> extends Action<R, S> {
     public final int start;
     public final int stop;
 

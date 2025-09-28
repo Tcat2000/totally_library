@@ -43,6 +43,7 @@ public class Plugin extends KubeJSPlugin {
     public void initStartup() {
         try {
             Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add, false));
+            ModMultiblocks.init();
         } catch(Exception e) {
             throw new RuntimeException(e);
         }

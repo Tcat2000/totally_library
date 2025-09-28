@@ -22,12 +22,10 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.kubejs.Plugin;
 import org.tcathebluecreper.totally_lib.kubejs.TLMultiblockRegistrationEventJS;
-import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
+import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -88,7 +86,7 @@ public class TLCommands {
             )
                 .then(Commands.literal("reload").executes(context -> {
                     try {
-                        Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add, true));
+                        Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, TLModMultiblocks.allMultiblocks::add, true));
                     } catch(Exception e) {
                         throw new RuntimeException(e);
                     }

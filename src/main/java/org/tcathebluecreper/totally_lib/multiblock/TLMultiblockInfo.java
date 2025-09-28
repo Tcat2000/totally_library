@@ -19,16 +19,16 @@ public class TLMultiblockInfo {
     public ResourceLocation getId() {return id;}
     private TLMultiblock multiblock;
     public TLMultiblock getMultiblock() {return multiblock;}
-    private Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state;
-    public Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> getState() {return state;}
-    private IMultiblockLogic<TraitMultiblockState> logic;
-    public IMultiblockLogic<TraitMultiblockState> getLogic() {return logic;}
+    private Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state;
+    public Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> getState() {return state;}
+    private IMultiblockLogic<TLTraitMultiblockState> logic;
+    public IMultiblockLogic<TLTraitMultiblockState> getLogic() {return logic;}
     private AssetGenerationData assetGenData;
     public AssetGenerationData getAssetGenData() {return assetGenData;}
     private TraitList traits;
     public TraitList getTraits() {return traits;}
 
-    public TLMultiblockInfo(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state, IMultiblockLogic<TraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits) {
+    public TLMultiblockInfo(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state, IMultiblockLogic<TLTraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits) {
         this.id = id;
         this.multiblock = multiblock;
         this.state = state;
@@ -36,7 +36,7 @@ public class TLMultiblockInfo {
         this.assetGenData = assetGenData;
         this.traits = traits;
     }
-    public TLMultiblockInfo reconstruct(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state, IMultiblockLogic<TraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits) {
+    public TLMultiblockInfo reconstruct(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state, IMultiblockLogic<TLTraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits) {
         this.id = id;
         this.multiblock = multiblock;
         this.state = state;
@@ -53,7 +53,7 @@ public class TLMultiblockInfo {
         return false;
     }
 
-    public BlockEntityRenderer<? extends MultiblockBlockEntityMaster<TraitMultiblockState>> createRenderer() {
+    public BlockEntityRenderer<? extends MultiblockBlockEntityMaster<TLTraitMultiblockState>> createRenderer() {
         return new TLMultiblockRenderer();
     }
 

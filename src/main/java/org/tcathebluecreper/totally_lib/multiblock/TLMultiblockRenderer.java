@@ -6,10 +6,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import org.tcathebluecreper.totally_lib.TIBlockEntityRenderer;
 import org.tcathebluecreper.totally_lib.trait.ITrait;
 
-public class TLMultiblockRenderer extends TIBlockEntityRenderer<MultiblockBlockEntityMaster<TraitMultiblockState>> {
+public class TLMultiblockRenderer extends TIBlockEntityRenderer<MultiblockBlockEntityMaster<TLTraitMultiblockState>> {
     @Override
-    public void render(MultiblockBlockEntityMaster<TraitMultiblockState> pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-        TraitMultiblockState state = pBlockEntity.getHelper().getContext().getState();
+    public void render(MultiblockBlockEntityMaster<TLTraitMultiblockState> pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+        TLTraitMultiblockState state = pBlockEntity.getHelper().getContext().getState();
 
         for(ITrait trait : state.traits) {
             if(trait.needsBER()) trait.render(state, pBlockEntity, pPartialTick, pPoseStack, pBuffer, pPackedLight, pPackedOverlay);

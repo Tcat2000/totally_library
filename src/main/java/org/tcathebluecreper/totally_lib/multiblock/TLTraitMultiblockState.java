@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
-public class TraitMultiblockState implements IMultiblockState {
-    private static final Logger log = LoggerFactory.getLogger(TraitMultiblockState.class);
+public class TLTraitMultiblockState implements IMultiblockState {
+    private static final Logger log = LoggerFactory.getLogger(TLTraitMultiblockState.class);
     public final TraitList traits;
     public CompoundTag customData = new CompoundTag();
     private Supplier<Level> levelSupplier;
     public Level getLevel() {return levelSupplier.get();}
 
-    public TraitMultiblockState(TraitList traits) {
+    public TLTraitMultiblockState(TraitList traits) {
         this.traits = traits;
     }
 
-    public TraitMultiblockState(IInitialMultiblockContext capSource, List<ITrait> traits) {
+    public TLTraitMultiblockState(IInitialMultiblockContext capSource, List<ITrait> traits) {
         this.traits = new TraitList(traits);
         this.traits.setOnValueChanged(trait -> capSource.getSyncRunnable().run());
         levelSupplier = capSource.levelSupplier();

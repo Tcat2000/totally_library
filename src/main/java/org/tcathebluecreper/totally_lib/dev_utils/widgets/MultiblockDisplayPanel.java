@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
+import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockInfo;
 
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class MultiblockDisplayPanel extends ScreenSpaceWidget {
     }
 
     public void loadMultiblock(ResourceLocation id) {
-        Optional<TLMultiblockInfo> op = ModMultiblocks.allMultiblocks.stream().filter(m -> m.getId().equals(id)).findFirst();
+        Optional<TLMultiblockInfo> op = TLModMultiblocks.allMultiblocks.stream().filter(m -> m.getId().equals(id)).findFirst();
         if(op.isEmpty()) return;
         TLMultiblockInfo mb = op.get();
 

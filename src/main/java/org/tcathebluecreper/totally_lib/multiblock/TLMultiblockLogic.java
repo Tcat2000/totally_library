@@ -17,23 +17,23 @@ import org.tcathebluecreper.totally_lib.trait.TraitList;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class TLMultiblockLogic implements IMultiblockLogic<TraitMultiblockState>, IClientTickableComponent<TraitMultiblockState>, IServerTickableComponent<TraitMultiblockState> {
+public class TLMultiblockLogic implements IMultiblockLogic<TLTraitMultiblockState>, IClientTickableComponent<TLTraitMultiblockState>, IServerTickableComponent<TLTraitMultiblockState> {
     private Function<BlockPos, VoxelShape> shape;
     public Function<BlockPos, VoxelShape> getShape() {return shape;}
-    private BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> serverTick;
-    public BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> getServerTick() {return serverTick;}
-    private BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> clientTick;
-    public BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> getClientTick() {return clientTick;}
-    private Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> stateConstructor;
-    public Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> getStateConstructor() {return stateConstructor;}
+    private BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> serverTick;
+    public BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> getServerTick() {return serverTick;}
+    private BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> clientTick;
+    public BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> getClientTick() {return clientTick;}
+    private Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> stateConstructor;
+    public Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> getStateConstructor() {return stateConstructor;}
 
-    public TLMultiblockLogic(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> stateConstructor) {
+    public TLMultiblockLogic(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> stateConstructor) {
         this.shape = shape;
         this.serverTick = serverTick;
         this.clientTick = clientTick;
         this.stateConstructor = stateConstructor;
     }
-    public TLMultiblockLogic reconstruct(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> stateConstructor) {
+    public TLMultiblockLogic reconstruct(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> stateConstructor) {
         this.shape = shape;
         this.serverTick = serverTick;
         this.clientTick = clientTick;
@@ -42,7 +42,7 @@ public class TLMultiblockLogic implements IMultiblockLogic<TraitMultiblockState>
     }
 
     @Override
-    public TraitMultiblockState createInitialState(IInitialMultiblockContext<TraitMultiblockState> iInitialMultiblockContext) {
+    public TLTraitMultiblockState createInitialState(IInitialMultiblockContext<TLTraitMultiblockState> iInitialMultiblockContext) {
         iInitialMultiblockContext.getSyncRunnable().run();
         return stateConstructor.apply(iInitialMultiblockContext);
     }
@@ -53,20 +53,20 @@ public class TLMultiblockLogic implements IMultiblockLogic<TraitMultiblockState>
     }
 
     @Override
-    public void tickServer(IMultiblockContext<TraitMultiblockState> iMultiblockContext) {
+    public void tickServer(IMultiblockContext<TLTraitMultiblockState> iMultiblockContext) {
         serverTick.accept(this, iMultiblockContext);
         iMultiblockContext.requestMasterBESync();
     }
 
     @Override
-    public void tickClient(IMultiblockContext<TraitMultiblockState> iMultiblockContext) {
+    public void tickClient(IMultiblockContext<TLTraitMultiblockState> iMultiblockContext) {
         clientTick.accept(this, iMultiblockContext);
         iMultiblockContext.requestMasterBESync();
     }
 
 
     @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<TraitMultiblockState> ctx, CapabilityPosition position, Capability<T> cap) {
+    public <T> LazyOptional<T> getCapability(IMultiblockContext<TLTraitMultiblockState> ctx, CapabilityPosition position, Capability<T> cap) {
         TraitList traits = ctx.getState().traits;
         for(ITrait trait : traits) {
             if(trait.getCapType() != cap) continue;

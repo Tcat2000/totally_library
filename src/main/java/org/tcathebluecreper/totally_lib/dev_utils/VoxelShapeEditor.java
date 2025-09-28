@@ -64,7 +64,7 @@ public class VoxelShapeEditor extends WidgetGroup {
         addWidget(side);
 
         displayID = new TextFieldWidget(60, 7, 120, 15, null, null);
-        if(!ModMultiblocks.allMultiblocks.isEmpty()) displayID.setCurrentString(ModMultiblocks.allMultiblocks.get(0).getId());
+        if(!TLModMultiblocks.allMultiblocks.isEmpty()) displayID.setCurrentString(TLModMultiblocks.allMultiblocks.get(0).getId());
         top.addWidget(new LabelWidget(5,10, "multiblock:"));
         top.addWidget(displayID);
 

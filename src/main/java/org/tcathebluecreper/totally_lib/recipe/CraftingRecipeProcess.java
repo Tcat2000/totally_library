@@ -1,18 +1,15 @@
 package org.tcathebluecreper.totally_lib.recipe;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.function.TriFunction;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
-import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.TLTraitMultiblockState;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;
 
 import java.util.List;
-import java.util.function.BiFunction;
 
-public class CraftingRecipeProcess<R extends TLRecipe,S extends TraitMultiblockState> extends TLRecipeProcess<R,S> {
+public class CraftingRecipeProcess<R extends TLRecipe,S extends TLTraitMultiblockState> extends TLRecipeProcess<R,S> {
     private final TLRecipeSerializer<R> serializer;
     public CraftingRecipeProcess(Class<R> type, List<Action<R, S>> actions, S state, TriFunction<TLRecipeProcess<R, S>, Integer, Integer, Boolean> tickLogic, TLRecipeSerializer<R> serializer) {
         super(type, actions, state, tickLogic);

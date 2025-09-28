@@ -20,8 +20,8 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.lib.AnimationUtils;
-import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
-import org.tcathebluecreper.totally_lib.multiblock.MultiblockBuilder;
+import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;
+import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
 import org.tcathebluecreper.totally_lib.trait.EnergyTrait;
 import org.tcathebluecreper.totally_lib.trait.FluidTrait;
 import org.tcathebluecreper.totally_lib.trait.ItemTrait;
@@ -42,12 +42,12 @@ public class Plugin extends KubeJSPlugin {
     @Override
     public void initStartup() {
         try {
-            Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add, false));
-            ModMultiblocks.init();
+            Plugin.multiblockRegisterEventJS.post(new TLMultiblockRegistrationEventJS(TotallyLibrary.regManager, TLModMultiblocks.allMultiblocks::add, false));
+            TLModMultiblocks.init();
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
-        MultiblockBuilder.init();
+        TLMultiblockBuilder.init();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class Plugin extends KubeJSPlugin {
 
     @Override
     public void generateAssetJsons(AssetJsonGenerator generator) {
-        ModMultiblocks.allMultiblocks.forEach(multiblock -> {
+        TLModMultiblocks.allMultiblocks.forEach(multiblock -> {
             if(multiblock.getAssetGenData() == null) return;
 
             String path = multiblock.getId().getPath();

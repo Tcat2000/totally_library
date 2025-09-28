@@ -13,7 +13,7 @@ import org.apache.commons.lang3.function.TriFunction;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.crafting.ProviderList;
-import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.TLTraitMultiblockState;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;
 import org.tcathebluecreper.totally_lib.recipe.action.TickAction;
 import org.tcathebluecreper.totally_lib.recipe.provider.Provider;
@@ -34,8 +34,8 @@ public class RecipeBuilder {
     public BiFunction<ModularRecipe, IMultiblockState, Boolean> checkCanExecute;
     public TriFunction<ModularRecipe, IMultiblockState, Integer, Boolean> checkCanResume;
     public ProviderList<Provider<?>> recipeProviders = new ProviderList<>();
-    public List<Action<ModularRecipe, TraitMultiblockState>> process = new ArrayList<>();
-    public TriFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Integer, Boolean> tickLogic;
+    public List<Action<ModularRecipe, TLTraitMultiblockState>> process = new ArrayList<>();
+    public TriFunction<TLRecipeProcess<ModularRecipe, TLTraitMultiblockState>, Integer, Integer, Boolean> tickLogic;
 
     public static final RegistryObject<RecipeType<?>> TLRegistrableRecipeRegistry = TotallyLibrary.regManager.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), TotallyLibrary.MODID, "recipe", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(MODID,"recipe")));
     public static final HashMap<ResourceLocation, RecipeInfo> serializers = new HashMap<>();
@@ -65,11 +65,11 @@ public class RecipeBuilder {
         recipeProviders.add(provider);
         return this;
     }
-    public RecipeBuilder tickLogic(TriFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Integer, Boolean> tickLogic) {
+    public RecipeBuilder tickLogic(TriFunction<TLRecipeProcess<ModularRecipe, TLTraitMultiblockState>, Integer, Integer, Boolean> tickLogic) {
         this.tickLogic = tickLogic;
         return this;
     }
-    public RecipeBuilder processTick(int tick, BiFunction<TLRecipeProcess<ModularRecipe, TraitMultiblockState>, Integer, Boolean> logic) {
+    public RecipeBuilder processTick(int tick, BiFunction<TLRecipeProcess<ModularRecipe, TLTraitMultiblockState>, Integer, Boolean> logic) {
         this.process.add(new TickAction<>(tick, logic));
         return this;
     }
@@ -109,8 +109,8 @@ public class RecipeBuilder {
         public BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> getRecipe() {return recipe;}
         private ProviderList<Provider<?>> recipeProviders;
         public ProviderList<Provider<?>> getRecipeProviders() {return recipeProviders;}
-        private Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess;
-        public Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> getCreateProcess() {return createProcess;}
+        private Function<TLTraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TLTraitMultiblockState>> createProcess;
+        public Function<TLTraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TLTraitMultiblockState>> getCreateProcess() {return createProcess;}
 
 //        public RecipeInfo(Supplier<ModularRecipeSerializer> getSerializer, BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipeConstructor, ProviderList<Provider<?>> recipeProviders, Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> createProcess) {
 //            this.serializer = getSerializer;

@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class MultiblockBuilder {
+public class TLMultiblockBuilder {
     public static final Map<ResourceLocation, Lazy<TLMultiblock>> multiblocksToRegister = new HashMap<>();
     public BlockPos masterOffset;
     public BlockPos triggerOffset;
@@ -49,7 +49,7 @@ public class MultiblockBuilder {
     private final boolean reload;
     private final static HashMap<ResourceLocation, MultiblockInfo> multiblockInfo = new HashMap<>();
 
-    public MultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<TLMultiblockInfo> consumer, boolean reload) {
+    public TLMultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<TLMultiblockInfo> consumer, boolean reload) {
         this.id = id;
         this.manager = manager;
         this.consumer = consumer;
@@ -61,24 +61,24 @@ public class MultiblockBuilder {
         else multiblock = null;
     }
 
-    public MultiblockBuilder masterOffset(BlockPos offset) {masterOffset = offset; return this;}
-    public MultiblockBuilder masterOffset(int x, int y, int z) {masterOffset = new BlockPos(x,y,z); return this;}
-    public MultiblockBuilder triggerOffset(BlockPos offset) {triggerOffset = offset; return this;}
-    public MultiblockBuilder triggerOffset(int x, int y, int z) {triggerOffset = new BlockPos(x,y,z); return this;}
-    public MultiblockBuilder size(BlockPos size) {this.size = size; return this;}
-    public MultiblockBuilder size(int x, int y, int z) {size = new BlockPos(x,y,z); return this;}
-    public MultiblockBuilder traits(Supplier<List<ITrait>> traits) {
+    public TLMultiblockBuilder masterOffset(BlockPos offset) {masterOffset = offset; return this;}
+    public TLMultiblockBuilder masterOffset(int x, int y, int z) {masterOffset = new BlockPos(x,y,z); return this;}
+    public TLMultiblockBuilder triggerOffset(BlockPos offset) {triggerOffset = offset; return this;}
+    public TLMultiblockBuilder triggerOffset(int x, int y, int z) {triggerOffset = new BlockPos(x,y,z); return this;}
+    public TLMultiblockBuilder size(BlockPos size) {this.size = size; return this;}
+    public TLMultiblockBuilder size(int x, int y, int z) {size = new BlockPos(x,y,z); return this;}
+    public TLMultiblockBuilder traits(Supplier<List<ITrait>> traits) {
         this.traits = () -> new ArrayList<>(traits.get());
         return this;
     }
-    public MultiblockBuilder form(List<List<Double>> blocks) {
+    public TLMultiblockBuilder form(List<List<Double>> blocks) {
         this.blocks = new int[blocks.size()][];
         for(int i = 0; i < blocks.size(); i++) {
             this.blocks[i] = new int[]{(int) Math.round(blocks.get(i).get(0)), (int) Math.round(blocks.get(i).get(1)), (int) Math.round(blocks.get(i).get(2))};
         }
         return this;
     }
-    public MultiblockBuilder obj(String modelLocation, NativeObject o) {
+    public TLMultiblockBuilder obj(String modelLocation, NativeObject o) {
         model = new JsonObject();
         model.addProperty("parent","minecraft:block/block");
 
@@ -97,7 +97,7 @@ public class MultiblockBuilder {
         model.addProperty("flip_v", true);
         return this;
     }
-    public MultiblockBuilder recipe(Consumer<RecipeBuilder> builder) {
+    public TLMultiblockBuilder recipe(Consumer<RecipeBuilder> builder) {
         RecipeBuilder recipeBuilder = new RecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}, reload);
         builder.accept(recipeBuilder);
         recipeInfo = recipeBuilder.build();
@@ -107,13 +107,13 @@ public class MultiblockBuilder {
     public TLMultiblockInfo build() {
         MultiblockInfo info = reload ? multiblockInfo.getOrDefault(id, new MultiblockInfo()) : new MultiblockInfo();
         info.state = (capabilitySource) -> {
-            if(recipeInfo == null) return new TraitMultiblockState(capabilitySource, traits.get());
-            return new RecipeTraitMultiblockState(capabilitySource, traits.get(), recipeInfo.getCreateProcess());
+            if(recipeInfo == null) return new TLTraitMultiblockState(capabilitySource, traits.get());
+            return new TLRecipeTraitMultiblockState(capabilitySource, traits.get(), recipeInfo.getCreateProcess());
         };
 
         info.tickLogic = recipeInfo == null ? (s, c) -> {} : (s, c) -> {
-            if(c.getState() instanceof RecipeTraitMultiblockState) {
-                ((RecipeTraitMultiblockState) c.getState()).process.tick(c.getLevel().getRawLevel());
+            if(c.getState() instanceof TLRecipeTraitMultiblockState) {
+                ((TLRecipeTraitMultiblockState) c.getState()).process.tick(c.getLevel().getRawLevel());
             }
         };
         info.logic = reload ? info.logic.reconstruct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state) : new TLMultiblockLogic(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
@@ -141,7 +141,7 @@ public class MultiblockBuilder {
 
         return info.reg;
     }
-    public MultiblockBuilder shape(List<VoxelShape> shapes) {
+    public TLMultiblockBuilder shape(List<VoxelShape> shapes) {
         shape = new MachineShape(shapes);
         return this;
     }
@@ -158,9 +158,9 @@ public class MultiblockBuilder {
     private static class MultiblockInfo {
         TLMultiblockInfo reg;
         TLMultiblock multiblockClass;
-        MultiblockRegistration<TraitMultiblockState> registration;
+        MultiblockRegistration<TLTraitMultiblockState> registration;
         TLMultiblockLogic logic;
-        BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> tickLogic;
-        Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state;
+        BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> tickLogic;
+        Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state;
     }
 }

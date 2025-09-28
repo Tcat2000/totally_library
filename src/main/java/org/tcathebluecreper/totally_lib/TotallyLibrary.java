@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.tcathebluecreper.totally_lib.dev_utils.*;
-import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
+import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;
 import org.tcathebluecreper.totally_lib.event.TLMultiblockRegistrationEvent;
 
 import java.util.Map;
@@ -66,7 +66,7 @@ public class TotallyLibrary {
         StructureArg.init();
 
 
-        modEventBus.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, ModMultiblocks.allMultiblocks::add, false));
+        modEventBus.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, TLModMultiblocks.allMultiblocks::add, false));
 
 
     }
@@ -82,7 +82,7 @@ public class TotallyLibrary {
         }
         @SubscribeEvent
         public void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            ModMultiblocks.  allMultiblocks.forEach(mb -> {
+            TLModMultiblocks.  allMultiblocks.forEach(mb -> {
 //                if(mb.needsBER()) registerBERenderNoContext(event, (BlockEntityType<MultiblockBlockEntityMaster<TraitMultiblockState>>) mb.getMultiblock().multiblockRegistration.masterBE().get(), () -> (BlockEntityRenderer<MultiblockBlockEntityMaster<TraitMultiblockState>>) mb.createRenderer());
             });
         }

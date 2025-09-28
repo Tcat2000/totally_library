@@ -12,7 +12,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.tcathebluecreper.totally_lib.RenderFunction;
-import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.TLTraitMultiblockState;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -104,7 +104,7 @@ public class FluidTrait extends TLTrait<FluidTank> {
     }
 
     @Override
-    public void render(TraitMultiblockState state, MultiblockBlockEntityMaster<TraitMultiblockState> te, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(TLTraitMultiblockState state, MultiblockBlockEntityMaster<TLTraitMultiblockState> te, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         renderFunction.render(state, te, this, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
     }
 }

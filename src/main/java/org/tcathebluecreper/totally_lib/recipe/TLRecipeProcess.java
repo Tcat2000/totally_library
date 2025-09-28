@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
 import org.tcathebluecreper.totally_lib.dev_utils.TLUtils;
-import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.TLTraitMultiblockState;
 import org.tcathebluecreper.totally_lib.trait.ITrait;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;
 import org.tcathebluecreper.totally_lib.recipe.provider.Provider;
@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 
-public abstract class TLRecipeProcess<R extends TLRecipe, S extends TraitMultiblockState> {
+public abstract class TLRecipeProcess<R extends TLRecipe, S extends TLTraitMultiblockState> {
     private static final Logger log = LogManager.getLogger(TLRecipeProcess.class);
     public final Class<R> type;
     public final List<Action<R, S>> actions;

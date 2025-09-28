@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
-import org.tcathebluecreper.totally_lib.multiblock.MultiblockBuilder;
+import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockBuilder;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockInfo;
 
 import java.util.function.Consumer;
@@ -20,7 +20,7 @@ public class TLMultiblockRegistrationEvent extends Event implements IModBusEvent
         this.reload = reload;
     }
 
-    public MultiblockBuilder multiblock(ResourceLocation id) {
-        return new MultiblockBuilder(id, manager, consumer, reload);
+    public TLMultiblockBuilder multiblock(ResourceLocation id) {
+        return new TLMultiblockBuilder(id, manager, consumer, reload);
     }
 }

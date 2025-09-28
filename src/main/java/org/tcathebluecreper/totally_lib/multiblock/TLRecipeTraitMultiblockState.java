@@ -11,15 +11,15 @@ import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;
 import java.util.List;
 import java.util.function.Function;
 
-public class RecipeTraitMultiblockState extends TraitMultiblockState {
-    public TLRecipeProcess<ModularRecipe, TraitMultiblockState> process;
+public class TLRecipeTraitMultiblockState extends TLTraitMultiblockState {
+    public TLRecipeProcess<ModularRecipe, TLTraitMultiblockState> process;
 
-    public RecipeTraitMultiblockState(TraitList traits, Function<TraitMultiblockState, TLRecipeProcess<ModularRecipe, TraitMultiblockState>> process) {
+    public TLRecipeTraitMultiblockState(TraitList traits, Function<TLTraitMultiblockState, TLRecipeProcess<ModularRecipe, TLTraitMultiblockState>> process) {
         super(traits);
         this.process = process.apply(this);
     }
 
-    public RecipeTraitMultiblockState(IInitialMultiblockContext capSource, List<ITrait> traits, Function<TraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TraitMultiblockState>> process) {
+    public TLRecipeTraitMultiblockState(IInitialMultiblockContext capSource, List<ITrait> traits, Function<TLTraitMultiblockState, CraftingRecipeProcess<ModularRecipe, TLTraitMultiblockState>> process) {
         super(capSource, traits);
         this.process = process.apply(this);
     }

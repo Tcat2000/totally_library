@@ -12,7 +12,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;
 import org.tcathebluecreper.totally_lib.RenderFunction;
 import org.tcathebluecreper.totally_lib.crafting.RangedDetectorWrapper;
-import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.TLTraitMultiblockState;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -99,7 +99,7 @@ public class ItemTrait extends TLTrait<RangedDetectorWrapper> {
     }
 
     @Override
-    public void render(TraitMultiblockState state, MultiblockBlockEntityMaster<TraitMultiblockState> te, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(TLTraitMultiblockState state, MultiblockBlockEntityMaster<TLTraitMultiblockState> te, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         renderFunction.render(state, te, this, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
     }
 }

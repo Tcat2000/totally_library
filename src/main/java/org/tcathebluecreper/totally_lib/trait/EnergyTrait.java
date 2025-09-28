@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.energy.EnergyStorage;
 import org.tcathebluecreper.totally_lib.RenderFunction;
-import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
+import org.tcathebluecreper.totally_lib.multiblock.TLTraitMultiblockState;
 
 import java.util.function.Consumer;
 
@@ -84,7 +84,7 @@ public class EnergyTrait extends TLTrait<EnergyStorage> {
     }
 
     @Override
-    public void render(TraitMultiblockState state, MultiblockBlockEntityMaster<TraitMultiblockState> te, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(TLTraitMultiblockState state, MultiblockBlockEntityMaster<TLTraitMultiblockState> te, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         renderFunction.render(state, te, this, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
     }
 }

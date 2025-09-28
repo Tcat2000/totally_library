@@ -26,7 +26,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.tcathebluecreper.totally_lib.dev_utils.*;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
-import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockRegistrationEvent;
+import org.tcathebluecreper.totally_lib.event.TLMultiblockRegistrationEvent;
 
 import java.util.Map;
 import java.util.function.Supplier;

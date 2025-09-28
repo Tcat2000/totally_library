@@ -22,10 +22,10 @@ import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.lib.AnimationUtils;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.MultiblockBuilder;
-import org.tcathebluecreper.totally_lib.multiblock.trait.EnergyTrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.FluidTrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.ItemTrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitIOSides;
+import org.tcathebluecreper.totally_lib.trait.EnergyTrait;
+import org.tcathebluecreper.totally_lib.trait.FluidTrait;
+import org.tcathebluecreper.totally_lib.trait.ItemTrait;
+import org.tcathebluecreper.totally_lib.trait.TraitIOSides;
 import org.tcathebluecreper.totally_lib.recipe.provider.*;
 
 

@@ -11,15 +11,14 @@ import com.google.gson.JsonObject;
 import dev.latvian.mods.rhino.NativeObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.Lazy;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.lib.ITMultiblockBlock;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
-import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
+import org.tcathebluecreper.totally_lib.trait.ITrait;
+import org.tcathebluecreper.totally_lib.trait.TraitList;
 import org.tcathebluecreper.totally_lib.recipe.RecipeBuilder;
 
 import java.util.*;
@@ -29,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MultiblockBuilder {
-    public static final Map<ResourceLocation, Lazy<TIMultiblock>> multiblocksToRegister = new HashMap<>();
+    public static final Map<ResourceLocation, Lazy<TLMultiblock>> multiblocksToRegister = new HashMap<>();
     public BlockPos masterOffset;
     public BlockPos triggerOffset;
     public BlockPos size;
@@ -43,14 +42,14 @@ public class MultiblockBuilder {
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
-    private final Consumer<RegistrableMultiblock> consumer;
+    private final Consumer<TLMultiblockInfo> consumer;
 
-    private final TIMultiblock multiblock;
+    private final TLMultiblock multiblock;
 
     private final boolean reload;
     private final static HashMap<ResourceLocation, MultiblockInfo> multiblockInfo = new HashMap<>();
 
-    public MultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<RegistrableMultiblock> consumer, boolean reload) {
+    public MultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<TLMultiblockInfo> consumer, boolean reload) {
         this.id = id;
         this.manager = manager;
         this.consumer = consumer;
@@ -105,7 +104,7 @@ public class MultiblockBuilder {
         return this;
     }
 
-    public RegistrableMultiblock build() {
+    public TLMultiblockInfo build() {
         MultiblockInfo info = reload ? multiblockInfo.getOrDefault(id, new MultiblockInfo()) : new MultiblockInfo();
         info.state = (capabilitySource) -> {
             if(recipeInfo == null) return new TraitMultiblockState(capabilitySource, traits.get());
@@ -131,15 +130,10 @@ public class MultiblockBuilder {
 
         manualModel = new TIDynamicModel("chemical_bath/chemical_bath");
 
-        info.multiblockClass = reload ? info.multiblockClass : new TIMultiblock(id, masterOffset, triggerOffset, size, info.registration, manualModel) {
-            @Override
-            public float getManualScale() {
-                return manualScale;
-            }
-        };
+        info.multiblockClass = reload ? info.multiblockClass : new TLMultiblock(id, masterOffset, triggerOffset, size, info.registration, manualModel, manualScale);
         multiblocksToRegister.put(id, Lazy.of(() -> info.multiblockClass));
 
-        info.reg = reload ? info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new RegistrableMultiblock.AssetGenerationData(blocks, model) : null, new TraitList(traits.get())) : new RegistrableMultiblock(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new RegistrableMultiblock.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()));
+        info.reg = reload ? info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get())) : new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()));
         consumer.accept(info.reg);
 
         multiblockInfo.put(id, info);
@@ -162,8 +156,8 @@ public class MultiblockBuilder {
     }
 
     private static class MultiblockInfo {
-        RegistrableMultiblock reg;
-        TIMultiblock multiblockClass;
+        TLMultiblockInfo reg;
+        TLMultiblock multiblockClass;
         MultiblockRegistration<TraitMultiblockState> registration;
         TLMultiblockLogic logic;
         BiConsumer<TLMultiblockLogic, IMultiblockContext<TraitMultiblockState>> tickLogic;

@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_lib.multiblock.trait;
+package org.tcathebluecreper.totally_lib.trait;
 
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;

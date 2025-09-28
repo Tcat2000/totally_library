@@ -11,8 +11,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
+import org.tcathebluecreper.totally_lib.trait.ITrait;
+import org.tcathebluecreper.totally_lib.trait.TraitList;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;

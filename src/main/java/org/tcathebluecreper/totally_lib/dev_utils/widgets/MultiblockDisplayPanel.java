@@ -6,17 +6,14 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import blusunrize.immersiveengineering.common.util.IELogger;
 import com.lowdragmc.lowdraglib.gui.widget.SceneWidget;
 import com.lowdragmc.lowdraglib.gui.widget.TextFieldWidget;
-import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.utils.TrackedDummyWorld;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.tcathebluecreper.totally_lib.multiblock.ModMultiblocks;
-import org.tcathebluecreper.totally_lib.multiblock.RegistrableMultiblock;
+import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockInfo;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -39,9 +36,9 @@ public class MultiblockDisplayPanel extends ScreenSpaceWidget {
     }
 
     public void loadMultiblock(ResourceLocation id) {
-        Optional<RegistrableMultiblock> op = ModMultiblocks.allMultiblocks.stream().filter(m -> m.getId().equals(id)).findFirst();
+        Optional<TLMultiblockInfo> op = ModMultiblocks.allMultiblocks.stream().filter(m -> m.getId().equals(id)).findFirst();
         if(op.isEmpty()) return;
-        RegistrableMultiblock mb = op.get();
+        TLMultiblockInfo mb = op.get();
 
         level = new TrackedDummyWorld();
         scene.createScene(level);

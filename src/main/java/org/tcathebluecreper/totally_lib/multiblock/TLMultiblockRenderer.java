@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.tcathebluecreper.totally_lib.TIBlockEntityRenderer;
-import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
+import org.tcathebluecreper.totally_lib.trait.ITrait;
 
 public class TLMultiblockRenderer extends TIBlockEntityRenderer<MultiblockBlockEntityMaster<TraitMultiblockState>> {
     @Override

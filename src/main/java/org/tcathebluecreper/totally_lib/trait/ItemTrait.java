@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_lib.multiblock.trait;
+package org.tcathebluecreper.totally_lib.trait;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemStackHandler;

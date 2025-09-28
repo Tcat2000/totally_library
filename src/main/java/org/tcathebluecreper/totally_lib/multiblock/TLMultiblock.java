@@ -29,19 +29,21 @@ import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class TIMultiblock extends IETemplateMultiblock {
+public class TLMultiblock extends IETemplateMultiblock {
     public final TIDynamicModel model;
     public final BlockPos masterFromOrigin;
     public final BlockPos triggerFromOrigin;
     public final BlockPos size;
     public final MultiblockRegistration<?> multiblockRegistration;
-    public TIMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic, TIDynamicModel manualModel) {
+    public final float manualScale;
+    public TLMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic, TIDynamicModel manualModel, float manualScale) {
         super(loc, masterFromOrigin, triggerFromOrigin, size, logic);
         this.model = manualModel;
         this.multiblockRegistration = logic;
         this.masterFromOrigin = masterFromOrigin;
         this.triggerFromOrigin = triggerFromOrigin;
         this.size = size;
+        this.manualScale = manualScale;
     }
 
     @Override
@@ -98,5 +100,10 @@ public abstract class TIMultiblock extends IETemplateMultiblock {
     }
     private List<Mirror> getPossibleMirrorStates() {
         return this.canBeMirrored() ? ImmutableList.of(Mirror.NONE, Mirror.FRONT_BACK) : ImmutableList.of(Mirror.NONE);
+    }
+
+    @Override
+    public float getManualScale() {
+        return manualScale;
     }
 }

@@ -1,7 +1,6 @@
-package org.tcathebluecreper.totally_lib.multiblock.trait;
+package org.tcathebluecreper.totally_lib.trait;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;

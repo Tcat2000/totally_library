@@ -6,8 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
+import org.tcathebluecreper.totally_lib.trait.ITrait;
+import org.tcathebluecreper.totally_lib.trait.TraitList;
 
 import java.util.List;
 import java.util.NoSuchElementException;

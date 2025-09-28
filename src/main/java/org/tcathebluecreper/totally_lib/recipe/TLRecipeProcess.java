@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
 import org.tcathebluecreper.totally_lib.dev_utils.TLUtils;
 import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
-import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
+import org.tcathebluecreper.totally_lib.trait.ITrait;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;
 import org.tcathebluecreper.totally_lib.recipe.provider.Provider;
 

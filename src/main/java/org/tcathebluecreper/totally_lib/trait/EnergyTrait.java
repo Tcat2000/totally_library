@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_lib.multiblock.trait;
+package org.tcathebluecreper.totally_lib.trait;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;

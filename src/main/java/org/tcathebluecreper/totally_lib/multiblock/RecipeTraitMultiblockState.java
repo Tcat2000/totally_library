@@ -2,8 +2,8 @@ package org.tcathebluecreper.totally_lib.multiblock;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import net.minecraft.nbt.CompoundTag;
-import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
+import org.tcathebluecreper.totally_lib.trait.ITrait;
+import org.tcathebluecreper.totally_lib.trait.TraitList;
 import org.tcathebluecreper.totally_lib.recipe.CraftingRecipeProcess;
 import org.tcathebluecreper.totally_lib.recipe.ModularRecipe;
 import org.tcathebluecreper.totally_lib.recipe.TLRecipeProcess;

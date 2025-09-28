@@ -8,17 +8,17 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tcathebluecreper.totally_lib.multiblock.trait.ITrait;
-import org.tcathebluecreper.totally_lib.multiblock.trait.TraitList;
+import org.tcathebluecreper.totally_lib.trait.ITrait;
+import org.tcathebluecreper.totally_lib.trait.TraitList;
 
 import java.util.function.Function;
 
-public class RegistrableMultiblock {
-    private static final Logger log = LogManager.getLogger(RegistrableMultiblock.class);
+public class TLMultiblockInfo {
+    private static final Logger log = LogManager.getLogger(TLMultiblockInfo.class);
     private ResourceLocation id;
     public ResourceLocation getId() {return id;}
-    private TIMultiblock multiblock;
-    public TIMultiblock getMultiblock() {return multiblock;}
+    private TLMultiblock multiblock;
+    public TLMultiblock getMultiblock() {return multiblock;}
     private Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state;
     public Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> getState() {return state;}
     private IMultiblockLogic<TraitMultiblockState> logic;
@@ -28,7 +28,7 @@ public class RegistrableMultiblock {
     private TraitList traits;
     public TraitList getTraits() {return traits;}
 
-    public RegistrableMultiblock(ResourceLocation id, TIMultiblock multiblock, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state, IMultiblockLogic<TraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits) {
+    public TLMultiblockInfo(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state, IMultiblockLogic<TraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits) {
         this.id = id;
         this.multiblock = multiblock;
         this.state = state;
@@ -36,7 +36,7 @@ public class RegistrableMultiblock {
         this.assetGenData = assetGenData;
         this.traits = traits;
     }
-    public RegistrableMultiblock reconstruct(ResourceLocation id, TIMultiblock multiblock, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state, IMultiblockLogic<TraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits) {
+    public TLMultiblockInfo reconstruct(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TraitMultiblockState>, TraitMultiblockState> state, IMultiblockLogic<TraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits) {
         this.id = id;
         this.multiblock = multiblock;
         this.state = state;

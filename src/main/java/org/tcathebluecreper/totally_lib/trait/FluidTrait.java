@@ -1,28 +1,19 @@
-package org.tcathebluecreper.totally_lib.multiblock.trait;
+package org.tcathebluecreper.totally_lib.trait;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.latvian.mods.rhino.annotations.JSConstructor;
-import dev.latvian.mods.rhino.annotations.JSFunction;
 import dev.latvian.mods.rhino.util.HideFromJS;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.ItemStackHandler;
 import org.tcathebluecreper.totally_lib.RenderFunction;
 import org.tcathebluecreper.totally_lib.multiblock.TraitMultiblockState;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 

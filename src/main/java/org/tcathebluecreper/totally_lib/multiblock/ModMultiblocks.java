@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModMultiblocks {
-    public static List<RegistrableMultiblock> allMultiblocks = new ArrayList<>();
+    public static List<TLMultiblockInfo> allMultiblocks = new ArrayList<>();
     public static void init() {
-        for(RegistrableMultiblock mb : allMultiblocks) MultiblockHandler.registerMultiblock(mb.getMultiblock());
+        for(TLMultiblockInfo mb : allMultiblocks) MultiblockHandler.registerMultiblock(mb.getMultiblock());
     }
 }

@@ -8,9 +8,11 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.Multibloc
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import com.google.gson.JsonObject;
+import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import dev.latvian.mods.rhino.NativeObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.Lazy;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
@@ -39,6 +41,7 @@ public class TLMultiblockBuilder {
     public JsonObject model = null;
     public RecipeBuilder.RecipeInfo recipeInfo = null;
     public MachineShape shape = new MachineShape.SolidMachineShape();
+    public Consumer<WidgetGroup> guiCreator;
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
@@ -103,6 +106,7 @@ public class TLMultiblockBuilder {
         recipeInfo = recipeBuilder.build();
         return this;
     }
+    public TLMultiblockBuilder gui(Consumer<WidgetGroup> gui) {guiCreator = gui; return this;}
 
     public TLMultiblockInfo build() {
         MultiblockInfo info = reload ? multiblockInfo.getOrDefault(id, new MultiblockInfo()) : new MultiblockInfo();
@@ -119,14 +123,17 @@ public class TLMultiblockBuilder {
         info.logic = reload ? info.logic.reconstruct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state) : new TLMultiblockLogic(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
 
 
-        info.registration = reload ? info.registration : new IEMultiblockBuilder<>(info.logic, id.getPath())
-            .defaultBEs(manager.getRegistry(id.getNamespace()).blockEntityType())
-            .customBlock(
-                manager.getRegistry(id.getNamespace()).blocks(), manager.getRegistry(id.getNamespace()).items(),
-                r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),
-                MultiblockItem::new)
-            .structure(() -> multiblocksToRegister.get(id).get())
-            .build();
+        info.registration = reload ? info.registration : new MultiblockRegistration<>(info.logic, new ArrayList<>(), new BlockEntityType<>());
+
+
+        new IEMultiblockBuilder<>(info.logic, id.getPath())
+        .defaultBEs(manager.getRegistry(id.getNamespace()).blockEntityType())
+        .customBlock(
+            manager.getRegistry(id.getNamespace()).blocks(), manager.getRegistry(id.getNamespace()).items(),
+            r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),
+            MultiblockItem::new)
+        .structure(() -> multiblocksToRegister.get(id).get())
+        .build();
 
         manualModel = new TIDynamicModel("chemical_bath/chemical_bath");
 

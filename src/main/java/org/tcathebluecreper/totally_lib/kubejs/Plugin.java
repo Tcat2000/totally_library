@@ -10,6 +10,7 @@ import dev.latvian.mods.kubejs.event.EventGroup;
 import dev.latvian.mods.kubejs.event.EventHandler;
 import dev.latvian.mods.kubejs.generator.AssetJsonGenerator;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
+import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
@@ -78,6 +79,8 @@ public class Plugin extends KubeJSPlugin {
         event.add("InventoryMenu", InventoryMenu.class);
         event.add("IEProperties", IEProperties.class);
         event.add("RenderUtils", RenderUtils.class);
+
+        event.add("IDrawableAnimated", IDrawableAnimated.class);
     }
 
     @Override

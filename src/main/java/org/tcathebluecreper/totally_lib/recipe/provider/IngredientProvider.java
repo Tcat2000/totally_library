@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.tcathebluecreper.totally_lib.crafting.RecipeSerializationException;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -129,5 +130,9 @@ public class IngredientProvider extends Provider<Ingredient> {
             if(canExtractFrom(handler, i)) return extractFrom(handler, i);
         }
         return ItemStack.EMPTY;
+    }
+
+    public List<@NotNull ItemStack> getItems() {
+        return List.of(get().getItems());
     }
 }

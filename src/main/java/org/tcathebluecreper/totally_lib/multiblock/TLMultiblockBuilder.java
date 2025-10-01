@@ -9,14 +9,19 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultibl
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.rhino.NativeObject;
+import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.Lazy;
 import org.tcathebluecreper.totally_lib.RegistrationManager;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
+import org.tcathebluecreper.totally_lib.jei.JEICategoryBuilder;
+import org.tcathebluecreper.totally_lib.jei.TLJEICategory;
 import org.tcathebluecreper.totally_lib.lib.ITMultiblockBlock;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
+import org.tcathebluecreper.totally_lib.recipe.ModularRecipe;
 import org.tcathebluecreper.totally_lib.trait.ITrait;
 import org.tcathebluecreper.totally_lib.trait.TraitList;
 import org.tcathebluecreper.totally_lib.recipe.RecipeBuilder;
@@ -39,6 +44,7 @@ public class TLMultiblockBuilder {
     public JsonObject model = null;
     public RecipeBuilder.RecipeInfo recipeInfo = null;
     public MachineShape shape = new MachineShape.SolidMachineShape();
+    public Consumer<JEICategoryBuilder> jeiCategoryBuilder;
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
@@ -133,11 +139,19 @@ public class TLMultiblockBuilder {
         info.multiblockClass = reload ? info.multiblockClass : new TLMultiblock(id, masterOffset, triggerOffset, size, info.registration, manualModel, manualScale);
         multiblocksToRegister.put(id, Lazy.of(() -> info.multiblockClass));
 
-        info.reg = reload ? info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get())) : new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()));
+
+
+        JEICategoryBuilder categoryBuilder = new JEICategoryBuilder(new RecipeType<>(id, ModularRecipe.class));
+        if(jeiCategoryBuilder != null) {
+            jeiCategoryBuilder.accept(categoryBuilder);
+            info.jeiInfo = categoryBuilder.build();
+        }
+
+
+        info.reg = reload ? info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo) : new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo);
         consumer.accept(info.reg);
 
         multiblockInfo.put(id, info);
-//        MultiblockHandler.registerMultiblock(info.multiblockClass);
 
         return info.reg;
     }
@@ -145,6 +159,7 @@ public class TLMultiblockBuilder {
         shape = new MachineShape(shapes);
         return this;
     }
+    public TLMultiblockBuilder jeiCategory(Consumer<JEICategoryBuilder> jeiCategoryBuilder) {this.jeiCategoryBuilder = jeiCategoryBuilder; return this;}
 
 
     public static void init() {
@@ -162,5 +177,6 @@ public class TLMultiblockBuilder {
         TLMultiblockLogic logic;
         BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> tickLogic;
         Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state;
+        JEICategoryBuilder.TLJEICategoryInfo jeiInfo;
     }
 }

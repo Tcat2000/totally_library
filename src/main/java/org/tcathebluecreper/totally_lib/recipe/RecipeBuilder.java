@@ -104,7 +104,7 @@ public class RecipeBuilder {
 
     public static class RecipeInfo {
         private Supplier<ModularRecipeSerializer> serializer;
-        public Supplier<ModularRecipeSerializer> getSerializer() {return serializer;}
+        public ModularRecipeSerializer getSerializer() {return serializer.get();}
         private BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> recipe;
         public BiFunction<ResourceLocation, ProviderList<Provider<?>>, ModularRecipe> getRecipe() {return recipe;}
         private ProviderList<Provider<?>> recipeProviders;

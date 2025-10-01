@@ -3,6 +3,7 @@ package org.tcathebluecreper.totally_lib.trait;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.latvian.mods.kubejs.typings.Info;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.energy.EnergyStorage;
@@ -86,5 +87,29 @@ public class EnergyTrait extends TLTrait<EnergyStorage> {
     @Override
     public void render(TLTraitMultiblockState state, MultiblockBlockEntityMaster<TLTraitMultiblockState> te, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         renderFunction.render(state, te, this, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
+    }
+
+
+    ///  UTIL METHODS
+
+    @Info("checks if the provided value can be extracted")
+    public boolean canExtract(int value) {
+        return storage.getValue().extractEnergy(value, true) >= value;
+    }
+    @Info("simulates an extract, and returns the amount that could be extracted")
+    public int simulateExtract(int value) {
+        return storage.getValue().extractEnergy(value, true);
+    }
+    @Info("tries to extract the provided energy amount, and returns the amount actually extracted")
+    public int extract(int maxValue) {
+        return storage.getValue().extractEnergy(maxValue, false);
+    }
+    @Info("checks if provided energy amount can be extracted, and if it can, does, and returns true, else returns false")
+    public boolean attemptExtract(int value) {
+        if(canExtract(value)) {
+            extract(value);
+            return true;
+        }
+        return false;
     }
 }

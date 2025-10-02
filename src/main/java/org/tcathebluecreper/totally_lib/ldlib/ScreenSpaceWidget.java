@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_lib.dev_utils.widgets;
+package org.tcathebluecreper.totally_lib.ldlib;
 
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 

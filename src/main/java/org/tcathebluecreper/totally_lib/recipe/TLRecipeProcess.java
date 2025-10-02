@@ -13,7 +13,7 @@ import org.apache.commons.lang3.function.TriFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.crafting.TIAPIException;
-import org.tcathebluecreper.totally_lib.dev_utils.TLUtils;
+import org.tcathebluecreper.totally_lib.lib.TLUtils;
 import org.tcathebluecreper.totally_lib.multiblock.TLTraitMultiblockState;
 import org.tcathebluecreper.totally_lib.trait.ITrait;
 import org.tcathebluecreper.totally_lib.recipe.action.Action;

@@ -14,8 +14,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
-import org.tcathebluecreper.totally_lib.dev_utils.widgets.MultiblockDisplayPanel;
-import org.tcathebluecreper.totally_lib.dev_utils.widgets.ScreenSpaceWidget;
+import org.tcathebluecreper.totally_lib.ldlib.MultiblockDisplayPanelWidget;
+import org.tcathebluecreper.totally_lib.ldlib.ScreenSpaceWidget;
 import org.tcathebluecreper.totally_lib.multiblock.*;
 
 import java.awt.*;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class VoxelShapeEditor extends WidgetGroup {
     private static final Logger log = LogManager.getLogger(VoxelShapeEditor.class);
-    private final MultiblockDisplayPanel mbDisplay;
+    private final MultiblockDisplayPanelWidget mbDisplay;
     public VoxelShape shape = null;
 
     public ArrayList<AABBListWidget> parts = new ArrayList<>();
@@ -44,7 +44,7 @@ public class VoxelShapeEditor extends WidgetGroup {
         super(0,0,100,100);
         initTemplate();
 
-        mbDisplay = new MultiblockDisplayPanel(0,30,-205,0, this::postRender);
+        mbDisplay = new MultiblockDisplayPanelWidget(0,30,-205,0, this::postRender);
         top = new ScreenSpaceWidget(0,0,-205, 30);
         sideTop = new ScreenSpaceWidget(-205,0,0,30);
         side = new ScreenSpaceWidget(-205,30,0,0);

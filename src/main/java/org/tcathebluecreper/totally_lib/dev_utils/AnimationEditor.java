@@ -17,7 +17,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
@@ -26,10 +25,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -37,10 +32,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import org.lwjgl.opengl.GL11;
-import org.tcathebluecreper.totally_lib.dev_utils.widgets.MultiblockDisplayPanel;
-import org.tcathebluecreper.totally_lib.dev_utils.widgets.ScreenSpaceWidget;
+import org.tcathebluecreper.totally_lib.ldlib.InspectorViewable;
+import org.tcathebluecreper.totally_lib.ldlib.MultiblockDisplayPanelWidget;
+import org.tcathebluecreper.totally_lib.ldlib.ScreenSpaceWidget;
+import org.tcathebluecreper.totally_lib.lib.GuiDrawer;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 
 import java.awt.*;
@@ -50,7 +45,7 @@ import java.util.function.BiConsumer;
 
 public class AnimationEditor extends WidgetGroup {
     private static final Logger log = LogManager.getLogger(AnimationEditor.class);
-    private final MultiblockDisplayPanel mbDisplay;
+    private final MultiblockDisplayPanelWidget mbDisplay;
 
     public final ScreenSpaceWidget top;
     public final ScreenSpaceWidget bottom;
@@ -61,7 +56,7 @@ public class AnimationEditor extends WidgetGroup {
     public final TabButton selectorTab;
     public final DraggableScrollableWidgetGroup partsList;
     public final WidgetGroup partsListContainer;
-    public Inspectable inspecting = null;
+    public InspectorViewable inspecting = null;
     public final List<AnimationPart> animationParts = new ArrayList<>();
     public AnimationPart selectedAnimationPart;
 
@@ -75,7 +70,7 @@ public class AnimationEditor extends WidgetGroup {
         tabUnselectedTexture.imageHeight = 1/8f;
         tabUnselectedTexture.offsetY = 1/8f;
 
-        mbDisplay = new MultiblockDisplayPanel(0,30,-200,-100, this::postRender);
+        mbDisplay = new MultiblockDisplayPanelWidget(0,30,-200,-100, this::postRender);
         addWidget(mbDisplay);
 
 
@@ -601,7 +596,7 @@ public class AnimationEditor extends WidgetGroup {
         }
     }
 
-    public static class AnimationKeyframe implements Inspectable {
+    public static class AnimationKeyframe implements InspectorViewable {
         public int frame;
         public float subFrame = 0;
         public DyeColor color = null;

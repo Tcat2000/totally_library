@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_lib.dev_utils;
+package org.tcathebluecreper.totally_lib.lib;
 
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import net.minecraft.client.Minecraft;

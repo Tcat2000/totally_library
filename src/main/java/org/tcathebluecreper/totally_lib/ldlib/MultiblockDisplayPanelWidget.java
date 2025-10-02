@@ -1,4 +1,4 @@
-package org.tcathebluecreper.totally_lib.dev_utils.widgets;
+package org.tcathebluecreper.totally_lib.ldlib;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
@@ -18,13 +18,13 @@ import org.tcathebluecreper.totally_lib.multiblock.TLMultiblockInfo;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class MultiblockDisplayPanel extends ScreenSpaceWidget {
+public class MultiblockDisplayPanelWidget extends ScreenSpaceWidget {
     private final SceneWidget scene;
     public TrackedDummyWorld level;
 
     public Consumer<SceneWidget> postRender;
 
-    public MultiblockDisplayPanel(int minX, int minY, int maxX, int maxY, Consumer<SceneWidget> postRender) {
+    public MultiblockDisplayPanelWidget(int minX, int minY, int maxX, int maxY, Consumer<SceneWidget> postRender) {
         super(minX, minY, maxX, maxY);
         this.postRender = postRender;
         

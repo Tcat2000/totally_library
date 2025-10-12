@@ -34,9 +34,9 @@ public class TLMultiblock extends IETemplateMultiblock {
     public final BlockPos masterFromOrigin;
     public final BlockPos triggerFromOrigin;
     public final BlockPos size;
-    public final MultiblockRegistration<?> multiblockRegistration;
+    public final MultiblockRegistration<TLTraitMultiblockState> multiblockRegistration;
     public final float manualScale;
-    public TLMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic, TIDynamicModel manualModel, float manualScale) {
+    public TLMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<TLTraitMultiblockState> logic, TIDynamicModel manualModel, float manualScale) {
         super(loc, masterFromOrigin, triggerFromOrigin, size, logic);
         this.model = manualModel;
         this.multiblockRegistration = logic;

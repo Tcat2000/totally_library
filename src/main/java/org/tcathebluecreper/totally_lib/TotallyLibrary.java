@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_lib;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.logging.LogUtils;
@@ -83,7 +84,7 @@ public class TotallyLibrary {
         @SubscribeEvent
         public void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             TLModMultiblocks.  allMultiblocks.forEach(mb -> {
-//                if(mb.needsBER()) registerBERenderNoContext(event, (BlockEntityType<MultiblockBlockEntityMaster<TraitMultiblockState>>) mb.getMultiblock().multiblockRegistration.masterBE().get(), () -> (BlockEntityRenderer<MultiblockBlockEntityMaster<TraitMultiblockState>>) mb.createRenderer());
+                if(mb.needsBER()) registerBERenderNoContext(event, mb.getMultiblock().multiblockRegistration.masterBE().get(), (Supplier) mb::createRenderer);
             });
         }
 

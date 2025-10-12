@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
@@ -25,6 +26,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -32,11 +35,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector4f;
 import org.tcathebluecreper.totally_lib.ldlib.InspectorViewable;
 import org.tcathebluecreper.totally_lib.ldlib.MultiblockDisplayPanelWidget;
 import org.tcathebluecreper.totally_lib.ldlib.ScreenSpaceWidget;
 import org.tcathebluecreper.totally_lib.lib.GuiDrawer;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
+import org.tcathebluecreper.totally_lib.multiblock.MachineAnimation;
 
 import java.awt.*;
 import java.util.*;
@@ -59,6 +64,8 @@ public class AnimationEditor extends WidgetGroup {
     public InspectorViewable inspecting = null;
     public final List<AnimationPart> animationParts = new ArrayList<>();
     public AnimationPart selectedAnimationPart;
+    public AnimationTimeLine timeLine;
+    public MachineAnimation machineAnimation = new MachineAnimation();
 
     public AnimationEditor() {
         ResourceBorderTexture tabSelectedTexture = new ResourceBorderTexture("minecraft:textures/gui/container/creative_inventory/tabs.png", 26, 32, 4, 4);
@@ -82,7 +89,7 @@ public class AnimationEditor extends WidgetGroup {
         top.addWidget(mbDisplay.crateInputField(7,7,100, 15));
 
         bottom = new ScreenSpaceWidget(0, -100, 0, 0);
-        bottom.addWidget(new AnimationTimeLine());
+        bottom.addWidget(timeLine = new AnimationTimeLine());
         addWidget(bottom);
 
         inspector = new ScreenSpaceWidget(-200, 55, 0, -100);
@@ -101,15 +108,7 @@ public class AnimationEditor extends WidgetGroup {
         partsListContainer.setDynamicSized(true);
         partsListContainer.setLayout(Layout.VERTICAL_LEFT);
 
-        partsListContainer.addWidget(new AnimationPart());
-        partsListContainer.addWidget(new AnimationPart());
-        partsListContainer.addWidget(new AnimationPart());
-        partsListContainer.addWidget(new AnimationPart());
-        partsListContainer.addWidget(new AnimationPart());
-        partsListContainer.addWidget(new AnimationPart());
-        partsListContainer.addWidget(new AnimationPart());
-        partsListContainer.addWidget(new AnimationPart());
-        partsListContainer.addWidget(new AnimationPart());
+//        partsListContainer.addWidget(new AnimationPart());
 
         partsList.addWidget(partsListContainer);
         ScreenSpaceWidget partsListTab = new ScreenSpaceWidget(-200, 55, 0, -100);
@@ -119,6 +118,10 @@ public class AnimationEditor extends WidgetGroup {
         inspectorPane = new DraggableScrollableWidgetGroup(4,34, 200, 300);
 
         tabs.addTab(inspectorTab, inspectorPane);
+
+
+
+        animationParts.add(new AnimationPart().setModel("minecraft:block/lectern"));
     }
 
     public void postRender(SceneWidget scene) {
@@ -149,9 +152,9 @@ public class AnimationEditor extends WidgetGroup {
 //        quads.addAll(mr.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.SOUTH, Minecraft.getInstance().level.random));
 //        quads.addAll(mr.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.WEST, Minecraft.getInstance().level.random));
 
-        for(int i = 0; i < animationParts.size(); i++) {
-            RenderUtils.renderModelTESRFancy(animationParts.get(i).quads, buffer, poseStack, mbDisplay.level, BlockPos.ZERO, false,-1, 15);
-        }
+//        for(int i = 0; i < animationParts.size(); i++) {
+//            RenderUtils.renderModelTESRFancy(animationParts.get(i).quads, buffer, poseStack, mbDisplay.level, BlockPos.ZERO, false,-1, 15);
+//        }
 
         tessellator.end();
         buffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
@@ -190,6 +193,11 @@ public class AnimationEditor extends WidgetGroup {
         }
 
         tessellator.end();
+        poseStack.popPose();
+
+        RenderSystem.setShader(GameRenderer::getRendertypeTranslucentShader);
+        machineAnimation.render(timeLine.cursorPos + (timeLine.playing ? Minecraft.getInstance().getPartialTick() : 0), poseStack, MultiBufferSource.immediate(buffer), mbDisplay.level);
+        tessellator.end();
     }
 
     WidgetGroup inspectorContent;
@@ -200,6 +208,20 @@ public class AnimationEditor extends WidgetGroup {
         inspectorContent.setDynamicSized(true);
         inspecting.loadInspector(inspectorContent, 0, 0, inspectorPane.getSizeWidth() - 4, inspectorPane.getSizeHeight());
         inspectorPane.addWidget(inspectorContent);
+    }
+
+    public boolean mouseInside(Widget widget, double x, double y, int posX, int posY, int sizeX, int sizeY) {
+        boolean a = false;
+        if(posX >= 0 && sizeX >= 0) a = x >= posX + widget.getPositionX() && x <= posX + sizeX + widget.getPositionX();
+        if(posX >= 0 && sizeX < 0) a = x >= posX + widget.getPositionX();
+        if(posX < 0 && sizeX >= 0) a = x <= sizeX + widget.getPositionX();
+        if(posX < 0 && sizeX < 0) a = true;
+        boolean b = false;
+        if(posY >= 0 && sizeY >= 0) b = y >= posY + widget.getPositionY() && y <= posY + sizeY + widget.getPositionY();
+        if(posY >= 0 && sizeY < 0) b = y >= posY + widget.getPositionY();
+        if(posY < 0 && sizeY >= 0) b = y <= sizeY + widget.getPositionY();
+        if(posY < 0 && sizeY < 0) b = true;
+        return a && b;
     }
 
     private static class AnimationElementWidget extends WidgetGroup {
@@ -222,7 +244,7 @@ public class AnimationEditor extends WidgetGroup {
 
         boolean mode = false;
 
-        public AnimationElementWidget(List<AnimationElementWidget> list, WidgetGroup parent, Runnable trigger) {
+        public AnimationElementWidget(List<AnimationElementWidget> list, WidgetGroup parent, Runnable trigger, MachineAnimation machineAnimation) {
             this.trigger = trigger;
 
             this.list = list;
@@ -324,58 +346,12 @@ public class AnimationEditor extends WidgetGroup {
                 }
             } catch(NumberFormatException e) {value = new AABB(0,0,0,0,0,0);}
         }
-
-        @Override
-        public String toString() {
-            try {
-                if(mode) return "Shapes.offset(" +
-                    Double.parseDouble(minX.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(minY.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(minZ.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(maxX.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(maxY.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(maxZ.getCurrentString()) +
-                    "),";
-                return "Shapes.size(" +
-                    Double.parseDouble(minX.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(minY.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(minZ.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(maxX.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(maxY.getCurrentString()) +
-                    "," +
-                    Double.parseDouble(maxZ.getCurrentString()) +
-                    "),";
-            } catch(NumberFormatException ignored) {return "";}
-        }
-    }
-
-    public boolean mouseInside(Widget widget, double x, double y, int posX, int posY, int sizeX, int sizeY) {
-        boolean a = false;
-        if(posX >= 0 && sizeX >= 0) a = x >= posX + widget.getPositionX() && x <= posX + sizeX + widget.getPositionX();
-        if(posX >= 0 && sizeX < 0) a = x >= posX + widget.getPositionX();
-        if(posX < 0 && sizeX >= 0) a = x <= sizeX + widget.getPositionX();
-        if(posX < 0 && sizeX < 0) a = true;
-        boolean b = false;
-        if(posY >= 0 && sizeY >= 0) b = y >= posY + widget.getPositionY() && y <= posY + sizeY + widget.getPositionY();
-        if(posY >= 0 && sizeY < 0) b = y >= posY + widget.getPositionY();
-        if(posY < 0 && sizeY >= 0) b = y <= sizeY + widget.getPositionY();
-        if(posY < 0 && sizeY < 0) b = true;
-        return a && b;
     }
 
     private class AnimationTimeLine extends Widget {
         int cursorPos = 0;
         float cursorSubPos = 0;
-        int scroll = 35;
+        int scroll = 0;
         boolean isDragging = false;
         int animationLength = 100;
         boolean playing = false;
@@ -451,67 +427,67 @@ public class AnimationEditor extends WidgetGroup {
 
             for(int i = 0; i < posKeyframes.size(); i++) {
                 AnimationKeyframe frame = posKeyframes.get(i);
-                if(!(frame.frame + 35 - scroll >= 35)) continue;
-                Color color = frame.color == null ? frame.frame % 2 == 0 ? GuiDrawer.text_dark : GuiDrawer.text_light : new Color(frame.color.getTextColor());
-                g.drawRect(frame.frame + 35 - scroll, 42, 1,1, color);
-                g.drawRect(frame.frame + 34 - scroll, 43, 3,1, color);
-                g.drawRect(frame.frame + 33 - scroll, 44, 5,1, color);
-                g.drawRect(frame.frame + 34 - scroll, 45, 3,1, color);
-                g.drawRect(frame.frame + 35 - scroll, 46, 1,1, color);
+                if(!(((int)frame.value.w) + 35 - scroll >= 35)) continue;
+                Color color = frame.color == null ? ((int)frame.value.w) % 2 == 0 ? GuiDrawer.text_dark : GuiDrawer.text_light : new Color(frame.color.getTextColor());
+                g.drawRect(((int)frame.value.w) + 35 - scroll, 42, 1,1, color);
+                g.drawRect(((int)frame.value.w) + 34 - scroll, 43, 3,1, color);
+                g.drawRect(((int)frame.value.w) + 33 - scroll, 44, 5,1, color);
+                g.drawRect(((int)frame.value.w) + 34 - scroll, 45, 3,1, color);
+                g.drawRect(((int)frame.value.w) + 35 - scroll, 46, 1,1, color);
 
                 if(inspecting == frame) {
-                    g.drawRect(frame.frame + 35 - scroll, 42, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 34 - scroll, 43, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 36 - scroll, 43, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 33 - scroll, 44, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 37 - scroll, 44, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 34 - scroll, 45, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 36 - scroll, 45, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 35 - scroll, 46, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 35 - scroll, 42, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 34 - scroll, 43, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 36 - scroll, 43, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 33 - scroll, 44, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 37 - scroll, 44, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 34 - scroll, 45, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 36 - scroll, 45, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 35 - scroll, 46, 1,1, GuiDrawer.mid);
                 }
             }
 
             for(int i = 0; i < rotKeyframes.size(); i++) {
                 AnimationKeyframe frame = rotKeyframes.get(i);
-                if(!(frame.frame + 35 - scroll >= 35)) continue;
-                Color color = frame.color == null ? frame.frame % 2 == 0 ? GuiDrawer.text_dark : GuiDrawer.text_light : new Color(frame.color.getTextColor());
-                g.drawRect(frame.frame + 35 - scroll, 62, 1,1, color);
-                g.drawRect(frame.frame + 34 - scroll, 63, 3,1, color);
-                g.drawRect(frame.frame + 33 - scroll, 64, 5,1, color);
-                g.drawRect(frame.frame + 34 - scroll, 65, 3,1, color);
-                g.drawRect(frame.frame + 35 - scroll, 66, 1,1, color);
+                if(!(((int)frame.value.w) + 35 - scroll >= 35)) continue;
+                Color color = frame.color == null ? ((int)frame.value.w) % 2 == 0 ? GuiDrawer.text_dark : GuiDrawer.text_light : new Color(frame.color.getTextColor());
+                g.drawRect(((int)frame.value.w) + 35 - scroll, 62, 1,1, color);
+                g.drawRect(((int)frame.value.w) + 34 - scroll, 63, 3,1, color);
+                g.drawRect(((int)frame.value.w) + 33 - scroll, 64, 5,1, color);
+                g.drawRect(((int)frame.value.w) + 34 - scroll, 65, 3,1, color);
+                g.drawRect(((int)frame.value.w) + 35 - scroll, 66, 1,1, color);
 
                 if(inspecting == frame) {
-                    g.drawRect(frame.frame + 35 - scroll, 62, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 34 - scroll, 63, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 36 - scroll, 63, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 33 - scroll, 64, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 37 - scroll, 64, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 34 - scroll, 65, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 36 - scroll, 65, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 35 - scroll, 66, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 35 - scroll, 62, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 34 - scroll, 63, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 36 - scroll, 63, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 33 - scroll, 64, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 37 - scroll, 64, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 34 - scroll, 65, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 36 - scroll, 65, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 35 - scroll, 66, 1,1, GuiDrawer.mid);
                 }
             }
 
             for(int i = 0; i < sizeKeyframes.size(); i++) {
                 AnimationKeyframe frame = sizeKeyframes.get(i);
-                if(!(frame.frame + 35 - scroll >= 35)) continue;
-                Color color = frame.color == null ? frame.frame % 2 == 0 ? GuiDrawer.text_dark : GuiDrawer.text_light : new Color(frame.color.getTextColor());
-                g.drawRect(frame.frame + 35 - scroll, 82, 1,1, color);
-                g.drawRect(frame.frame + 34 - scroll, 83, 3,1, color);
-                g.drawRect(frame.frame + 33 - scroll, 84, 5,1, color);
-                g.drawRect(frame.frame + 34 - scroll, 85, 3,1, color);
-                g.drawRect(frame.frame + 35 - scroll, 86, 1,1, color);
+                if(!(((int)frame.value.w) + 35 - scroll >= 35)) continue;
+                Color color = frame.color == null ? ((int)frame.value.w) % 2 == 0 ? GuiDrawer.text_dark : GuiDrawer.text_light : new Color(frame.color.getTextColor());
+                g.drawRect(((int)frame.value.w) + 35 - scroll, 82, 1,1, color);
+                g.drawRect(((int)frame.value.w) + 34 - scroll, 83, 3,1, color);
+                g.drawRect(((int)frame.value.w) + 33 - scroll, 84, 5,1, color);
+                g.drawRect(((int)frame.value.w) + 34 - scroll, 85, 3,1, color);
+                g.drawRect(((int)frame.value.w) + 35 - scroll, 86, 1,1, color);
 
                 if(inspecting == frame) {
-                    g.drawRect(frame.frame + 35 - scroll, 82, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 34 - scroll, 83, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 36 - scroll, 83, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 33 - scroll, 84, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 37 - scroll, 84, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 34 - scroll, 85, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 36 - scroll, 85, 1,1, GuiDrawer.mid);
-                    g.drawRect(frame.frame + 35 - scroll, 86, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 35 - scroll, 82, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 34 - scroll, 83, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 36 - scroll, 83, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 33 - scroll, 84, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 37 - scroll, 84, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 34 - scroll, 85, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 36 - scroll, 85, 1,1, GuiDrawer.mid);
+                    g.drawRect(((int)frame.value.w) + 35 - scroll, 86, 1,1, GuiDrawer.mid);
                 }
             }
 
@@ -538,15 +514,15 @@ public class AnimationEditor extends WidgetGroup {
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if(mouseX >= 21 + getPositionX() && mouseX <= 29 + getPositionX()) {
                 if(mouseY >= 6 + 18 * 2 + getPositionY() && mouseY <= 14 + 18 * 2 + getPositionY()) {
-                    posKeyframes.add(new AnimationKeyframe(cursorPos, "Pos", 0, (clickData, frame) -> posKeyframes.remove(frame)));
+                    posKeyframes.add(new AnimationKeyframe(cursorPos, "Pos", 0, (clickData, frame) -> posKeyframes.remove(frame), animationParts.get(0).animationPart.positionFrames));
                     posKeyframes.sort(Comparator.comparingInt(a -> a.frame));
                 }
                 if(mouseY >= 6 + 18 * 3 + getPositionY() && mouseY <= 14 + 18 * 3 + getPositionY()) {
-                    rotKeyframes.add(new AnimationKeyframe(cursorPos, "Rot", 0, (clickData, frame) -> rotKeyframes.remove(frame)));
+                    rotKeyframes.add(new AnimationKeyframe(cursorPos, "Rot", 0, (clickData, frame) -> rotKeyframes.remove(frame), animationParts.get(0).animationPart.rotationFrames));
                     rotKeyframes.sort(Comparator.comparingInt(a -> a.frame));
                 }
                 if(mouseY >= 6 + 18 * 4 + getPositionY() && mouseY <= 14 + 18 * 4 + getPositionY()) {
-                    sizeKeyframes.add(new AnimationKeyframe(cursorPos, "Size", 1, (clickData, frame) -> sizeKeyframes.remove(frame)));
+                    sizeKeyframes.add(new AnimationKeyframe(cursorPos, "Size", 1, (clickData, frame) -> sizeKeyframes.remove(frame), animationParts.get(0).animationPart.scaleFrames));
                     sizeKeyframes.sort(Comparator.comparingInt(a -> a.frame));
                 }
             }
@@ -601,19 +577,17 @@ public class AnimationEditor extends WidgetGroup {
         public float subFrame = 0;
         public DyeColor color = null;
         public final String type;
-        public float valueX;
-        public float valueY;
-        public float valueZ;
+        public final Vector4f value;
 
         public final BiConsumer<ClickData, AnimationKeyframe> remove;
 
-        public AnimationKeyframe(int frame, String type, int defaultValue, BiConsumer<ClickData, AnimationKeyframe> remove) {
+        public AnimationKeyframe(int frame, String type, int defaultValue, BiConsumer<ClickData, AnimationKeyframe> remove, List<Vector4f> keyframes) {
             this.frame = frame;
             this.type = type;
-            valueX = defaultValue;
-            valueY = defaultValue;
-            valueZ = defaultValue;
             this.remove = remove;
+            
+            value = new Vector4f(defaultValue, defaultValue, defaultValue, frame);
+            keyframes.add(value);
         }
 
         @Override
@@ -623,11 +597,11 @@ public class AnimationEditor extends WidgetGroup {
                 @Override
                 protected void onTextChanged(String newTextString) {
                     try {
-                        frame = Integer.parseInt(newTextString);
+                        value.w = Integer.parseInt(newTextString);
                     } catch(NumberFormatException ignored) {}
                 }
             };
-            frameField.setCurrentString(frame);
+            frameField.setCurrentString(value.w);
             parent.addWidget(frameField);
 
 
@@ -660,11 +634,11 @@ public class AnimationEditor extends WidgetGroup {
                 @Override
                 protected void onTextChanged(String newTextString) {
                     try {
-                        valueX = Float.parseFloat(newTextString);
+                        value.x = Float.parseFloat(newTextString);
                     } catch(NumberFormatException ignored) {}
                 }
             };
-            xField.setCurrentString(valueX);
+            xField.setCurrentString(value.x);
             parent.addWidget(xField);
 
             parent.addWidget(new LabelWidget(8, 92, type + " Y:"));
@@ -672,11 +646,11 @@ public class AnimationEditor extends WidgetGroup {
                 @Override
                 protected void onTextChanged(String newTextString) {
                     try {
-                        valueX = Float.parseFloat(newTextString);
+                        value.y = Float.parseFloat(newTextString);
                     } catch(NumberFormatException ignored) {}
                 }
             };
-            yField.setCurrentString(valueY);
+            yField.setCurrentString(value.y);
             parent.addWidget(yField);
 
             parent.addWidget(new LabelWidget(8, 112, type + " Z:"));
@@ -684,11 +658,11 @@ public class AnimationEditor extends WidgetGroup {
                 @Override
                 protected void onTextChanged(String newTextString) {
                     try {
-                        valueX = Float.parseFloat(newTextString);
+                        value.z = Float.parseFloat(newTextString);
                     } catch(NumberFormatException ignored) {}
                 }
             };
-            zField.setCurrentString(valueZ);
+            zField.setCurrentString(value.z);
             parent.addWidget(zField);
 
             ButtonWidget deleteButton = new ButtonWidget(65, 130, 60, 15, new GuiTextureGroup(new IGuiTexture[]{ResourceBorderTexture.BUTTON_COMMON, new TextTexture("DELETE")}), clickData -> remove.accept(clickData, this));
@@ -699,14 +673,20 @@ public class AnimationEditor extends WidgetGroup {
     }
 
     public class AnimationPart extends WidgetGroup {
-        List<BakedQuad> quads = new ArrayList<>();
+        final List<BakedQuad> quads;
         SceneWidget renderer;
         RendererBlockEntity holder;
+
+        final MachineAnimation.AnimatedModelPart animationPart;
         public AnimationPart() {
             super(0,0,192,50);
             initTemplate();
 
-            IModelRenderer2 model = new IModelRenderer2(ResourceLocation.fromNamespaceAndPath("minecraft", "block/diamond_block"));
+            animationPart = new MachineAnimation.AnimatedModelPart(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            machineAnimation.parts.add(animationPart);
+            quads = animationPart.quads;
+
+            IModelRenderer2 model = new IModelRenderer2(ResourceLocation.fromNamespaceAndPath("minecraft", "block/lectern"));
 
             quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, null, Minecraft.getInstance().level.random));
             quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.UP, Minecraft.getInstance().level.random));
@@ -735,60 +715,79 @@ public class AnimationEditor extends WidgetGroup {
                 }
             });
 
-//            TrackedDummyWorld level = new TrackedDummyWorld();
-//            level.addBlock(BlockPos.ZERO, BlockInfo.fromBlock(RendererBlock.BLOCK));
-//            this.holder = (RendererBlockEntity)level.getBlockEntity(BlockPos.ZERO);
-//
-//            holder.setRenderer(new IModelRenderer(ResourceLocation.fromNamespaceAndPath("minecraft", "block/diamond_block")));
-//
-//            renderer = new SceneWidget(4, 4, 42, 42, level);
-//            renderer.setRenderedCore(List.of(BlockPos.ZERO), null);
-////            renderer.setAfterWorldRender(sceneWidget -> {
-////                var poseStack = new PoseStack();
-////                var tessellator = Tesselator.getInstance();
-////                var buffer = tessellator.getBuilder();
-////
-////                buffer.begin(RenderType.solid().mode(), RenderType.solid().format());
-////
-////                var lightTexture = Minecraft.getInstance().gameRenderer.lightTexture();
-////                lightTexture.turnOnLightLayer();
-////
-////                RenderSystem.clearColor(1,1,1,1);
-////
-////                RenderUtils.renderModelTESRFancy(quads, buffer, poseStack, mbDisplay.level, BlockPos.ZERO, false,-1, 15);
-////
-////
-////                model.renderItem(ItemStack.EMPTY, ItemDisplayContext.GUI, false, poseStack, MultiBufferSource.immediate(buffer), 15, 15, model.getItemBakedModel());
-////
-////                tessellator.end();
-////            });
-////            renderer.setRenderSelect(false);
-//            renderer.setRenderFacing(false);
-//            renderer.getRenderer().setOnLookingAt(null);
-//            renderer.createScene(level);
-//            renderer.setBackground(new ColorBorderTexture(1, ColorPattern.T_WHITE.color));
-//            renderer.setIntractable(false);
-//            addWidget(renderer);
-
-            var level = new TrackedDummyWorld();
+            TrackedDummyWorld level = new TrackedDummyWorld();
             level.addBlock(BlockPos.ZERO, BlockInfo.fromBlock(RendererBlock.BLOCK));
-            Optional.ofNullable(level.getBlockEntity(BlockPos.ZERO)).ifPresent(blockEntity -> {
-                if (blockEntity instanceof RendererBlockEntity holder) {
-                    holder.setRenderer(model);
-                }
-            });
+            this.holder = (RendererBlockEntity)level.getBlockEntity(BlockPos.ZERO);
 
-            var sceneWidget = new SceneWidget(5, 5, 40, 40, level);
+            holder.setRenderer(new IModelRenderer(ResourceLocation.fromNamespaceAndPath("minecraft", "block/diamond_block")));
+
+            renderer = new SceneWidget(4, 4, 42, 42, level);
+            renderer.setRenderedCore(List.of(BlockPos.ZERO), null);
+            renderer.setAfterWorldRender(sceneWidget -> {
+                var poseStack = new PoseStack();
+                var tessellator = Tesselator.getInstance();
+                var buffer = tessellator.getBuilder();
+
+                buffer.begin(RenderType.solid().mode(), RenderType.solid().format());
+
+                var lightTexture = Minecraft.getInstance().gameRenderer.lightTexture();
+                lightTexture.turnOnLightLayer();
+
+                RenderSystem.clearColor(1,1,1,1);
+
+//                RenderUtils.renderModelTESRFancy(quads, buffer, poseStack, mbDisplay.level, BlockPos.ZERO, false, -1, 15);
+
+
+//                model.renderItem(ItemStack.EMPTY, ItemDisplayContext.GUI, false, poseStack, MultiBufferSource.immediate(buffer), 15, 15, model.getItemBakedModel());
+
+                tessellator.end();
+            });
+            renderer.setRenderSelect(false);
+            renderer.setRenderFacing(false);
+            renderer.getRenderer().setOnLookingAt(null);
+            renderer.createScene(level);
+            renderer.setBackground(new ColorBorderTexture(1, ColorPattern.T_WHITE.color));
+            renderer.setIntractable(false);
+            addWidget(renderer);
+
+//            var level = new TrackedDummyWorld();
+//            level.addBlock(BlockPos.ZERO, BlockInfo.fromBlock(RendererBlock.BLOCK));
+//            Optional.ofNullable(level.getBlockEntity(BlockPos.ZERO)).ifPresent(blockEntity -> {
+//                if (blockEntity instanceof RendererBlockEntity holder) {
+//                    holder.setRenderer(model);
+//                }
+//            });
+
+//            var sceneWidget = new SceneWidget(5, 5, 40, 40, level);
 //            sceneWidget.setRenderFacing(false);
 //            sceneWidget.setRenderSelect(false);
-            sceneWidget.createScene(level);
+//            sceneWidget.createScene(level);
 //            sceneWidget.getRenderer().setOnLookingAt(null); // better performance
-            sceneWidget.setRenderedCore(Collections.singleton(BlockPos.ZERO), null);
-            sceneWidget.setBackground(new ColorBorderTexture(2, ColorPattern.T_WHITE.color));
+//            sceneWidget.setRenderedCore(Collections.singleton(BlockPos.ZERO), null);
+//            sceneWidget.setBackground(new ColorBorderTexture(2, ColorPattern.T_WHITE.color));
+//
+//            addWidget(sceneWidget);
+        }
 
-            addWidget(sceneWidget);
+        public AnimationPart setModel(String s) {
+            quads.clear();
+
+            if(!ResourceLocation.isValidResourceLocation(s)) return this;
+
+//                    holder.setRenderer(new IModelRenderer(ResourceLocation.parse(newTextString)));
+            IModelRenderer2 model = new IModelRenderer2(ResourceLocation.parse(s));
+
+            quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, null, Minecraft.getInstance().level.random));
+            quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.UP, Minecraft.getInstance().level.random));
+            quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.DOWN, Minecraft.getInstance().level.random));
+            quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.NORTH, Minecraft.getInstance().level.random));
+            quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.EAST, Minecraft.getInstance().level.random));
+            quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.SOUTH, Minecraft.getInstance().level.random));
+            quads.addAll(model.renderModel(mbDisplay.level, new BlockPos(0,4,0), null, Direction.WEST, Minecraft.getInstance().level.random));
+            return this;
         }
     }
+    
     public static class IModelRenderer2 extends IModelRenderer {
         public IModelRenderer2(ResourceLocation modelLocation) {
             super(modelLocation);

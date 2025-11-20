@@ -43,7 +43,8 @@ public class ModularRecipeSerializer extends TLRecipeSerializer<ModularRecipe> {
 
     @Override
     public ModularRecipe findRecipe(IMultiblockState state, Level level) {
-        for(ModularRecipe recipe : getRecipes(level)) {
+        List<ModularRecipe> recipesList = getRecipes(level);
+        for(ModularRecipe recipe : recipesList) {
             if(recipe.checkCanExecute(state)) return recipe;
         }
         return null;
@@ -51,7 +52,8 @@ public class ModularRecipeSerializer extends TLRecipeSerializer<ModularRecipe> {
 
     @Override
     public ModularRecipe getRecipe(ResourceLocation id, Level level) {
-        for(ModularRecipe recipe : getRecipes(level)) {
+        List<ModularRecipe> recipesList = getRecipes(level);
+        for(ModularRecipe recipe : recipesList) {
             if(recipe.id == id) return recipe;
         }
         return null;

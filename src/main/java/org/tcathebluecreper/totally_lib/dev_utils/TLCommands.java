@@ -23,6 +23,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
+import org.tcathebluecreper.totally_lib.client.animation.editor.AnimationEditor;
 import org.tcathebluecreper.totally_lib.kubejs.Plugin;
 import org.tcathebluecreper.totally_lib.kubejs.TLMultiblockRegistrationEventJS;
 import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;

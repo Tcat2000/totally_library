@@ -155,10 +155,12 @@ public class TLMultiblockBuilder {
 
         return info.reg;
     }
+
     public TLMultiblockBuilder shape(List<VoxelShape> shapes) {
         shape = new MachineShape(shapes);
         return this;
     }
+
     public TLMultiblockBuilder jeiCategory(Consumer<JEICategoryBuilder> jeiCategoryBuilder) {this.jeiCategoryBuilder = jeiCategoryBuilder; return this;}
 
 

@@ -24,6 +24,12 @@ public class MultiblockDisplayPanelWidget extends ScreenSpaceWidget {
 
     public Consumer<SceneWidget> postRender;
 
+    public ResourceLocation getLastMachineID() {
+        return lastMachineID;
+    }
+
+    private ResourceLocation lastMachineID = null;
+
     public MultiblockDisplayPanelWidget(int minX, int minY, int maxX, int maxY, Consumer<SceneWidget> postRender) {
         super(minX, minY, maxX, maxY);
         this.postRender = postRender;
@@ -38,6 +44,8 @@ public class MultiblockDisplayPanelWidget extends ScreenSpaceWidget {
     public void loadMultiblock(ResourceLocation id) {
         Optional<TLMultiblockInfo> op = TLModMultiblocks.allMultiblocks.stream().filter(m -> m.getId().equals(id)).findFirst();
         if(op.isEmpty()) return;
+        lastMachineID = id;
+
         TLMultiblockInfo mb = op.get();
 
         level = new TrackedDummyWorld();
@@ -70,12 +78,16 @@ public class MultiblockDisplayPanelWidget extends ScreenSpaceWidget {
     }
 
     public TextFieldWidget crateInputField(int posX, int posY, int sizeX, int sizeY) {
-        return new TextFieldWidget(posX, posY, sizeX, sizeY, null, null).setTextResponder(text -> {
-            if(ResourceLocation.isValidResourceLocation(text)) {
-                ResourceLocation id = ResourceLocation.parse(text);
-                this.loadMultiblock(id);
+        return new TextFieldWidget(posX, posY, sizeX, sizeY, null, null) {
+            @Override
+            protected void onTextChanged(String text) {
+                super.onTextChanged(text);
+                if(ResourceLocation.isValidResourceLocation(text)) {
+                    ResourceLocation id = ResourceLocation.parse(text);
+                    loadMultiblock(id);
+                }
             }
-        });
+        };
     }
 
     @Override

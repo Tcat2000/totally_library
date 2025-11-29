@@ -95,30 +95,25 @@ public class Plugin extends KubeJSPlugin {
             ResourceLocation pathToBlockstate = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "blockstates/" + name);
             ResourceLocation pathToItemModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "models/item/" + name);
 
-            CompoundTag out = new CompoundTag();
-            ListTag blockPoses = new ListTag();
+            JsonObject json = new JsonObject();
+            JsonArray blockPoses = new JsonArray();
 
-            out.putString("parent","minecraft:block/block");
-            CompoundTag textures = new CompoundTag();
-            textures.putString("particle","minecraft:block/diamond_block");
-            out.put("textures", textures);
+            json.addProperty("parent","minecraft:block/block");
+            json.add("textures", multiblock.getAssetGenData().getInnerModel().get("textures"));
 
-            out.putString("loader","immersiveengineering:basic_split");
-//                out.putBoolean("dynamic", false);
+            json.addProperty("loader","immersiveengineering:basic_split");
 
-            out.put("inner_model", JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, multiblock.getAssetGenData().getInnerModel()));
+            json.add("inner_model", multiblock.getAssetGenData().getInnerModel());
 
             for(int i = 0; i < multiblock.getAssetGenData().getBlocks().length; i++) {
                 int[] pos = multiblock.getAssetGenData().getBlocks()[i];
-                ListTag tag = new ListTag();
-                tag.add(IntTag.valueOf(pos[0] - multiblock.getMultiblock().masterFromOrigin.getX()));
-                tag.add(IntTag.valueOf(pos[1] - multiblock.getMultiblock().masterFromOrigin.getY()));
-                tag.add(IntTag.valueOf(pos[2] - multiblock.getMultiblock().masterFromOrigin.getZ()));
+                JsonArray tag = new JsonArray();
+                tag.add(pos[0] - multiblock.getMultiblock().masterFromOrigin.getX());
+                tag.add(pos[1] - multiblock.getMultiblock().masterFromOrigin.getY());
+                tag.add(pos[2] - multiblock.getMultiblock().masterFromOrigin.getZ());
                 blockPoses.add(tag);
             }
-            out.put("split_parts", blockPoses);
-
-            JsonObject json = NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, out).getAsJsonObject();
+            json.add("split_parts", blockPoses);
 
             json.addProperty("dynamic", false);
 

@@ -84,7 +84,7 @@ public class TLMultiblockBuilder {
         }
         return this;
     }
-    public TLMultiblockBuilder obj(String modelLocation, NativeObject o) {
+    public TLMultiblockBuilder obj(String modelLocation, NativeObject o, boolean automaticCulling, boolean flipV) {
         model = new JsonObject();
         model.addProperty("parent","minecraft:block/block");
 
@@ -94,15 +94,15 @@ public class TLMultiblockBuilder {
             textures.addProperty((String) entry.getKey(), (String) entry.getValue());
         });
 
-        textures.addProperty("side","immersiveengineering:block/multiblocks/coke_oven");
         model.add("textures", textures);
 
         model.addProperty("loader", "forge:obj");
         model.addProperty("model", modelLocation);
-        model.addProperty("automatic_culling", false);
-        model.addProperty("flip_v", true);
+        model.addProperty("automatic_culling", automaticCulling);
+        model.addProperty("flip_v", flipV);
         return this;
     }
+
     public TLMultiblockBuilder recipe(Consumer<RecipeBuilder> builder) {
         RecipeBuilder recipeBuilder = new RecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}, reload);
         builder.accept(recipeBuilder);
@@ -111,7 +111,13 @@ public class TLMultiblockBuilder {
     }
 
     public TLMultiblockInfo build() {
-        MultiblockInfo info = reload ? multiblockInfo.getOrDefault(id, new MultiblockInfo()) : new MultiblockInfo();
+        if(reload) return pRebuild();
+        return pBuild();
+    }
+
+    private TLMultiblockInfo pRebuild() {
+        MultiblockInfo info = multiblockInfo.getOrDefault(id, new MultiblockInfo());
+
         info.state = (capabilitySource) -> {
             if(recipeInfo == null) return new TLTraitMultiblockState(capabilitySource, traits.get());
             return new TLRecipeTraitMultiblockState(capabilitySource, traits.get(), recipeInfo.getCreateProcess());
@@ -122,10 +128,30 @@ public class TLMultiblockBuilder {
                 ((TLRecipeTraitMultiblockState) c.getState()).process.tick(c.getLevel().getRawLevel());
             }
         };
-        info.logic = reload ? info.logic.reconstruct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state) : new TLMultiblockLogic(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
+
+        info.logic.reconstruct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
+
+        info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo);
+
+        return info.reg;
+    }
+
+    private TLMultiblockInfo pBuild() {
+        MultiblockInfo info = new MultiblockInfo();
+        info.state = (capabilitySource) -> {
+            if(recipeInfo == null) return new TLTraitMultiblockState(capabilitySource, traits.get());
+            return new TLRecipeTraitMultiblockState(capabilitySource, traits.get(), recipeInfo.getCreateProcess());
+        };
+
+        info.tickLogic = recipeInfo == null ? (s, c) -> {} : (s, c) -> {
+            if(c.getState() instanceof TLRecipeTraitMultiblockState) {
+                ((TLRecipeTraitMultiblockState) c.getState()).process.tick(c.getLevel().getRawLevel());
+            }
+        };
+        info.logic = new TLMultiblockLogic(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
 
 
-        info.registration = reload ? info.registration : new IEMultiblockBuilder<>(info.logic, id.getPath())
+        info.registration = new IEMultiblockBuilder<>(info.logic, id.getPath())
             .defaultBEs(manager.getRegistry(id.getNamespace()).blockEntityType())
             .customBlock(
                 manager.getRegistry(id.getNamespace()).blocks(), manager.getRegistry(id.getNamespace()).items(),
@@ -136,7 +162,7 @@ public class TLMultiblockBuilder {
 
         manualModel = new TIDynamicModel("chemical_bath/chemical_bath");
 
-        info.multiblockClass = reload ? info.multiblockClass : new TLMultiblock(id, masterOffset, triggerOffset, size, info.registration, manualModel, manualScale);
+        info.multiblockClass = new TLMultiblock(id, masterOffset, triggerOffset, size, info.registration, manualModel, manualScale);
         multiblocksToRegister.put(id, Lazy.of(() -> info.multiblockClass));
 
 
@@ -148,7 +174,7 @@ public class TLMultiblockBuilder {
         }
 
 
-        info.reg = reload ? info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo) : new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo);
+        info.reg = new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo);
         consumer.accept(info.reg);
 
         multiblockInfo.put(id, info);

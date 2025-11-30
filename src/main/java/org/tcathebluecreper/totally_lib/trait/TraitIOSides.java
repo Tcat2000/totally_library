@@ -15,4 +15,5 @@ public class TraitIOSides {
     public static final Predicate<RelativeBlockFace> SIDES = side -> side == RelativeBlockFace.FRONT || side == RelativeBlockFace.BACK || side == RelativeBlockFace.LEFT || side == RelativeBlockFace.RIGHT;
     public static final Predicate<RelativeBlockFace> TOP_BOTTOM = side -> side == RelativeBlockFace.UP || side == RelativeBlockFace.DOWN;
     public static final Predicate<RelativeBlockFace> LEFT_RIGHT = side -> side == RelativeBlockFace.LEFT || side == RelativeBlockFace.RIGHT;
+    public static final Predicate<RelativeBlockFace> FRONT_BACK = side -> side == RelativeBlockFace.LEFT || side == RelativeBlockFace.RIGHT;
 }

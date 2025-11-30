@@ -12,6 +12,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
@@ -55,9 +56,9 @@ public class TLCommands {
                 .then(Commands.literal("clear"))
             )
                 .then(Commands.literal("generate")
-                    .then(Commands.literal("form").then(Commands.argument("structure", ResourceLocationArgument.id()).then(Commands.argument("offset", Vec3Argument.vec3())
+                    .then(Commands.literal("form").then(Commands.argument("structure", ResourceLocationArgument.id()).then(Commands.argument("offset", BlockPosArgument.blockPos())
                         .executes(context -> {
-                            Optional<Resource> st = StructureArg.getStructure(context, "structure", "structures", ".nbt");
+                            Optional<Resource> st = StructureArg.getStructure(context, "structure", "structures/", ".nbt");
                             if(st.isEmpty()) return 0;
     
                             try {
@@ -65,10 +66,10 @@ public class TLCommands {
                                 outputList.append(".form([");
     
                                 CompoundTag tag = NbtIo.readCompressed(st.get().open());
-                                Vec3 offset = Vec3Argument.getVec3(context, "offset");
+                                BlockPos offset = BlockPosArgument.getBlockPos(context, "offset");
                                 for(Tag block : (ListTag) tag.get("blocks")) {
                                     ListTag pos = ((CompoundTag) block).getList("pos", Tag.TAG_INT);
-                                    outputList.append("[" + (pos.getInt(0) - offset.x) + "," + (pos.getInt(1) - offset.y) + "," + (pos.getInt(2) - offset.z) + "],");
+                                    outputList.append("[" + (pos.getInt(0) - offset.getX()) + "," + (pos.getInt(1) - offset.getY()) + "," + (pos.getInt(2) - offset.getZ()) + "],");
                                 }
     
                                 outputList.append("])");

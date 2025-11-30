@@ -1,6 +1,6 @@
 {
     "type": "test:multiblock",
-    "length": 60,
+    "length": 10,
     "input": {
         "item": "minecraft:iron_ingot",
         "count": 1

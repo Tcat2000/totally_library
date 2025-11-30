@@ -1,5 +1,6 @@
 package org.tcathebluecreper.totally_lib.jei;
 
+import blusunrize.immersiveengineering.common.util.compat.jei.JEIRecipeTypes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
@@ -35,6 +36,7 @@ public class TLJeiPlugin implements IModPlugin {
             if(tlMultiblockInfo.getJeiInfo() != null) {
                 tlMultiblockInfo.getJeiInfo().catalystItemStacks.forEach(stack -> registration.addRecipeCatalyst(stack.get(), tlMultiblockInfo.getJeiInfo().UID));
                 tlMultiblockInfo.getJeiInfo().catalystItems.forEach(item -> registration.addRecipeCatalyst(item.get(), tlMultiblockInfo.getJeiInfo().UID));
+                tlMultiblockInfo.getRecipeCatalysts().forEach(catalyst -> catalyst.register(registration));
             }
         });
     }

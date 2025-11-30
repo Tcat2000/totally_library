@@ -9,10 +9,12 @@ import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.jei.JEICategoryBuilder;
+import org.tcathebluecreper.totally_lib.jei.JeiRecipeCatalyst;
 import org.tcathebluecreper.totally_lib.recipe.RecipeBuilder;
 import org.tcathebluecreper.totally_lib.trait.ITrait;
 import org.tcathebluecreper.totally_lib.trait.TraitList;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class TLMultiblockInfo {
@@ -33,8 +35,10 @@ public class TLMultiblockInfo {
     private RecipeBuilder.RecipeInfo recipeType;
     public RecipeBuilder.RecipeInfo getRecipeType() {return recipeType;}
     public TraitList getTraits() {return traits;}
+    private List<JeiRecipeCatalyst> recipeCatalysts;
+    public List<JeiRecipeCatalyst> getRecipeCatalysts() {return recipeCatalysts;}
 
-    public TLMultiblockInfo(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state, IMultiblockLogic<TLTraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits, JEICategoryBuilder.TLJEICategoryInfo jeiInfo, RecipeBuilder.RecipeInfo recipeType) {
+    public TLMultiblockInfo(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state, IMultiblockLogic<TLTraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits, JEICategoryBuilder.TLJEICategoryInfo jeiInfo, RecipeBuilder.RecipeInfo recipeType, List<JeiRecipeCatalyst> recipeCatalysts) {
         this.id = id;
         this.multiblock = multiblock;
         this.state = state;
@@ -43,8 +47,9 @@ public class TLMultiblockInfo {
         this.traits = traits;
         this.jeiInfo = jeiInfo;
         this.recipeType = recipeType;
+        this.recipeCatalysts = recipeCatalysts;
     }
-    public TLMultiblockInfo reconstruct(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state, IMultiblockLogic<TLTraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits, JEICategoryBuilder.TLJEICategoryInfo jeiInfo, RecipeBuilder.RecipeInfo recipeType) {
+    public TLMultiblockInfo reconstruct(ResourceLocation id, TLMultiblock multiblock, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> state, IMultiblockLogic<TLTraitMultiblockState> logic, AssetGenerationData assetGenData, TraitList traits, JEICategoryBuilder.TLJEICategoryInfo jeiInfo, RecipeBuilder.RecipeInfo recipeType, List<JeiRecipeCatalyst> recipeCatalysts) {
         this.id = id;
         this.multiblock = multiblock;
         this.state = state;
@@ -53,6 +58,7 @@ public class TLMultiblockInfo {
         this.traits = traits;
         this.jeiInfo = jeiInfo;
         this.recipeType = recipeType;
+        this.recipeCatalysts = recipeCatalysts;
         return this;
     }
 

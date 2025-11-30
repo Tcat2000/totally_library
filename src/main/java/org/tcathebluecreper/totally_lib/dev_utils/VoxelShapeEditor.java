@@ -332,7 +332,10 @@ public class VoxelShapeEditor extends WidgetGroup {
         }
 
         public void update() {
-            this.setSelfPosition(2, list.indexOf(this) * 47 + 1);
+            if(parent instanceof DraggableScrollableWidgetGroup) {
+                this.setSelfPosition(2, list.indexOf(this) * 47 + 1 - ((DraggableScrollableWidgetGroup) parent).getScrollYOffset());
+            }
+            else this.setSelfPosition(2, list.indexOf(this) * 47 + 1);
             this.initTemplate();
         }
 
@@ -344,9 +347,10 @@ public class VoxelShapeEditor extends WidgetGroup {
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if(isMouseOverElement(mouseX, mouseY) && !super.mouseClicked(mouseX, mouseY, button)) {
                 list.forEach(AABBListWidget::update);
+                parent.widgets.remove(this);
+                parent.widgets.add(this);
+                this.update();
                 this.setBackground(ResourceBorderTexture.BORDERED_BACKGROUND, selectTexture);
-                parent.removeWidget(this);
-                parent.addWidget(this);
                 selected.put(list, this);
                 return true;
             }

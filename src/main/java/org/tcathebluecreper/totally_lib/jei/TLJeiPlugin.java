@@ -33,10 +33,10 @@ public class TLJeiPlugin implements IModPlugin {
         ClientLevel world = Minecraft.getInstance().level;
         assert world != null;
         TLModMultiblocks.allMultiblocks.forEach(tlMultiblockInfo -> {
+            tlMultiblockInfo.getRecipeCatalysts().forEach(catalyst -> catalyst.register(registration));
             if(tlMultiblockInfo.getJeiInfo() != null) {
                 tlMultiblockInfo.getJeiInfo().catalystItemStacks.forEach(stack -> registration.addRecipeCatalyst(stack.get(), tlMultiblockInfo.getJeiInfo().UID));
                 tlMultiblockInfo.getJeiInfo().catalystItems.forEach(item -> registration.addRecipeCatalyst(item.get(), tlMultiblockInfo.getJeiInfo().UID));
-                tlMultiblockInfo.getRecipeCatalysts().forEach(catalyst -> catalyst.register(registration));
             }
         });
     }

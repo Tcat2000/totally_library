@@ -35,7 +35,7 @@ public abstract class JeiRecipeCatalyst {
 
         @Override
         public void register(IRecipeCatalystRegistration registration) {
-            Optional<RecipeType<?>> type = registration.getJeiHelpers().getAllRecipeTypes().filter(rt -> rt.getUid() == recipeType).findFirst();
+            Optional<RecipeType<?>> type = registration.getJeiHelpers().getAllRecipeTypes().filter(rt -> rt.getUid().equals(recipeType)).findFirst();
             if(type.isEmpty()) {
                 logMissingRecipeType();
                 return;

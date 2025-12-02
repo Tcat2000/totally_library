@@ -33,6 +33,7 @@ import org.tcathebluecreper.totally_lib.recipe.provider.*;
 public class Plugin extends KubeJSPlugin {
     public static EventGroup multiblockEventsGroup = EventGroup.of("IEMultiblockEvents");
     public static EventHandler multiblockRegisterEventJS = multiblockEventsGroup.startup("registerMultiblocks", () -> TLMultiblockRegistrationEventJS.class);
+    public static EventHandler manualEntriesEventJS = multiblockEventsGroup.client("addManualEntries", () -> ManualEntriesEventJS.class);
 
     @Override
     public void registerEvents() {
@@ -81,6 +82,8 @@ public class Plugin extends KubeJSPlugin {
         event.add("RenderUtils", RenderUtils.class);
 
         event.add("IDrawableAnimated", IDrawableAnimated.class);
+
+        event.add("TLibMultiblocks", TLModMultiblocks.class);
     }
 
     @Override
@@ -94,6 +97,8 @@ public class Plugin extends KubeJSPlugin {
             ResourceLocation readablePathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "block/multiblock/" + path + "/" + name + "_split");
             ResourceLocation pathToBlockstate = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "blockstates/" + name);
             ResourceLocation pathToItemModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "models/item/" + name);
+
+            generator.json(multiblock.getId().withPrefix("models/manual/"), multiblock.getAssetGenData().getManualModel());
 
             JsonObject json = new JsonObject();
             JsonArray blockPoses = new JsonArray();

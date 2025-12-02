@@ -41,11 +41,13 @@ public class TLMultiblockBuilder {
     public BlockPos masterOffset;
     public BlockPos triggerOffset;
     public BlockPos size;
-    public int manualScale = 0;
-    public TIDynamicModel manualModel;
+    public float manualScale = 16;
+    public TIDynamicModel manualModel = new TIDynamicModel("");
+    private boolean hasCustomManualModel = false;
     public Supplier<List<ITrait>> traits = ArrayList::new;
     public int[][] blocks = new int[0][];
-    public JsonObject model = null;
+    public JsonObject modelJson = null;
+    public JsonObject manualModelJson = null;
     public RecipeBuilder.RecipeInfo recipeInfo = null;
     public MachineShape shape = new MachineShape.SolidMachineShape();
     public Consumer<JEICategoryBuilder> jeiCategoryBuilder;
@@ -77,6 +79,10 @@ public class TLMultiblockBuilder {
     public TLMultiblockBuilder size(BlockPos size) {this.size = size; return this;}
     @Info("Defines the cubic size of the machine.")
     public TLMultiblockBuilder size(int x, int y, int z) {size = new BlockPos(x,y,z); return this;}
+    @Info("Sets the size of the multiblock when rendered in the manual.")
+    public TLMultiblockBuilder manualScale(int scale) {manualScale = scale; return this;}
+    @Info("Overrides the automatically generated model for display in the manual. Useful for modeling fake BER components.")
+    public TLMultiblockBuilder manualModel(ResourceLocation location) {manualModel = new TIDynamicModel(location); hasCustomManualModel = true; return this;}
 
     @Info("Proves capability to your machine like items, fluids, powers, ect.")
     public TLMultiblockBuilder traits(Supplier<List<ITrait>> traits) {
@@ -95,19 +101,22 @@ public class TLMultiblockBuilder {
 
     @Info("Also required for auto generation of split model, provide the resourceLocation, textures, automatic culling (assume true), and flipV (assume true)")
     public TLMultiblockBuilder obj(String modelLocation, NativeObject textures, boolean automaticCulling, boolean flipV) {
-        model = new JsonObject();
-        model.addProperty("parent","minecraft:block/block");
+        modelJson = new JsonObject();
+        modelJson.addProperty("parent","minecraft:block/block");
 
         JsonObject texturesObject = new JsonObject();
 
         textures.forEach((key, value) -> texturesObject.addProperty((String) key, (String) value));
 
-        model.add("textures", texturesObject);
+        modelJson.add("textures", texturesObject);
 
-        model.addProperty("loader", "forge:obj");
-        model.addProperty("model", modelLocation);
-        model.addProperty("automatic_culling", automaticCulling);
-        model.addProperty("flip_v", flipV);
+        modelJson.addProperty("loader", "forge:obj");
+        modelJson.addProperty("model", modelLocation);
+        modelJson.addProperty("automatic_culling", automaticCulling);
+        modelJson.addProperty("flip_v", flipV);
+
+        if(!hasCustomManualModel) manualModelJson = modelJson.deepCopy();
+
         return this;
     }
 
@@ -140,9 +149,11 @@ public class TLMultiblockBuilder {
             }
         };
 
+        if(!hasCustomManualModel) manualModel = new TIDynamicModel(id.withPrefix("manual/"));
+
         info.logic.reconstruct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
 
-        info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo, jeiCatalysts);
+        info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, modelJson, manualModelJson) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo, jeiCatalysts);
 
         return info.reg;
     }
@@ -172,7 +183,7 @@ public class TLMultiblockBuilder {
             .structure(() -> multiblocksToRegister.get(id).get())
             .build();
 
-        manualModel = new TIDynamicModel("chemical_bath/chemical_bath");
+        if(!hasCustomManualModel) manualModel = new TIDynamicModel(id.withPrefix("manual/"));
 
         info.multiblockClass = new TLMultiblock(id, masterOffset, triggerOffset, size, info.registration, manualModel, manualScale);
         multiblocksToRegister.put(id, Lazy.of(() -> info.multiblockClass));
@@ -186,7 +197,7 @@ public class TLMultiblockBuilder {
         }
 
 
-        info.reg = new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, model) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo, jeiCatalysts);
+        info.reg = new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, modelJson, manualModelJson) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo, jeiCatalysts);
         consumer.accept(info.reg);
 
         multiblockInfo.put(id, info);
@@ -228,7 +239,7 @@ public class TLMultiblockBuilder {
 
     @HideFromJS
     private boolean hasModelInfo() {
-        return model != null && blocks.length != 0;
+        return modelJson != null && blocks.length != 0;
     }
 
     @HideFromJS

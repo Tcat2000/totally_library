@@ -1,6 +1,6 @@
 package org.tcathebluecreper.totally_lib;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import blusunrize.immersiveengineering.api.ManualHelper;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.logging.LogUtils;
@@ -12,7 +12,9 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,10 +24,14 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.tcathebluecreper.totally_lib.dev_utils.*;
+import org.tcathebluecreper.totally_lib.kubejs.ManualEntriesEventJS;
+import org.tcathebluecreper.totally_lib.kubejs.Plugin;
 import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;
 import org.tcathebluecreper.totally_lib.event.TLMultiblockRegistrationEvent;
 
@@ -42,22 +48,6 @@ public class TotallyLibrary {
 //    public static final File multiblockFileLocation = new File(Platform.getGamePath().toFile(), "tl_multiblock_metadata");
 
     public TotallyLibrary() {
-//        multiblockFileLocation.mkdirs();
-//        File infoFile = new File(multiblockFileLocation, "info.txt");
-//        try {
-//            if(!infoFile.exists()) infoFile.createNewFile();
-//            FileWriter fw = new FileWriter(infoFile);
-//            fw.flush();
-//            fw.write("""
-//                This folder contains the editor files for any multiblocks created using Totally Lib.
-//                These files are *NOT* required for your multiblocks to work; they are only the values set in the editor before exporting.
-//                When exporting a modpack, this folder can be safely left out.
-//                IF your delete these files, you multiblock editor will not remember your machines, and you will no longer be able to open/edit/export them.""");
-//            fw.close();
-//        } catch(IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MinecraftForge.EVENT_BUS.register(new ForgeEvents());
         modEventBus.register(new ModEvents());
@@ -68,8 +58,6 @@ public class TotallyLibrary {
 
 
         modEventBus.post(new TLMultiblockRegistrationEvent(TotallyLibrary.regManager, TLModMultiblocks.allMultiblocks::add, false));
-
-
     }
 
     public static boolean isLDLibLoaded() {
@@ -120,6 +108,19 @@ public class TotallyLibrary {
 //                    TLRegistrableRecipeSerializer.getSerializers().forEach(TLRegistrableRecipeSerializer::clearRecipes);
                 }
             });
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            Plugin.manualEntriesEventJS.post(new ManualEntriesEventJS(ManualHelper.getManual().getRoot(), ManualHelper.getManual()));
+        }
+
+        @SubscribeEvent
+        public static void registerModels(ModelEvent.RegisterAdditional ev) {
+            ev.register(ResourceLocation.fromNamespaceAndPath("tlib", "multiblocks/advanced_coke_oven"));
         }
     }
 }

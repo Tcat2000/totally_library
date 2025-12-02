@@ -79,14 +79,18 @@ public class TLMultiblockInfo {
         public int[][] getBlocks() {return blocks;}
         private JsonObject innerModel;
         public JsonObject getInnerModel() {return innerModel;}
+        private JsonObject manualModel;
+        public JsonObject getManualModel() {return manualModel;}
 
-        public AssetGenerationData(int[][] blocks, JsonObject innerModel) {
+        public AssetGenerationData(int[][] blocks, JsonObject innerModel, JsonObject manualModel) {
             this.blocks = blocks;
             this.innerModel = innerModel;
+            this.manualModel = manualModel;
         }
-        public AssetGenerationData reconstruct(int[][] blocks, JsonObject innerModel) {
+        public AssetGenerationData reconstruct(int[][] blocks, JsonObject innerModel, JsonObject manualModel) {
             this.blocks = blocks;
             this.innerModel = innerModel;
+            this.manualModel = manualModel;
             return this;
         }
     }

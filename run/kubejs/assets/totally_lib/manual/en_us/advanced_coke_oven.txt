@@ -1,0 +1,5 @@
+Improved Coke Oven
+Electrifying old tech
+<&advanced_coke_oven>
+The Improved Coke Oven does the same thing as the basic Coke Oven, but faster, with I/O, and can be sped up with power.
+With coal or wood being inputed in the top, creosote comes out the bottom, charcoal or coke out the front, and power in the back.

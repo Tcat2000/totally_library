@@ -8,6 +8,7 @@ import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.SpecialManualElement;
 import blusunrize.lib.manual.Tree;
 import dev.latvian.mods.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.RemapForJS;
 import net.minecraft.resources.ResourceLocation;
 import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;
@@ -25,45 +26,54 @@ public class ManualEntriesEventJS extends EventJS {
         this.manual = manual;
     }
 
+    @Info("Adds a new category or gets and existing category with the provided id. Weight, if provided, affects where on the list the category is.")
     public ManualEntriesEventJS category(ResourceLocation category, double weight) {
         return new ManualEntriesEventJS(page.getOrCreateSubnode(category, () -> weight), manual);
     }
 
+    @Info("Adds a new category or gets and existing category with the provided id. Weight, if provided, affects where on the list the category is.")
     public ManualEntriesEventJS category(ResourceLocation category) {
         return category(category, 0);
     }
 
+    @Info("Adds a new category or gets and existing category with the provided id, once for each element")
     public ManualEntriesEventJS categories(List<ResourceLocation> categories) {
         AtomicReference<Tree.InnerNode<ResourceLocation, ManualEntry>> page = new AtomicReference<>(this.page);
         categories.forEach(rl -> page.set(page.get().getOrCreateSubnode(rl)));
         return new ManualEntriesEventJS(page.get(), manual);
     }
 
+    @Info("Creates a page builder. Does NOT need to be run on the category it will be added to. End with .create()")
     public ManualEntry.ManualEntryBuilder builder() {
         return new ManualEntry.ManualEntryBuilder(manual);
     }
 
-    public void addLeaf(ManualEntry entry) {
-        addLeaf(entry, 0);
+    @Info("Adds the page to to current category. Weight, if provided, affects where on the list the page is.")
+    public void addPage(ManualEntry entry) {
+        addPage(entry, 0);
     }
 
-    public void addLeaf(ManualEntry entry, double weight) {
+    @Info("Adds the page to to current category. Weight, if provided, affects where on the list the page is.")
+    public void addPage(ManualEntry entry, double weight) {
         page.addNewLeaf(entry, () -> weight);
     }
 
+    @Info("Adds a special element, can be provided from any of `manualElement...()`, or custom (advanced)")
     public ManualEntry.SpecialElementData specialElementData(String name, int offset, Supplier<SpecialManualElement> element) {
         return new ManualEntry.SpecialElementData(name, offset, element);
     }
 
+    @Info("Creates a multiblock panel using the id. Id MUST be of a machine added with Totally Library. For non-tlib multiblocks, use `manualElementMultiblock`.")
     @RemapForJS("manualElementMultiblockId")
-    public SpecialManualElement manualElementMultiblock(ResourceLocation mb) {
+    public ManualElementMultiblock manualElementMultiblock(ResourceLocation mb) {
         TLMultiblock multiblock = TLModMultiblocks.byId(mb).getMultiblock();
         if(multiblock == null) {
             throw new IllegalArgumentException("No multiblock with id " + mb + ", if this is the id of a multiblock not added with tlib, provide the multiblock, not the id.");
         }
         return new ManualElementMultiblock(manual, multiblock);
     }
-    public SpecialManualElement manualElementMultiblock(MultiblockHandler.IMultiblock multiblock) {
+    @Info("Creates a multiblock panel using the multiblock. The machine can be gotten from other mod's ModMultiblock classes (advanced)")
+    public ManualElementMultiblock manualElementMultiblock(MultiblockHandler.IMultiblock multiblock) {
         return new ManualElementMultiblock(manual, multiblock);
     }
 }

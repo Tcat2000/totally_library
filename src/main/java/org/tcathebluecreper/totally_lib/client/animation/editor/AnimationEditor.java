@@ -141,7 +141,7 @@ public class AnimationEditor extends WidgetGroup {
         partsListContainer = new WidgetGroup();
         partsList = new DraggableScrollableWidgetGroup(4, 47, 192, 178);
         selectorTabPane.addWidget(new ButtonWidget(1,1, 16, 12, new GuiTextureGroup(ResourceBorderTexture.BUTTON_COMMON, new TextTexture("+")), clickData -> {
-            AnimationElementWidget part = new AnimationElementWidget(this, animationParts);
+            AnimationElementPreview part = new AnimationElementPreview(this, animationParts);
             if(selectedAnimationPart instanceof AnimationElementGroupWidget) {
                 ((AnimationElementGroupWidget) selectedAnimationPart).otherElements.add(part);
                 selectedAnimationPart.addWidget(part);
@@ -225,7 +225,7 @@ public class AnimationEditor extends WidgetGroup {
 
         machineAnimation.forAllParts(part -> {
             AnimationElement element = null;
-            if(part instanceof MachineAnimation.AnimatedModelPart) element = new AnimationElementWidget(this, animationParts, (MachineAnimation.AnimatedModelPart) part);
+            if(part instanceof MachineAnimation.AnimatedModelPart) element = new AnimationElementPreview(this, animationParts, (MachineAnimation.AnimatedModelPart) part);
             if(part instanceof MachineAnimation.AnimatedModelGroup) element = new AnimationElementGroupWidget(this, animationParts, (MachineAnimation.AnimatedModelGroup) part);
             if(element != null) {
                 animationParts.add(element);

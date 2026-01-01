@@ -4,6 +4,7 @@ import com.lowdragmc.lowdraglib.gui.texture.ColorBorderTexture;
 import com.lowdragmc.lowdraglib.gui.texture.IGuiTexture;
 import com.lowdragmc.lowdraglib.gui.texture.ResourceBorderTexture;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
+import org.tcathebluecreper.totally_lib.client.animation.ProgressMode;
 import org.tcathebluecreper.totally_lib.multiblock.MachineAnimation;
 
 import java.awt.*;
@@ -24,7 +25,7 @@ public class AnimationElementGroupWidget extends AnimationElement {
         this.otherElements = otherElements;
         this.setBackground(ResourceBorderTexture.BORDERED_BACKGROUND);
 
-        animationPart = new MachineAnimation.AnimatedModelGroup(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        animationPart = new MachineAnimation.AnimatedModelGroup(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), ProgressMode.ALWAYS);
         animationEditor.machineAnimation.parts.add(animationPart);
 
         setDynamicSized(true);

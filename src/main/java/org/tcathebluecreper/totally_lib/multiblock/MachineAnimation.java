@@ -20,6 +20,8 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.tcathebluecreper.totally_lib.client.animation.Easing;
 import org.tcathebluecreper.totally_lib.client.animation.IEasingMethod;
+import org.tcathebluecreper.totally_lib.client.animation.ProgressMode;
+import org.tcathebluecreper.totally_lib.client.animation.editor.AnimationElement;
 import org.tcathebluecreper.totally_lib.lib.AnimationUtils;
 
 import java.util.ArrayList;
@@ -84,11 +86,15 @@ public class MachineAnimation {
         public final List<Frame> positionFrames;
         public final List<OriginFrame> rotationFrames;
         public final List<OriginFrame> scaleFrames;
+        ProgressMode progressMode = ProgressMode.SYNC_TO_PROGRESS;
+        public int animationLength;
+        public ProgressMode mode;
 
-        protected AnimatedModelElement(List<Frame> positionFrames, List<OriginFrame> rotationFrames, List<OriginFrame> scaleFrames) {
+        protected AnimatedModelElement(List<Frame> positionFrames, List<OriginFrame> rotationFrames, List<OriginFrame> scaleFrames, ProgressMode mode) {
             this.positionFrames = positionFrames;
             this.rotationFrames = rotationFrames;
             this.scaleFrames = scaleFrames;
+            this.progressMode = mode;
             positionFrames.sort((a,b) -> (int) (a.getTime() - b.getTime()));
             rotationFrames.sort((a,b) -> (int) (a.getTime() - b.getTime()));
             scaleFrames.sort((a,b) -> (int) (a.getTime() - b.getTime()));
@@ -177,6 +183,7 @@ public class MachineAnimation {
             object.add("position", posKeyframes);
             object.add("rotation", rotKeyframes);
             object.add("scale", sizeKeyframes);
+            object.addProperty("mode", progressMode.toString());
 
             return object;
         }
@@ -209,7 +216,9 @@ public class MachineAnimation {
                     subElements.add(AnimatedModelElement.deserialize((JsonObject) size));
                 }
 
-                return new AnimatedModelGroup(posFrames, rotFrames, sizeFrames, subElements);
+                ProgressMode mode = ProgressMode.valueOf(element.get("mode").getAsString());
+
+                return new AnimatedModelGroup(posFrames, rotFrames, sizeFrames, subElements, mode);
             }
             else if(Objects.equals(type, "part")) {
 
@@ -233,6 +242,8 @@ public class MachineAnimation {
                     sizeFrames.add(OriginFrame.deserialize((JsonObject) size));
                 }
 
+                ProgressMode mode = ProgressMode.valueOf(element.get("mode").getAsString());
+
                 List<BakedQuad> quads = new ArrayList<>();
                 IModelRenderer loadModel = new IModelRenderer(model);
                 Level level = Minecraft.getInstance().level;
@@ -246,7 +257,7 @@ public class MachineAnimation {
                 quads.addAll(loadModel.renderModel(level, new BlockPos(0, 4, 0), null, Direction.WEST, Minecraft.getInstance().level.random));
 
 
-                return new AnimatedModelPart(posFrames, rotFrames, sizeFrames, quads);
+                return new AnimatedModelPart(posFrames, rotFrames, sizeFrames, quads, mode);
             }
             throw new JsonParseException("Error parsing machine animation part: invalid type '" + type + "', expected ['group','part'] in element: " + element);
         }
@@ -256,12 +267,13 @@ public class MachineAnimation {
         public final List<BakedQuad> quads;
         public IModelRenderer model;
 
-        public AnimatedModelPart fromV4(List<Vector4f> positionFrames, List<Vector4f> rotationFrames, List<Vector4f> scaleFrames, List<BakedQuad> quads) {
-            return new AnimatedModelPart(positionFrames.stream().map(Frame::linear).toList(), rotationFrames.stream().map(OriginFrame::linear).toList(), scaleFrames.stream().map(OriginFrame::linear).toList(), quads);
+        public AnimatedModelPart fromV4(List<Vector4f> positionFrames, List<Vector4f> rotationFrames, List<Vector4f> scaleFrames, List<BakedQuad> quads, ProgressMode mode) {
+            return new AnimatedModelPart(positionFrames.stream().map(Frame::linear).toList(), rotationFrames.stream().map(OriginFrame::linear).toList(), scaleFrames.stream().map(OriginFrame::linear).toList(), quads, mode);
         }
-        public AnimatedModelPart(List<Frame> positionFrames, List<OriginFrame> rotationFrames, List<OriginFrame> scaleFrames, List<BakedQuad> quads) {
-            super(positionFrames, rotationFrames, scaleFrames);
+        public AnimatedModelPart(List<Frame> positionFrames, List<OriginFrame> rotationFrames, List<OriginFrame> scaleFrames, List<BakedQuad> quads, ProgressMode mode) {
+            super(positionFrames, rotationFrames, scaleFrames, mode);
             this.quads = quads;
+            this.progressMode = mode;
         }
 
         public void render(float frame, PoseStack poseStack, MultiBufferSource bufferSource, Level level) {
@@ -327,12 +339,12 @@ public class MachineAnimation {
     public static class AnimatedModelGroup extends AnimatedModelElement {
         public final List<AnimatedModelElement> subElements;
 
-        public AnimatedModelGroup(List<Frame> positionFrames, List<OriginFrame> rotationFrames, List<OriginFrame> scaleFrames, List<AnimatedModelElement> subElements) {
-            super(positionFrames, rotationFrames, scaleFrames);
+        public AnimatedModelGroup(List<Frame> positionFrames, List<OriginFrame> rotationFrames, List<OriginFrame> scaleFrames, List<AnimatedModelElement> subElements, ProgressMode mode) {
+            super(positionFrames, rotationFrames, scaleFrames, mode);
             this.subElements = subElements;
         }
-        public AnimatedModelGroup(List<Frame> positionFrames, List<OriginFrame> rotationFrames, List<OriginFrame> scaleFrames) {
-            super(positionFrames, rotationFrames, scaleFrames);
+        public AnimatedModelGroup(List<Frame> positionFrames, List<OriginFrame> rotationFrames, List<OriginFrame> scaleFrames, ProgressMode mode) {
+            super(positionFrames, rotationFrames, scaleFrames, mode);
             this.subElements = new ArrayList<>();
         }
         public AnimatedModelGroup(List<AnimatedModelElement> subElements) {

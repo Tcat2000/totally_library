@@ -5,7 +5,7 @@ ServerEvents.recipes(event => {
         //{creosote=250, result={"item":"minecraft:charcoal"}, input={"tag":"minecraft:logs"}, time=900, type="immersiveengineering:coke_oven"}
 
         console.log({
-            type: 'tlib:advanced_coke_oven',
+            type: 'totally_lib:advanced_coke_oven',
             length: json.get("time").getAsInt() / 2,
             input: json.getAsJsonObject("input"),
             output: json.getAsJsonObject("result"),
@@ -15,7 +15,7 @@ ServerEvents.recipes(event => {
         });
 
         event.custom({
-            type: 'tlib:advanced_coke_oven',
+            type: 'totally_lib:advanced_coke_oven',
             length: json.get("time").getAsInt() / 2,
             input: json.getAsJsonObject("input"),
             output: json.getAsJsonObject("result"),

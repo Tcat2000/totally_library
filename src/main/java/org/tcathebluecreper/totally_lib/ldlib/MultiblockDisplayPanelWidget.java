@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 public class MultiblockDisplayPanelWidget extends ScreenSpaceWidget {
     private final SceneWidget scene;
-    public TrackedDummyWorld level;
+    public TrackedDummyWorld level = new TrackedDummyWorld();
 
     public Consumer<SceneWidget> postRender;
 

@@ -19,6 +19,8 @@ import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.lib.AnimationUtils;
 import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;
@@ -31,7 +33,8 @@ import org.tcathebluecreper.totally_lib.recipe.provider.*;
 
 
 public class Plugin extends KubeJSPlugin {
-    public static EventGroup multiblockEventsGroup = EventGroup.of("IEMultiblockEvents");
+    private static final Logger log = LogManager.getLogger(Plugin.class);
+    public static EventGroup multiblockEventsGroup = EventGroup.of("TLEvents");
     public static EventHandler multiblockRegisterEventJS = multiblockEventsGroup.startup("registerMultiblocks", () -> TLMultiblockRegistrationEventJS.class);
     public static EventHandler manualEntriesEventJS = multiblockEventsGroup.client("addManualEntries", () -> ManualEntriesEventJS.class);
 
@@ -94,36 +97,76 @@ public class Plugin extends KubeJSPlugin {
             String path = multiblock.getId().getPath();
             String name = path.split("/")[path.split("/").length - 1];
             ResourceLocation pathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "models/block/multiblock/" + path + "/" + name + "_split");
+            ResourceLocation pathToMirroredSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "models/block/multiblock/" + path + "/" + name + "_mirrored_split");
             ResourceLocation readablePathToSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "block/multiblock/" + path + "/" + name + "_split");
+            ResourceLocation readablePathToMirroredSplitModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "block/multiblock/" + path + "/" + name + "_mirrored_split");
             ResourceLocation pathToBlockstate = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "blockstates/" + name);
             ResourceLocation pathToItemModel = ResourceLocation.fromNamespaceAndPath(multiblock.getId().getNamespace(), "models/item/" + name);
 
             generator.json(multiblock.getId().withPrefix("models/manual/"), multiblock.getAssetGenData().getManualModel());
 
-            JsonObject json = new JsonObject();
-            JsonArray blockPoses = new JsonArray();
+            {
+                JsonObject json = new JsonObject();
+                JsonArray blockPoses = new JsonArray();
 
-            json.addProperty("parent","minecraft:block/block");
-            json.add("textures", multiblock.getAssetGenData().getInnerModel().get("textures"));
+                json.addProperty("parent", "minecraft:block/block");
+                json.add("textures", multiblock.getAssetGenData().getInnerModel().get("textures"));
 
-            json.addProperty("loader","immersiveengineering:basic_split");
+                json.addProperty("loader", "immersiveengineering:basic_split");
 
-            json.add("inner_model", multiblock.getAssetGenData().getInnerModel());
+                json.add("inner_model", multiblock.getAssetGenData().getInnerModel());
 
-            for(int i = 0; i < multiblock.getAssetGenData().getBlocks().length; i++) {
-                int[] pos = multiblock.getAssetGenData().getBlocks()[i];
-                JsonArray tag = new JsonArray();
-                tag.add(pos[0] - multiblock.getMultiblock().masterFromOrigin.getX());
-                tag.add(pos[1] - multiblock.getMultiblock().masterFromOrigin.getY());
-                tag.add(pos[2] - multiblock.getMultiblock().masterFromOrigin.getZ());
-                blockPoses.add(tag);
+                for(int i = 0; i < multiblock.getAssetGenData().getBlocks().length; i++) {
+                    int[] pos = multiblock.getAssetGenData().getBlocks()[i];
+                    JsonArray tag = new JsonArray();
+                    tag.add(pos[0] - multiblock.getMultiblock().masterFromOrigin.getX());
+                    tag.add(pos[1] - multiblock.getMultiblock().masterFromOrigin.getY());
+                    tag.add(pos[2] - multiblock.getMultiblock().masterFromOrigin.getZ());
+                    blockPoses.add(tag);
+                }
+                json.add("split_parts", blockPoses);
+
+                json.addProperty("dynamic", false);
+                generator.json(pathToSplitModel, json.deepCopy());
+                log.debug("split model: {}, {}", pathToSplitModel, json);
             }
-            json.add("split_parts", blockPoses);
 
-            json.addProperty("dynamic", false);
 
-            System.out.println("generated json asset: " + json);
-            generator.json(pathToSplitModel, json);
+            {
+                JsonObject json = new JsonObject();
+                JsonArray blockPoses = new JsonArray();
+
+                json.addProperty("parent", "minecraft:block/block");
+                json.add("textures", multiblock.getAssetGenData().getInnerModel().get("textures"));
+
+                json.addProperty("loader", "immersiveengineering:basic_split");
+
+                json.add("inner_model", multiblock.getAssetGenData().getInnerModel());
+
+                for(int i = 0; i < multiblock.getAssetGenData().getBlocks().length; i++) {
+                    int[] pos = multiblock.getAssetGenData().getBlocks()[i];
+                    JsonArray tag = new JsonArray();
+                    tag.add(pos[0] - multiblock.getMultiblock().masterFromOrigin.getX());
+                    tag.add(pos[1] - multiblock.getMultiblock().masterFromOrigin.getY());
+                    tag.add(pos[2] - multiblock.getMultiblock().masterFromOrigin.getZ());
+                    blockPoses.add(tag);
+                }
+                json.add("split_parts", blockPoses);
+
+                json.addProperty("dynamic", false);
+
+                if(multiblock.getAssetGenData().getFlippedInnerModel() == null) {
+                    JsonObject mirrored = new JsonObject();
+                    mirrored.addProperty("loader", "immersiveengineering:mirror");
+                    mirrored.add("inner_model", json.getAsJsonObject("inner_model").deepCopy());
+
+                    json.add("inner_model", mirrored);
+                }
+                else json.add("inner_model", multiblock.getAssetGenData().getFlippedInnerModel());
+                generator.json(pathToMirroredSplitModel, json);
+                log.debug("mirrored split model: {}, {}", pathToMirroredSplitModel, json);
+            }
+
 
             JsonObject blockstate = new JsonObject();
             JsonObject variants = new JsonObject();
@@ -131,6 +174,10 @@ public class Plugin extends KubeJSPlugin {
             JsonObject model = new JsonObject();
             model.addProperty("model", readablePathToSplitModel.toString());
             model.addProperty("uvlock", true);
+
+            JsonObject mirrorModel = new JsonObject();
+            mirrorModel.addProperty("model", readablePathToMirroredSplitModel.toString());
+            mirrorModel.addProperty("uvlock", true);
 
             model.addProperty("y", 0);
             variants.add("facing=north,mirrored=false", model.deepCopy());
@@ -140,17 +187,18 @@ public class Plugin extends KubeJSPlugin {
             variants.add("facing=south,mirrored=false", model.deepCopy());
             model.addProperty("y", 270);
             variants.add("facing=west,mirrored=false", model.deepCopy());
-            model.addProperty("y", 0);
-            variants.add("facing=north,mirrored=true", model.deepCopy());
-            model.addProperty("y", 90);
-            variants.add("facing=east,mirrored=true", model.deepCopy());
-            model.addProperty("y", 180);
-            variants.add("facing=south,mirrored=true", model.deepCopy());
-            model.addProperty("y", 270);
-            variants.add("facing=west,mirrored=true", model.deepCopy());
+            mirrorModel.addProperty("y", 0);
+            variants.add("facing=north,mirrored=true", mirrorModel.deepCopy());
+            mirrorModel.addProperty("y", 90);
+            variants.add("facing=east,mirrored=true", mirrorModel.deepCopy());
+            mirrorModel.addProperty("y", 180);
+            variants.add("facing=south,mirrored=true", mirrorModel.deepCopy());
+            mirrorModel.addProperty("y", 270);
+            variants.add("facing=west,mirrored=true", mirrorModel.deepCopy());
 
             blockstate.add("variants", variants);
             generator.json(pathToBlockstate, blockstate);
+            log.debug("blockstate: {}, {}", pathToBlockstate, blockstate);
 
             float size = Math.max(multiblock.getMultiblock().size.getX(), Math.max(multiblock.getMultiblock().size.getY(), multiblock.getMultiblock().size.getZ()));
 

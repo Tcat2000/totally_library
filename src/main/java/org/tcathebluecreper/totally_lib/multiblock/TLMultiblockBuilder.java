@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistra
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockItem;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import com.google.gson.JsonObject;
@@ -16,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -23,7 +25,7 @@ import org.tcathebluecreper.totally_lib.RegistrationManager;
 import org.tcathebluecreper.totally_lib.TotallyLibrary;
 import org.tcathebluecreper.totally_lib.jei.JEICategoryBuilder;
 import org.tcathebluecreper.totally_lib.jei.JeiRecipeCatalyst;
-import org.tcathebluecreper.totally_lib.lib.ITMultiblockBlock;
+import org.tcathebluecreper.totally_lib.lib.TLMultiblockBlock;
 import org.tcathebluecreper.totally_lib.lib.TIDynamicModel;
 import org.tcathebluecreper.totally_lib.recipe.ModularRecipe;
 import org.tcathebluecreper.totally_lib.trait.ITrait;
@@ -31,10 +33,7 @@ import org.tcathebluecreper.totally_lib.trait.TraitList;
 import org.tcathebluecreper.totally_lib.recipe.RecipeBuilder;
 
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public class TLMultiblockBuilder {
     public static final Map<ResourceLocation, Lazy<TLMultiblock>> multiblocksToRegister = new HashMap<>();
@@ -47,11 +46,14 @@ public class TLMultiblockBuilder {
     public Supplier<List<ITrait>> traits = ArrayList::new;
     public int[][] blocks = new int[0][];
     public JsonObject modelJson = null;
+    public JsonObject flippedModelJson = null;
     public JsonObject manualModelJson = null;
     public RecipeBuilder.RecipeInfo recipeInfo = null;
     public MachineShape shape = new MachineShape.SolidMachineShape();
     public Consumer<JEICategoryBuilder> jeiCategoryBuilder;
     public List<JeiRecipeCatalyst> jeiCatalysts = new ArrayList<>();
+    public BlockBehaviour.Properties multiblockProperties = IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn();
+    public BiFunction<BlockBehaviour.Properties,MultiblockRegistration<?>,? extends MultiblockPartBlock<TLTraitMultiblockState>> multiblockBlockConstructor = (props, r) -> new TLMultiblockBlock(props, r);
 
     private final ResourceLocation id;
     private final RegistrationManager manager;
@@ -59,6 +61,8 @@ public class TLMultiblockBuilder {
 
     private final boolean reload;
     private final static HashMap<ResourceLocation, MultiblockInfo> multiblockInfo = new HashMap<>();
+
+    private Supplier<TLMultiblockLogic> logicConstructor = TLMultiblockLogic::new;
 
     public TLMultiblockBuilder(ResourceLocation id, RegistrationManager manager, Consumer<TLMultiblockInfo> consumer, boolean reload) {
         this.id = id;
@@ -83,6 +87,8 @@ public class TLMultiblockBuilder {
     public TLMultiblockBuilder manualScale(int scale) {manualScale = scale; return this;}
     @Info("Overrides the automatically generated model for display in the manual. Useful for modeling fake BER components.")
     public TLMultiblockBuilder manualModel(ResourceLocation location) {manualModel = new TIDynamicModel(location); hasCustomManualModel = true; return this;}
+    @Info("Sets block properties of the blocks that make up the formed multiblock.")
+    public TLMultiblockBuilder multiblockProperties(BlockBehaviour.Properties properties) {multiblockProperties = properties; return this;}
 
     @Info("Proves capability to your machine like items, fluids, powers, ect.")
     public TLMultiblockBuilder traits(Supplier<List<ITrait>> traits) {
@@ -101,6 +107,7 @@ public class TLMultiblockBuilder {
 
     @Info("Also required for auto generation of split model, provide the resourceLocation, textures, automatic culling (assume true), and flipV (assume true)")
     public TLMultiblockBuilder obj(String modelLocation, NativeObject textures, boolean automaticCulling, boolean flipV) {
+        flippedModelJson = null;
         modelJson = new JsonObject();
         modelJson.addProperty("parent","minecraft:block/block");
 
@@ -120,13 +127,50 @@ public class TLMultiblockBuilder {
         return this;
     }
 
-    @Info("Provides a recipe type builder, contains processing logic")
+    @Info("Also required for auto generation of split model, provide the resourceLocation, textures, automatic culling (assume true), and flipV (assume true)")
+    public TLMultiblockBuilder obj(String modelLocation, String flippedModelLocation, NativeObject textures, boolean automaticCulling, boolean flipV) {
+        modelJson = new JsonObject();
+        modelJson.addProperty("parent","minecraft:block/block");
+
+        JsonObject texturesObject = new JsonObject();
+
+        textures.forEach((key, value) -> texturesObject.addProperty((String) key, (String) value));
+
+        modelJson.add("textures", texturesObject.deepCopy());
+
+        modelJson.addProperty("loader", "forge:obj");
+        modelJson.addProperty("model", modelLocation);
+        modelJson.addProperty("automatic_culling", automaticCulling);
+        modelJson.addProperty("flip_v", flipV);
+
+        flippedModelJson = new JsonObject();
+        flippedModelJson.addProperty("parent","minecraft:block/block");
+
+        flippedModelJson.add("textures", texturesObject.deepCopy());
+
+        flippedModelJson.addProperty("loader", "forge:obj");
+        flippedModelJson.addProperty("model", flippedModelLocation);
+        flippedModelJson.addProperty("automatic_culling", automaticCulling);
+        flippedModelJson.addProperty("flip_v", flipV);
+
+        if(!hasCustomManualModel) manualModelJson = modelJson.deepCopy();
+
+        return this;
+    }
+
+    @Info("Provides a recipe type builder, contains processing logic.")
     public TLMultiblockBuilder recipe(Consumer<RecipeBuilder> builder) {
         RecipeBuilder recipeBuilder = new RecipeBuilder(id, TotallyLibrary.regManager, (b) -> {}, reload);
         builder.accept(recipeBuilder);
         recipeInfo = recipeBuilder.build();
         return this;
     }
+
+//    @Info("Creates a recipe type that extends the one with the id provided.")
+//    public TLMultiblockBuilder recipeType(ResourceLocation recipeType) {
+//        if(!RecipeBuilder.serializers.containsKey(id)) throw new IllegalArgumentException("No recipe type with id " + recipeType + " has been register by TLib.");
+//
+//    }
 
     @Info("Finishes the builder.")
     public TLMultiblockInfo build() {
@@ -151,12 +195,14 @@ public class TLMultiblockBuilder {
 
         if(!hasCustomManualModel) manualModel = new TIDynamicModel(id.withPrefix("manual/"));
 
-        info.logic.reconstruct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
+        info.logic.construct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
 
-        info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, modelJson, manualModelJson) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo, jeiCatalysts);
+        info.reg.reconstruct(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, modelJson, flippedModelJson, manualModelJson) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo, jeiCatalysts);
 
         return info.reg;
     }
+
+
 
     @HideFromJS
     private TLMultiblockInfo pBuild() {
@@ -171,14 +217,14 @@ public class TLMultiblockBuilder {
                 ((TLRecipeTraitMultiblockState) c.getState()).process.tick(c.getLevel().getRawLevel());
             }
         };
-        info.logic = new TLMultiblockLogic(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
+        info.logic = logicConstructor.get().construct(pos -> shape.get(pos), info.tickLogic, info.tickLogic, info.state);
 
 
         info.registration = new IEMultiblockBuilder<>(info.logic, id.getPath())
             .defaultBEs(manager.getRegistry(id.getNamespace()).blockEntityType())
             .customBlock(
                 manager.getRegistry(id.getNamespace()).blocks(), manager.getRegistry(id.getNamespace()).items(),
-                r -> new ITMultiblockBlock<>(IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get().forceSolidOn(), r),
+                r -> multiblockBlockConstructor.apply(multiblockProperties, r),
                 MultiblockItem::new)
             .structure(() -> multiblocksToRegister.get(id).get())
             .build();
@@ -197,7 +243,7 @@ public class TLMultiblockBuilder {
         }
 
 
-        info.reg = new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, modelJson, manualModelJson) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo, jeiCatalysts);
+        info.reg = new TLMultiblockInfo(id, info.multiblockClass, info.state, info.logic, hasModelInfo() ? new TLMultiblockInfo.AssetGenerationData(blocks, modelJson, flippedModelJson, manualModelJson) : null, new TraitList(traits.get()), info.jeiInfo, recipeInfo, jeiCatalysts);
         consumer.accept(info.reg);
 
         multiblockInfo.put(id, info);

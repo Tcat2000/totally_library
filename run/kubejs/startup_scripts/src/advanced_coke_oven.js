@@ -2,7 +2,7 @@ console.log("startup scripts loading!");
 
 // IEMultiblockEvents.jeiCategory
 // IEMultiblockEvents.manualEntry
-IEMultiblockEvents.registerMultiblocks(event => {
+TLEvents.registerMultiblocks(event => {
     console.log("registering multiblocks")
     event.multiblock("totally_lib:advanced_coke_oven")
         .size(3,4,3)

@@ -22,13 +22,14 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import org.tcathebluecreper.totally_lib.client.animation.ProgressMode;
 import org.tcathebluecreper.totally_lib.multiblock.MachineAnimation;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnimationElementWidget extends AnimationElement {
+public class AnimationElementPreview extends AnimationElement {
     private final AnimationEditor animationEditor;
     final List<BakedQuad> quads;
     final List<AnimationElement> otherElements;
@@ -38,11 +39,11 @@ public class AnimationElementWidget extends AnimationElement {
 
     MachineAnimation.AnimatedModelPart animationPart;
 
-    public AnimationElementWidget(AnimationEditor animationEditor, List<AnimationElement> otherElements) {
-        this(animationEditor, otherElements, new MachineAnimation.AnimatedModelPart(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+    public AnimationElementPreview(AnimationEditor animationEditor, List<AnimationElement> otherElements) {
+        this(animationEditor, otherElements, new MachineAnimation.AnimatedModelPart(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), ProgressMode.ALWAYS));
     }
 
-    public AnimationElementWidget(AnimationEditor animationEditor, List<AnimationElement> otherElements, MachineAnimation.AnimatedModelPart animationPart) {
+    public AnimationElementPreview(AnimationEditor animationEditor, List<AnimationElement> otherElements, MachineAnimation.AnimatedModelPart animationPart) {
         super(0, 16, 192, 50);
         this.animationEditor = animationEditor;
         this.otherElements = otherElements;
@@ -52,7 +53,7 @@ public class AnimationElementWidget extends AnimationElement {
         quads = animationPart.quads;
         this.animationPart = animationPart;
 
-        posKeyframes = animationPart.positionFrames.stream().map(frame -> new AnimationKeyframeData("Pos", frame, (ClickData, f) -> animationPart.positionFrames.remove(f), animationEditor.selectedAnimationPart.getAnimationElement().positionFrames)).toList();
+        posKeyframes = new ArrayList<>(animationPart.positionFrames.stream().map(frame -> new AnimationKeyframeData("Pos", frame, (ClickData, f) -> animationPart.positionFrames.remove(f), animationEditor.selectedAnimationPart.getAnimationElement().positionFrames, animationEditor.selectedAnimationPart)).toList());
 
         AnimationEditor.IModelRenderer2 model = new AnimationEditor.IModelRenderer2(ResourceLocation.fromNamespaceAndPath("minecraft", "block/lectern"));
 
@@ -128,7 +129,7 @@ public class AnimationElementWidget extends AnimationElement {
         });
     }
 
-    public AnimationElementWidget setModel(String s) {
+    public AnimationElementPreview setModel(String s) {
         quads.clear();
 
         if(!ResourceLocation.isValidResourceLocation(s)) return this;

@@ -181,15 +181,15 @@ class AnimationTimeLine extends Widget {
         if(mouseX >= 21 + getPositionX() && mouseX <= 29 + getPositionX()) {
             if(animationEditor.selectedAnimationPart != null) {
                 if(mouseY >= 6 + 18 * 2 + getPositionY() && mouseY <= 14 + 18 * 2 + getPositionY()) {
-                    posKeyframes.add(new AnimationKeyframeData(cursorPos, "Pos", 0, (clickData, frame) -> posKeyframes.remove(frame), animationEditor.selectedAnimationPart.getAnimationElement().positionFrames));
+                    posKeyframes.add(new AnimationKeyframeData(cursorPos, "Pos", 0, (clickData, frame) -> posKeyframes.remove(frame), animationEditor.selectedAnimationPart.getAnimationElement().positionFrames, animationEditor.selectedAnimationPart));
                     posKeyframes.sort(Comparator.comparingInt(a -> a.frame));
                 }
                 if(mouseY >= 6 + 18 * 3 + getPositionY() && mouseY <= 14 + 18 * 3 + getPositionY()) {
-                    rotKeyframes.add(new AnimationKeyframeData(cursorPos, "Rot", 0, (clickData, frame) -> rotKeyframes.remove(frame), animationEditor.selectedAnimationPart.getAnimationElement().rotationFrames, new Vector3f(0, 0, 0)));
+                    rotKeyframes.add(new AnimationKeyframeData(cursorPos, "Rot", 0, (clickData, frame) -> rotKeyframes.remove(frame), animationEditor.selectedAnimationPart.getAnimationElement().rotationFrames, new Vector3f(0, 0, 0), animationEditor.selectedAnimationPart));
                     rotKeyframes.sort(Comparator.comparingInt(a -> a.frame));
                 }
                 if(mouseY >= 6 + 18 * 4 + getPositionY() && mouseY <= 14 + 18 * 4 + getPositionY()) {
-                    sizeKeyframes.add(new AnimationKeyframeData(cursorPos, "Size", 1, (clickData, frame) -> sizeKeyframes.remove(frame), animationEditor.selectedAnimationPart.getAnimationElement().scaleFrames, new Vector3f(0, 0, 0)));
+                    sizeKeyframes.add(new AnimationKeyframeData(cursorPos, "Size", 1, (clickData, frame) -> sizeKeyframes.remove(frame), animationEditor.selectedAnimationPart.getAnimationElement().scaleFrames, new Vector3f(0, 0, 0), animationEditor.selectedAnimationPart));
                     sizeKeyframes.sort(Comparator.comparingInt(a -> a.frame));
                 }
             }

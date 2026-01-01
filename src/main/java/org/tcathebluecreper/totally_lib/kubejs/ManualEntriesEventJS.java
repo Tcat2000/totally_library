@@ -11,11 +11,13 @@ import dev.latvian.mods.kubejs.event.EventJS;
 import dev.latvian.mods.kubejs.typings.Info;
 import dev.latvian.mods.rhino.util.RemapForJS;
 import net.minecraft.resources.ResourceLocation;
+import org.tcathebluecreper.totally_lib.ldlib.ManualElementLdlib;
 import org.tcathebluecreper.totally_lib.multiblock.TLModMultiblocks;
 import org.tcathebluecreper.totally_lib.multiblock.TLMultiblock;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ManualEntriesEventJS extends EventJS {
@@ -75,5 +77,14 @@ public class ManualEntriesEventJS extends EventJS {
     @Info("Creates a multiblock panel using the multiblock. The machine can be gotten from other mod's ModMultiblock classes (advanced)")
     public ManualElementMultiblock manualElementMultiblock(MultiblockHandler.IMultiblock multiblock) {
         return new ManualElementMultiblock(manual, multiblock);
+    }
+
+    @Info("Allows for custom LDLib ui in the manual")
+    public ManualElementLdlib manualElementLdlib(int yOffset, ManualElementLdlib.ManualElementWidgetCreator creator) {
+        return new ManualElementLdlib(yOffset, creator);
+    }
+    @Info("Allows for custom LDLib ui in the manual")
+    public ManualElementLdlib manualElementLdlib(int yOffset, ManualElementLdlib.ManualElementWidgetCreator creator, Predicate<String> searchCheck) {
+        return new ManualElementLdlib(yOffset, creator, searchCheck);
     }
 }

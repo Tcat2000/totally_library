@@ -27,13 +27,7 @@ public class TLMultiblockLogic implements IMultiblockLogic<TLTraitMultiblockStat
     private Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> stateConstructor;
     public Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> getStateConstructor() {return stateConstructor;}
 
-    public TLMultiblockLogic(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> stateConstructor) {
-        this.shape = shape;
-        this.serverTick = serverTick;
-        this.clientTick = clientTick;
-        this.stateConstructor = stateConstructor;
-    }
-    public TLMultiblockLogic reconstruct(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> stateConstructor) {
+    public TLMultiblockLogic construct(Function<BlockPos, VoxelShape> shape, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> serverTick, BiConsumer<TLMultiblockLogic, IMultiblockContext<TLTraitMultiblockState>> clientTick, Function<IInitialMultiblockContext<TLTraitMultiblockState>, TLTraitMultiblockState> stateConstructor) {
         this.shape = shape;
         this.serverTick = serverTick;
         this.clientTick = clientTick;

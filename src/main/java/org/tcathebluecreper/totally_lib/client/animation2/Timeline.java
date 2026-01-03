@@ -26,10 +26,6 @@ public abstract class Timeline<TYPE extends Frame> {
         list.sort(Comparator.comparingInt(a -> a.frame));
     }
 
-    public void apply(PoseStack poseStack, int frame, float partialTick) {
-
-    }
-
     public abstract void applyFrameTranslations(int frame, PoseStack poseStack, AnimationInstance instance, AnimationElement element);
 
     public static class PosTimeline extends Timeline<Frame> {
